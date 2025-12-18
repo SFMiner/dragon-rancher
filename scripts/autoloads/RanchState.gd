@@ -386,7 +386,11 @@ func calculate_food_consumption() -> int:
 		var multiplier: float = Lifecycle.get_food_consumption_multiplier(dragon_data.life_stage)
 		consumption = int(consumption * multiplier)
 
-		# TODO: Add metabolism trait modifier in future
+		# Modified by metabolism trait
+		if dragon_data.phenotype.has("metabolism"):
+			var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+			var food_mult: float = metabolism_pheno.get("food_multiplier", 1.0)
+			consumption = int(consumption * food_mult)
 
 		total += consumption
 
@@ -404,6 +408,30 @@ func _process_food_consumption() -> void:
 
 		for dragon_data in dragons.values():
 			dragon_data.health = max(0.0, dragon_data.health - health_loss)
+
+
+## Check for dragon escapes based on docility (called by advance_season)
+func _check_dragon_escapes() -> void:
+	var escaped_dragons: Array[DragonData] = []
+
+	# Check each dragon for escape chance
+	for dragon_data in dragons.values():
+		if dragon_data.phenotype.has("docility"):
+			var docility_pheno: Dictionary = dragon_data.phenotype["docility"]
+			var escape_chance: float = docility_pheno.get("escape_chance", 0.0)
+
+			# Roll for escape
+			if RNGService.randf() < escape_chance:
+				escaped_dragons.append(dragon_data)
+				print("[RanchState] %s escaped! (docility: %s, chance: %.0f%%)" % [
+					dragon_data.name,
+					docility_pheno.get("name", "Unknown"),
+					escape_chance * 100.0
+				])
+
+	# Remove escaped dragons
+	for dragon_data in escaped_dragons:
+		remove_dragon(dragon_data.id)
 
 
 # === PROGRESSION SYSTEM ===
@@ -522,6 +550,9 @@ func advance_season() -> void:
 	# Process food consumption
 	_process_food_consumption()
 
+	# Check for dragon escapes (docility trait)
+	_check_dragon_escapes()
+
 	# Check order deadlines
 	_check_order_deadlines()
 
@@ -602,43 +633,77 @@ func load_state(save_data: Dictionary) -> bool:
 	facilities.clear()
 	active_orders.clear()
 
-	# Load basic values
-	current_season = save_data.get("current_season", 1)
+	# Load basic values - support both old and new key names
+	current_season = save_data.get("season", save_data.get("current_season", 1))
 	money = save_data.get("money", 500)
 	reputation = save_data.get("reputation", 0)
 	lifetime_earnings = save_data.get("lifetime_earnings", 0)
-	food_supply = save_data.get("food_supply", 100)
+	food_supply = save_data.get("food", save_data.get("food_supply", 100))
 
 	# Load achievements
 	achievements = save_data.get("achievements", {}).duplicate(true)
 
-	# Load dragons
-	var dragons_data: Dictionary = save_data.get("dragons", {})
-	for dragon_id in dragons_data.keys():
-		var dragon := DragonData.new()
-		dragon.from_dict(dragons_data[dragon_id])
-		if dragon.is_valid():
-			dragons[dragon_id] = dragon
-		else:
-			push_warning("[RanchState] Skipped invalid dragon: %s" % dragon_id)
+	# Load dragons - support both array and dictionary formats
+	var dragons_data = save_data.get("dragons", [])
+	if dragons_data is Array:
+		# New format: array of dragon dictionaries
+		for dragon_dict in dragons_data:
+			if dragon_dict is Dictionary:
+				var dragon := DragonData.new()
+				dragon.from_dict(dragon_dict)
+				if dragon.is_valid():
+					dragons[dragon.id] = dragon
+				else:
+					push_warning("[RanchState] Skipped invalid dragon")
+	elif dragons_data is Dictionary:
+		# Old format: dictionary of dragon_id -> dragon_dict
+		for dragon_id in dragons_data.keys():
+			var dragon := DragonData.new()
+			dragon.from_dict(dragons_data[dragon_id])
+			if dragon.is_valid():
+				dragons[dragon_id] = dragon
+			else:
+				push_warning("[RanchState] Skipped invalid dragon: %s" % dragon_id)
 
-	# Load eggs
-	var eggs_data: Dictionary = save_data.get("eggs", {})
-	for egg_id in eggs_data.keys():
-		var egg := EggData.new()
-		egg.from_dict(eggs_data[egg_id])
-		if egg.is_valid():
-			eggs[egg_id] = egg
-		else:
-			push_warning("[RanchState] Skipped invalid egg: %s" % egg_id)
+	# Load eggs - support both array and dictionary formats
+	var eggs_data = save_data.get("eggs", [])
+	if eggs_data is Array:
+		# New format: array of egg dictionaries
+		for egg_dict in eggs_data:
+			if egg_dict is Dictionary:
+				var egg := EggData.new()
+				egg.from_dict(egg_dict)
+				if egg.is_valid():
+					eggs[egg.id] = egg
+				else:
+					push_warning("[RanchState] Skipped invalid egg")
+	elif eggs_data is Dictionary:
+		# Old format: dictionary of egg_id -> egg_dict
+		for egg_id in eggs_data.keys():
+			var egg := EggData.new()
+			egg.from_dict(eggs_data[egg_id])
+			if egg.is_valid():
+				eggs[egg_id] = egg
+			else:
+				push_warning("[RanchState] Skipped invalid egg: %s" % egg_id)
 
-	# Load facilities
-	facilities = save_data.get("facilities", {}).duplicate(true)
+	# Load facilities - support both array and dictionary formats
+	var facilities_data = save_data.get("facilities", [])
+	if facilities_data is Array:
+		# New format: array of facility dictionaries
+		for facility_dict in facilities_data:
+			if facility_dict is Dictionary:
+				var facility := FacilityData.new()
+				facility.from_dict(facility_dict)
+				facilities[facility.id] = facility
+	elif facilities_data is Dictionary:
+		# Old format: keep as-is
+		facilities = facilities_data.duplicate(true)
 
 	# Load active orders
 	active_orders = save_data.get("active_orders", []).duplicate(true)
 
-	# Restore RNG seed
+	# Restore RNG seed (optional, might not be in save data)
 	if save_data.has("rng_seed"):
 		RNGService.set_seed(save_data["rng_seed"])
 
@@ -651,7 +716,63 @@ func load_state(save_data: Dictionary) -> bool:
 	return true
 
 
-## Serialize game state to dictionary
+## Check if this is a new game (no dragons and season 1)
+func is_new_game() -> bool:
+	return current_season == 1 and dragons.size() == 0 and eggs.size() == 0
+
+
+## Save game state (for SaveSystem)
+func save_state() -> Dictionary:
+	# Serialize dragons as array of dictionaries
+	var dragons_array: Array[Dictionary] = []
+	for dragon_id in dragons.keys():
+		dragons_array.append(dragons[dragon_id].to_dict())
+
+	# Serialize eggs as array of dictionaries
+	var eggs_array: Array[Dictionary] = []
+	for egg_id in eggs.keys():
+		eggs_array.append(eggs[egg_id].to_dict())
+
+	# Serialize facilities as array
+	var facilities_array: Array[Dictionary] = []
+	for facility in facilities.values():
+		if facility is FacilityData:
+			facilities_array.append(facility.to_dict())
+		elif facility is Dictionary:
+			facilities_array.append(facility)
+
+	# Serialize orders as array
+	var orders_array: Array[Dictionary] = []
+	for order in active_orders:
+		if order is OrderData:
+			orders_array.append(order.to_dict())
+		elif order is Dictionary:
+			orders_array.append(order)
+
+	# Get unlocked traits (from TraitDB if available)
+	var unlocked: Array[String] = []
+	if TraitDB and TraitDB.has_method("get_unlocked_trait_keys"):
+		unlocked = TraitDB.get_unlocked_trait_keys(reputation)
+	else:
+		# Fallback: basic traits always unlocked
+		unlocked = ["fire", "wings", "armor"]
+
+	return {
+		"season": current_season,
+		"money": money,
+		"food": food_supply,
+		"reputation": reputation,
+		"lifetime_earnings": lifetime_earnings,
+		"dragons": dragons_array,
+		"eggs": eggs_array,
+		"facilities": facilities_array,
+		"active_orders": orders_array,
+		"completed_orders": [],  # TODO: Track completed orders
+		"unlocked_traits": unlocked
+	}
+
+
+## Serialize game state to dictionary (legacy method)
 func to_dict() -> Dictionary:
 	# Serialize dragons
 	var dragons_dict: Dictionary = {}

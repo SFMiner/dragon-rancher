@@ -16,6 +16,7 @@ func show_notification(text: String, type: String = "info"):
 			notification_label.modulate = Color.GREEN
 		"error":
 			notification_label.modulate = Color.RED
+			AudioManager.play_sfx("ui_error.ogg")
 		"info":
 			notification_label.modulate = Color.WHITE
 

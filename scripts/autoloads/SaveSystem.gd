@@ -1,290 +1,341 @@
 # SaveSystem.gd
-# Save/load system with versioning and validation
-# Part of Dragon Ranch - Session 5 Save System
+# Save/load system with multiple slots, versioning, and validation
+# Part of Dragon Ranch - Session 14 Save/Load System
 
 extends Node
 
-## Save file version
-const SAVE_VERSION: int = 1
+## Current save format version
+const SAVE_VERSION: String = "1.0"
 
-## Save file paths
-const SAVE_PATH: String = "user://savegame_v1.json"
-const BACKUP_PATH: String = "user://savegame_v1.bak.json"
+## Save directory
+const SAVE_DIR: String = "user://saves/"
+
+## Auto-save slot (special slot)
+const AUTOSAVE_SLOT: int = -1
 
 ## Signals
-signal save_complete(success: bool)
-signal load_complete(success: bool)
+signal save_completed(slot: int)
+signal load_completed(slot: int)
+signal save_failed(slot: int, error: String)
+signal load_failed(slot: int, error: String)
 
-## Autosave timer
-var _autosave_timer: Timer = null
-var _autosave_enabled: bool = false
-
-
-# === SERIALIZATION ===
-
-func _serialize_dragon(dragon: DragonData) -> Dictionary:
-	if dragon == null:
-		return {}
-	return dragon.to_dict()
+## Auto-save settings
+var autosave_enabled: bool = true
+var autosave_interval_seasons: int = 5
+var _seasons_since_autosave: int = 0
 
 
-func _deserialize_dragon(data: Dictionary) -> DragonData:
-	var dragon := DragonData.new()
-	dragon.from_dict(data)
-	if not dragon.is_valid():
-		push_error("[SaveSystem] Invalid dragon data")
-		return null
-	return dragon
+func _ready() -> void:
+	# Ensure save directory exists
+	_ensure_save_directory()
+
+	# Connect to RanchState for auto-save triggers
+	if RanchState:
+		RanchState.season_changed.connect(_on_season_changed)
+		RanchState.order_completed.connect(_on_order_completed)
+
+	print("[SaveSystem] Initialized - Save directory: ", SAVE_DIR)
 
 
-func _serialize_egg(egg: EggData) -> Dictionary:
-	if egg == null:
-		return {}
-	return egg.to_dict()
+## Ensure save directory exists
+func _ensure_save_directory() -> void:
+	var dir = DirAccess.open("user://")
+	if dir and not dir.dir_exists("saves"):
+		var err = dir.make_dir("saves")
+		if err != OK:
+			push_error("[SaveSystem] Failed to create saves directory: " + str(err))
 
 
-func _deserialize_egg(data: Dictionary) -> EggData:
-	var egg := EggData.new()
-	egg.from_dict(data)
-	if not egg.is_valid():
-		push_error("[SaveSystem] Invalid egg data")
-		return null
-	return egg
+## Get save file path for a slot
+func _get_save_path(slot: int) -> String:
+	if slot == AUTOSAVE_SLOT:
+		return SAVE_DIR + "autosave.json"
+	else:
+		return SAVE_DIR + "save_%d.json" % slot
 
 
-# === SAVE GAME ===
+## Get backup path for a slot
+func _get_backup_path(slot: int) -> String:
+	return _get_save_path(slot) + ".bak"
 
-func save_game() -> bool:
-	print("[SaveSystem] Saving game...")
 
-	# Gather all state
-	var save_data: Dictionary = {
-		"save_version": SAVE_VERSION,
-		"timestamp": Time.get_unix_time_from_system(),
-		"current_season": RanchState.current_season,
-		"money": RanchState.money,
-		"reputation": RanchState.reputation,
-		"food_supply": RanchState.food_supply,
-		"dragons": {},
-		"eggs": {},
-		"facilities": RanchState.facilities.duplicate(true),
-		"active_orders": RanchState.active_orders.duplicate(true),
-		"rng_seed": RNGService.get_seed()
-	}
+## Save game to specific slot
+func save_game(slot: int = 0) -> bool:
+	print("[SaveSystem] Saving game to slot %d..." % slot)
 
-	# Serialize dragons
-	for dragon_id in RanchState.dragons.keys():
-		save_data["dragons"][dragon_id] = _serialize_dragon(RanchState.dragons[dragon_id])
+	# Create SaveData from current game state
+	var save_data = SaveData.new()
+	save_data.version = SAVE_VERSION
+	save_data.timestamp = Time.get_unix_time_from_system()
 
-	# Serialize eggs
-	for egg_id in RanchState.eggs.keys():
-		save_data["eggs"][egg_id] = _serialize_egg(RanchState.eggs[egg_id])
+	# Gather state from RanchState
+	if RanchState and RanchState.has_method("save_state"):
+		var ranch_state_data = RanchState.save_state()
+
+		save_data.season = ranch_state_data.get("season", 1)
+		save_data.money = ranch_state_data.get("money", 500)
+		save_data.food = ranch_state_data.get("food", 100)
+		save_data.reputation = ranch_state_data.get("reputation", 0)
+		save_data.dragons = ranch_state_data.get("dragons", [])
+		save_data.eggs = ranch_state_data.get("eggs", [])
+		save_data.facilities = ranch_state_data.get("facilities", [])
+		save_data.active_orders = ranch_state_data.get("active_orders", [])
+		save_data.completed_orders = ranch_state_data.get("completed_orders", [])
+		save_data.unlocked_traits = ranch_state_data.get("unlocked_traits", [])
+	else:
+		push_error("[SaveSystem] RanchState.save_state() not available")
+		save_failed.emit(slot, "RanchState not ready")
+		return false
+
+	# Get tutorial state
+	if TutorialService and TutorialService.has_method("save_state"):
+		save_data.tutorial_state = TutorialService.save_state()
+
+	# Get RNG state
+	if RNGService and RNGService.has_method("get_seed"):
+		save_data.rng_state = RNGService.get_seed()
 
 	# Convert to JSON
-	var json_string: String = JSON.stringify(save_data, "\t")
+	var json_string = JSON.stringify(save_data.to_dict(), "\t")
 
 	# Backup existing save
-	if FileAccess.file_exists(SAVE_PATH):
-		var backup_result: Error = DirAccess.copy_absolute(SAVE_PATH, BACKUP_PATH)
-		if backup_result != OK:
-			push_warning("[SaveSystem] Failed to create backup: %d" % backup_result)
+	var save_path = _get_save_path(slot)
+	if FileAccess.file_exists(save_path):
+		var backup_path = _get_backup_path(slot)
+		DirAccess.copy_absolute(save_path, backup_path)
 
 	# Write to file
-	var file: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file = FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
-		push_error("[SaveSystem] Failed to open save file for writing")
-		save_complete.emit(false)
+		var err_msg = "Failed to open file for writing: " + save_path
+		push_error("[SaveSystem] " + err_msg)
+		save_failed.emit(slot, err_msg)
 		return false
 
 	file.store_string(json_string)
 	file.close()
 
-	# Verify write succeeded
-	if not FileAccess.file_exists(SAVE_PATH):
-		push_error("[SaveSystem] Save file not created")
-		save_complete.emit(false)
+	# Verify write
+	if not FileAccess.file_exists(save_path):
+		var err_msg = "Save file not created after write"
+		push_error("[SaveSystem] " + err_msg)
+		save_failed.emit(slot, err_msg)
 		return false
 
-	print("[SaveSystem] Game saved successfully to %s" % SAVE_PATH)
-	save_complete.emit(true)
+	print("[SaveSystem] Game saved successfully to slot %d" % slot)
+	save_completed.emit(slot)
 	return true
 
 
-# === LOAD GAME ===
+## Load game from specific slot
+func load_game(slot: int = 0) -> bool:
+	print("[SaveSystem] Loading game from slot %d..." % slot)
 
-func load_game() -> bool:
-	print("[SaveSystem] Loading game...")
+	var save_path = _get_save_path(slot)
 
 	# Check if save exists
-	if not FileAccess.file_exists(SAVE_PATH):
-		print("[SaveSystem] No save file found")
-		load_complete.emit(false)
+	if not FileAccess.file_exists(save_path):
+		var err_msg = "Save file not found: " + save_path
+		print("[SaveSystem] " + err_msg)
+		load_failed.emit(slot, err_msg)
 		return false
 
 	# Read file
-	var file: FileAccess = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file = FileAccess.open(save_path, FileAccess.READ)
 	if file == null:
-		push_error("[SaveSystem] Failed to open save file")
-		return _try_load_backup()
+		var err_msg = "Failed to open save file"
+		push_error("[SaveSystem] " + err_msg)
+		# Try backup
+		return _try_load_backup(slot)
 
-	var json_string: String = file.get_as_text()
+	var json_string = file.get_as_text()
 	file.close()
 
 	# Parse JSON
-	var json: JSON = JSON.new()
-	var parse_result: Error = json.parse(json_string)
+	var json = JSON.new()
+	var parse_result = json.parse(json_string)
 
 	if parse_result != OK:
-		push_error("[SaveSystem] Failed to parse save file: %s" % json.get_error_message())
-		return _try_load_backup()
+		var err_msg = "Failed to parse JSON: " + json.get_error_message()
+		push_error("[SaveSystem] " + err_msg)
+		# Try backup
+		return _try_load_backup(slot)
 
-	var save_data: Dictionary = json.data
+	var data = json.data
+	if not data is Dictionary:
+		var err_msg = "JSON root is not a dictionary"
+		push_error("[SaveSystem] " + err_msg)
+		return _try_load_backup(slot)
 
-	# Validate version
-	if not save_data.has("save_version"):
-		push_error("[SaveSystem] Save file missing version")
-		return _try_load_backup()
+	# Create SaveData from dictionary
+	var save_data = SaveData.from_dict(data)
 
-	var file_version: int = save_data["save_version"]
-	if file_version != SAVE_VERSION:
-		print("[SaveSystem] Save version mismatch: %d (expected %d)" % [file_version, SAVE_VERSION])
-		save_data = _migrate_save(save_data, file_version, SAVE_VERSION)
-		if save_data.is_empty():
-			return _try_load_backup()
+	# Check version
+	if save_data.version != SAVE_VERSION:
+		print("[SaveSystem] Version mismatch: %s (expected %s)" % [save_data.version, SAVE_VERSION])
+		# Attempt migration
+		save_data = _migrate_save_data(save_data)
+		if save_data == null:
+			return _try_load_backup(slot)
 
 	# Load into RanchState
-	if not RanchState.load_state(save_data):
-		push_error("[SaveSystem] Failed to load state")
-		return _try_load_backup()
+	if RanchState and RanchState.has_method("load_state"):
+		var ranch_state_data = {
+			"season": save_data.season,
+			"money": save_data.money,
+			"food": save_data.food,
+			"reputation": save_data.reputation,
+			"dragons": save_data.dragons,
+			"eggs": save_data.eggs,
+			"facilities": save_data.facilities,
+			"active_orders": save_data.active_orders,
+			"completed_orders": save_data.completed_orders,
+			"unlocked_traits": save_data.unlocked_traits
+		}
 
-	print("[SaveSystem] Game loaded successfully")
-	load_complete.emit(true)
+		if not RanchState.load_state(ranch_state_data):
+			var err_msg = "RanchState.load_state() failed"
+			push_error("[SaveSystem] " + err_msg)
+			load_failed.emit(slot, err_msg)
+			return false
+	else:
+		var err_msg = "RanchState.load_state() not available"
+		push_error("[SaveSystem] " + err_msg)
+		load_failed.emit(slot, err_msg)
+		return false
+
+	# Load tutorial state
+	if TutorialService and TutorialService.has_method("load_state"):
+		TutorialService.load_state(save_data.tutorial_state)
+
+	# Load RNG state
+	if RNGService and RNGService.has_method("set_seed"):
+		RNGService.set_seed(save_data.rng_state)
+
+	print("[SaveSystem] Game loaded successfully from slot %d" % slot)
+	load_completed.emit(slot)
+	_seasons_since_autosave = 0
 	return true
 
 
-func _try_load_backup() -> bool:
-	print("[SaveSystem] Attempting to load backup...")
+## Try to load from backup
+func _try_load_backup(slot: int) -> bool:
+	print("[SaveSystem] Attempting to load backup for slot %d..." % slot)
 
-	if not FileAccess.file_exists(BACKUP_PATH):
-		push_error("[SaveSystem] No backup file found")
-		load_complete.emit(false)
+	var backup_path = _get_backup_path(slot)
+
+	if not FileAccess.file_exists(backup_path):
+		var err_msg = "No backup file found"
+		push_error("[SaveSystem] " + err_msg)
+		load_failed.emit(slot, err_msg)
 		return false
 
-	var file: FileAccess = FileAccess.open(BACKUP_PATH, FileAccess.READ)
+	# Copy backup to main save and try again
+	var save_path = _get_save_path(slot)
+	DirAccess.copy_absolute(backup_path, save_path)
+
+	var err_msg = "Loaded from backup"
+	print("[SaveSystem] " + err_msg)
+	return load_game(slot)
+
+
+## Delete save file
+func delete_save(slot: int) -> bool:
+	var save_path = _get_save_path(slot)
+
+	if not FileAccess.file_exists(save_path):
+		return true  # Already deleted
+
+	var result = DirAccess.remove_absolute(save_path)
+	if result == OK:
+		# Also delete backup
+		var backup_path = _get_backup_path(slot)
+		if FileAccess.file_exists(backup_path):
+			DirAccess.remove_absolute(backup_path)
+
+		print("[SaveSystem] Deleted save slot %d" % slot)
+		return true
+	else:
+		push_error("[SaveSystem] Failed to delete save slot %d: %d" % [slot, result])
+		return false
+
+
+## Check if save exists
+func has_save(slot: int) -> bool:
+	return FileAccess.file_exists(_get_save_path(slot))
+
+
+## Get save info for display
+func get_save_info(slot: int) -> Dictionary:
+	if not has_save(slot):
+		return {"exists": false, "slot": slot}
+
+	var save_path = _get_save_path(slot)
+	var file = FileAccess.open(save_path, FileAccess.READ)
+
 	if file == null:
-		push_error("[SaveSystem] Failed to open backup file")
-		load_complete.emit(false)
-		return false
+		return {"exists": false, "slot": slot, "error": "Failed to open"}
 
-	var json_string: String = file.get_as_text()
+	var json_string = file.get_as_text()
 	file.close()
 
-	var json: JSON = JSON.new()
+	var json = JSON.new()
 	if json.parse(json_string) != OK:
-		push_error("[SaveSystem] Backup file also corrupted")
-		load_complete.emit(false)
-		return false
+		return {"exists": false, "slot": slot, "error": "Corrupted"}
 
-	var save_data: Dictionary = json.data
+	var data = json.data
+	if not data is Dictionary:
+		return {"exists": false, "slot": slot, "error": "Invalid format"}
 
-	if RanchState.load_state(save_data):
-		print("[SaveSystem] Loaded from backup successfully")
-		load_complete.emit(true)
-		return true
+	var save_data = SaveData.from_dict(data)
+	var info = save_data.get_summary()
+	info["exists"] = true
+	info["slot"] = slot
 
-	load_complete.emit(false)
-	return false
-
-
-# === MIGRATION ===
-
-func _migrate_save(data: Dictionary, from_version: int, to_version: int) -> Dictionary:
-	print("[SaveSystem] Migrating save from version %d to %d" % [from_version, to_version])
-
-	# For now, just validate basic structure
-	if not _validate_save_structure(data):
-		push_error("[SaveSystem] Save structure validation failed")
-		return {}
-
-	# Future: Add migration paths for specific versions
-	# if from_version == 1 and to_version == 2:
-	#     data = _migrate_v1_to_v2(data)
-
-	return data
+	return info
 
 
-func _validate_save_structure(data: Dictionary) -> bool:
-	# Check required keys
-	var required_keys: Array[String] = ["current_season", "money", "dragons", "eggs"]
+## List all saves
+func list_saves() -> Array[Dictionary]:
+	var saves: Array[Dictionary] = []
 
-	for key in required_keys:
-		if not data.has(key):
-			push_warning("[SaveSystem] Missing required key: %s" % key)
-			return false
+	# Check slots 0-9
+	for slot in range(10):
+		saves.append(get_save_info(slot))
 
-	# Validate dragons
-	if not data["dragons"] is Dictionary:
-		push_warning("[SaveSystem] Dragons data is not a dictionary")
-		return false
+	# Check autosave
+	if has_save(AUTOSAVE_SLOT):
+		saves.append(get_save_info(AUTOSAVE_SLOT))
 
-	# Validate eggs
-	if not data["eggs"] is Dictionary:
-		push_warning("[SaveSystem] Eggs data is not a dictionary")
-		return false
-
-	return true
+	return saves
 
 
-# === AUTOSAVE ===
+## Migrate save data between versions
+func _migrate_save_data(save_data: SaveData) -> SaveData:
+	print("[SaveSystem] Migrating save data from version %s to %s" % [save_data.version, SAVE_VERSION])
 
-func enable_autosave(interval_seconds: float = 300.0) -> void:
-	if _autosave_timer == null:
-		_autosave_timer = Timer.new()
-		_autosave_timer.timeout.connect(_on_autosave_timer_timeout)
-		add_child(_autosave_timer)
+	# Future: Add version-specific migrations here
+	# For now, just update version and hope for the best
+	save_data.version = SAVE_VERSION
 
-	_autosave_timer.wait_time = interval_seconds
-	_autosave_timer.start()
-	_autosave_enabled = true
-
-	print("[SaveSystem] Autosave enabled (every %.0f seconds)" % interval_seconds)
+	return save_data
 
 
-func disable_autosave() -> void:
-	if _autosave_timer:
-		_autosave_timer.stop()
+## Auto-save on season change
+func _on_season_changed(_season: int) -> void:
+	if not autosave_enabled:
+		return
 
-	_autosave_enabled = false
-	print("[SaveSystem] Autosave disabled")
+	_seasons_since_autosave += 1
 
-
-func _on_autosave_timer_timeout() -> void:
-	if _autosave_enabled:
-		print("[SaveSystem] Autosaving...")
-		save_game()
-
-
-# === MANUAL TRIGGERS ===
-
-## Trigger save at key moments
-func trigger_autosave_if_enabled() -> void:
-	if _autosave_enabled:
-		save_game()
+	if _seasons_since_autosave >= autosave_interval_seasons:
+		print("[SaveSystem] Auto-saving...")
+		save_game(AUTOSAVE_SLOT)
+		_seasons_since_autosave = 0
 
 
-# === UTILITY ===
-
-func save_exists() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
-
-
-func delete_save() -> bool:
-	if FileAccess.file_exists(SAVE_PATH):
-		var result: Error = DirAccess.remove_absolute(SAVE_PATH)
-		if result == OK:
-			print("[SaveSystem] Save file deleted")
-			return true
-		else:
-			push_error("[SaveSystem] Failed to delete save: %d" % result)
-			return false
-	return true
+## Auto-save on order completion
+func _on_order_completed(_order_id: String, _payment: int) -> void:
+	if autosave_enabled:
+		print("[SaveSystem] Auto-saving after order completion...")
+		save_game(AUTOSAVE_SLOT)

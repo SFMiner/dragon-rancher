@@ -8,7 +8,7 @@
 extends Node2D
 
 ## Dragon clicked signal (emitted when player clicks this dragon)
-signal dragon_clicked(dragon: Dragon)
+signal dragon_clicked(dragon: Node2D)
 
 ## Reference to dragon data
 var dragon_data: DragonData = null
@@ -63,8 +63,15 @@ func setup(data: DragonData) -> void:
 	if name_label:
 		name_label.text = dragon_data.name
 
-	# Update movement speed based on life stage
+	# Update movement speed based on life stage and metabolism
 	var speed_multiplier: float = Lifecycle.get_stage_speed_multiplier(dragon_data.life_stage)
+
+	# Apply metabolism speed multiplier if present
+	if dragon_data.phenotype.has("metabolism"):
+		var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+		var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
+		speed_multiplier *= metabolism_speed
+
 	wander_speed = base_wander_speed * speed_multiplier
 
 	# Pick initial wander target
@@ -78,7 +85,16 @@ func update_visuals() -> void:
 
 	# Get scale based on life stage
 	var stage_scale: float = Lifecycle.get_stage_scale(dragon_data.life_stage)
-	scale = Vector2(stage_scale, stage_scale)
+
+	# Get scale based on size phenotype
+	var size_scale: float = 1.0
+	if dragon_data.phenotype.has("size"):
+		var size_pheno: Dictionary = dragon_data.phenotype["size"]
+		size_scale = size_pheno.get("scale_factor", 1.0)
+
+	# Combine both scales
+	var final_scale: float = stage_scale * size_scale
+	scale = Vector2(final_scale, final_scale)
 
 	# Try to load sprite based on phenotype
 	var sprite_path: String = _build_sprite_path()
@@ -90,17 +106,20 @@ func update_visuals() -> void:
 		# Use colored placeholder based on phenotype
 		_create_placeholder_sprite()
 
+	# Apply color modulation if color trait present
+	_apply_color_modulation()
+
 
 ## Build sprite path from phenotype
-## Example: "res://assets/sprites/dragons/dragon_fire_vestigial_heavy.png"
+## Example: "res://assets/sprites/dragons/dragon_red_fire_vestigial_heavy.png"
 func _build_sprite_path() -> String:
 	if dragon_data == null or dragon_data.phenotype.is_empty():
 		return ""
 
 	var parts: Array[String] = ["dragon"]
 
-	# Add phenotype suffixes in order: fire, wings, armor
-	for trait_key in ["fire", "wings", "armor"]:
+	# Add phenotype suffixes in order: color, fire, wings, armor
+	for trait_key in ["color", "fire", "wings", "armor"]:
 		if dragon_data.phenotype.has(trait_key):
 			var pheno_data: Dictionary = dragon_data.phenotype[trait_key]
 			if pheno_data.has("sprite_suffix"):
@@ -142,7 +161,17 @@ func _get_dominant_phenotype_color() -> Color:
 	if dragon_data == null or dragon_data.phenotype.is_empty():
 		return Color.GRAY
 
-	# Try to get color from fire trait first (most visible)
+	# Prioritize color trait if present
+	if dragon_data.phenotype.has("color"):
+		var color_pheno: Dictionary = dragon_data.phenotype["color"]
+		if color_pheno.has("color"):
+			var color_value = color_pheno["color"]
+			if color_value is Color:
+				return color_value
+			elif color_value is String:
+				return Color.from_string(color_value, Color.GRAY)
+
+	# Try to get color from fire trait (most visible)
 	for trait_key in ["fire", "wings", "armor"]:
 		if dragon_data.phenotype.has(trait_key):
 			var pheno_data: Dictionary = dragon_data.phenotype[trait_key]
@@ -154,6 +183,35 @@ func _get_dominant_phenotype_color() -> Color:
 					return Color.from_string(color_value, Color.GRAY)
 
 	return Color.GRAY
+
+
+## Apply color modulation to sprite based on color trait
+func _apply_color_modulation() -> void:
+	if not sprite or dragon_data == null:
+		return
+
+	# Check if color trait is present
+	if not dragon_data.phenotype.has("color"):
+		# No color trait, use default white (no modulation)
+		sprite.modulate = Color.WHITE
+		return
+
+	var color_pheno: Dictionary = dragon_data.phenotype["color"]
+	if not color_pheno.has("color"):
+		sprite.modulate = Color.WHITE
+		return
+
+	# Get color value
+	var color_value = color_pheno["color"]
+	var modulate_color: Color = Color.WHITE
+
+	if color_value is Color:
+		modulate_color = color_value
+	elif color_value is String:
+		modulate_color = Color.from_string(color_value, Color.WHITE)
+
+	# Apply color modulation to sprite
+	sprite.modulate = modulate_color
 
 
 ## Process wandering behavior
@@ -225,8 +283,15 @@ func refresh_from_data() -> void:
 	if dragon_data:
 		update_visuals()
 
-		# Update speed based on new life stage
+		# Update speed based on new life stage and metabolism
 		var speed_multiplier: float = Lifecycle.get_stage_speed_multiplier(dragon_data.life_stage)
+
+		# Apply metabolism speed multiplier if present
+		if dragon_data.phenotype.has("metabolism"):
+			var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+			var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
+			speed_multiplier *= metabolism_speed
+
 		wander_speed = base_wander_speed * speed_multiplier
 
 		# Update name label

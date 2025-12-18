@@ -85,5 +85,3 @@ Implement Color trait with incomplete dominance and integrate into game systems.
 - [ ] Dragon sprites display correct color
 - [ ] Orders request color and match correctly
 - [ ] Tutorial explains incomplete dominance
-
----

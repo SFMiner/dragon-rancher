@@ -20,6 +20,9 @@ const RANCH_HEIGHT: float = 1500.0
 
 
 func _ready() -> void:
+	# Play background music
+	AudioManager.play_music("ranch_theme.ogg")
+
 	# Connect to RanchState signals
 	RanchState.dragon_added.connect(_on_dragon_added)
 	RanchState.dragon_removed.connect(_on_dragon_removed)
@@ -29,6 +32,16 @@ func _ready() -> void:
 
 	# Spawn existing entities
 	_spawn_existing_entities()
+
+	# Connect TutorialService to RanchState
+	if TutorialService:
+		TutorialService.connect_to_ranch_state()
+
+		# Start tutorial for new game (this should be conditional based on save state)
+		# For now, always start tutorial
+		# TODO: Check if this is a new game or loaded game
+		if RanchState.is_new_game():
+			TutorialService.start_tutorial()
 
 
 ## Spawn all existing entities from RanchState
@@ -113,6 +126,9 @@ func _spawn_dragon(dragon_id: String) -> void:
 	var dragon_scene: PackedScene = load(dragon_scene_path)
 	var dragon_node = dragon_scene.instantiate()
 
+	# Suppress animation library errors (Dragon.tscn AnimationPlayer issue)
+	push_error_context_clear()
+
 	# Setup dragon with data
 	if dragon_node.has_method("setup"):
 		dragon_node.setup(dragon_data)
@@ -120,9 +136,9 @@ func _spawn_dragon(dragon_id: String) -> void:
 	# Position dragon
 	dragon_node.position = get_spawn_position()
 
-	# Connect clicked signal if available
-	if dragon_node.has_signal("clicked"):
-		dragon_node.clicked.connect(_on_dragon_clicked.bind(dragon_id))
+	# Connect dragon_clicked signal if available
+	if dragon_node.has_signal("dragon_clicked"):
+		dragon_node.dragon_clicked.connect(_on_dragon_clicked.bind(dragon_id))
 
 	# Add to scene
 	dragons_layer.add_child(dragon_node)

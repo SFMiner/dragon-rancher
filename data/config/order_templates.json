@@ -110,6 +110,193 @@
       "deadline_max": 6,
       "reputation_required": 1,
       "description": "Messenger service needs light, agile flying dragon."
+    },
+    {
+      "id": "color_red_fire",
+      "type": "complex",
+      "required_traits": {"color": "RR", "fire": "F_"},
+      "payment_min": 300,
+      "payment_max": 400,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 1,
+      "description": "Need a red dragon with fire breath for ceremonial guard."
+    },
+    {
+      "id": "color_pink_any",
+      "type": "simple",
+      "required_traits": {"color": "RW"},
+      "payment_min": 250,
+      "payment_max": 350,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 1,
+      "description": "Looking for a pink dragon for a royal garden exhibit."
+    },
+    {
+      "id": "color_white_vestigial",
+      "type": "complex",
+      "required_traits": {"color": "WW", "wings": "ww"},
+      "payment_min": 280,
+      "payment_max": 380,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 1,
+      "description": "White dragon with vestigial wings needed for temple grounds."
+    },
+    {
+      "id": "exact_red_pure",
+      "type": "exact_genotype",
+      "required_traits": {"color": "RR"},
+      "payment_min": 350,
+      "payment_max": 450,
+      "deadline_min": 5,
+      "deadline_max": 8,
+      "reputation_required": 2,
+      "description": "Breeding program requires pure red dragon genetics (RR)."
+    },
+    {
+      "id": "color_white_simple",
+      "type": "simple",
+      "required_traits": {"color": "WW"},
+      "payment_min": 200,
+      "payment_max": 300,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 1,
+      "description": "Need a white dragon for snow mountain patrol."
+    },
+    {
+      "id": "metabolism_hyper_racing",
+      "type": "simple",
+      "required_traits": {"metabolism": "mm"},
+      "payment_min": 400,
+      "payment_max": 500,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 3,
+      "description": "Racing league needs hyper-metabolism dragon for speed competitions!"
+    },
+    {
+      "id": "metabolism_normal_reliable",
+      "type": "simple",
+      "required_traits": {"metabolism": "MM"},
+      "payment_min": 250,
+      "payment_max": 350,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 3,
+      "description": "Long-term guard position requires reliable normal-metabolism dragon."
+    },
+    {
+      "id": "metabolism_intermediate",
+      "type": "simple",
+      "required_traits": {"metabolism": "Mm"},
+      "payment_min": 300,
+      "payment_max": 400,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 3,
+      "description": "Need intermediate-metabolism dragon for balanced performance."
+    },
+    {
+      "id": "size_extra_large",
+      "type": "exact_genotype",
+      "required_traits": {"size_S": "SS", "size_G": "GG"},
+      "payment_min": 500,
+      "payment_max": 650,
+      "deadline_min": 6,
+      "deadline_max": 8,
+      "reputation_required": 2,
+      "description": "Castle defense requires extra large dragon (SSGG genotype)."
+    },
+    {
+      "id": "size_large",
+      "type": "complex",
+      "required_traits": {"size_S": "SS", "size_G": "G_"},
+      "payment_min": 400,
+      "payment_max": 550,
+      "deadline_min": 5,
+      "deadline_max": 7,
+      "reputation_required": 2,
+      "description": "Need large dragon for construction work (SSG_)."
+    },
+    {
+      "id": "size_tiny_pet",
+      "type": "exact_genotype",
+      "required_traits": {"size_S": "ss", "size_G": "gg"},
+      "payment_min": 350,
+      "payment_max": 450,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 2,
+      "description": "Collector seeks tiny dragon for royal menagerie (ssgg)."
+    },
+    {
+      "id": "hyper_small_courier",
+      "type": "complex",
+      "required_traits": {"metabolism": "mm", "size_S": "ss", "wings": "WW"},
+      "payment_min": 600,
+      "payment_max": 750,
+      "deadline_min": 6,
+      "deadline_max": 8,
+      "reputation_required": 3,
+      "description": "Express delivery service needs fast, small flying dragon!"
+    },
+    {
+      "id": "docile_petting_zoo",
+      "type": "exact_genotype",
+      "required_traits": {"docility": "D1D1"},
+      "payment_min": 350,
+      "payment_max": 450,
+      "deadline_min": 5,
+      "deadline_max": 7,
+      "reputation_required": 4,
+      "description": "Petting zoo needs very docile dragon with zero escape risk (D1D1 genotype)."
+    },
+    {
+      "id": "docile_therapy",
+      "type": "simple",
+      "required_traits": {"docility": "D1_"},
+      "payment_min": 250,
+      "payment_max": 350,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 4,
+      "description": "Therapy program needs gentle dragon (must have D1 allele)."
+    },
+    {
+      "id": "normal_reliable",
+      "type": "simple",
+      "required_traits": {"docility": "D2_"},
+      "payment_min": 200,
+      "payment_max": 300,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 4,
+      "description": "General ranch work requires normal-tempered dragon."
+    },
+    {
+      "id": "aggressive_guard",
+      "type": "complex",
+      "required_traits": {"docility": "D2D3"},
+      "payment_min": 300,
+      "payment_max": 400,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 4,
+      "description": "Guard duty needs aggressive but controllable dragon (D2D3)."
+    },
+    {
+      "id": "very_aggressive_arena",
+      "type": "exact_genotype",
+      "required_traits": {"docility": "D3D3"},
+      "payment_min": 400,
+      "payment_max": 500,
+      "deadline_min": 5,
+      "deadline_max": 8,
+      "reputation_required": 4,
+      "description": "Battle arena seeks very aggressive dragon for competition (D3D3 genotype)."
     }
   ]
 }

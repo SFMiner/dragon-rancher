@@ -5,16 +5,52 @@ extends Control
 @onready var season_label = $CanvasLayer/TopBar/HBoxContainer/SeasonLabel
 @onready var reputation_label = $CanvasLayer/TopBar/HBoxContainer2/ReputationLabel
 
+## Top bar buttons
+@onready var menu_button = get_node_or_null("CanvasLayer/TopBar/MenuButton")
+@onready var settings_button = get_node_or_null("CanvasLayer/TopBar/SettingsButton")
+
+## Bottom bar buttons
+@onready var orders_button = $CanvasLayer/BottomBar/OrdersButton
+@onready var breeding_button = $CanvasLayer/BottomBar/BreedingButton
+@onready var build_button = $CanvasLayer/BottomBar/BuildButton
+@onready var advance_season_button = $CanvasLayer/BottomBar/AdvanceSeasonButton
+
+## Panel references
+@onready var orders_panel = get_node_or_null("/root/Ranch/UILayer/OrdersPanel")
+@onready var breeding_panel = get_node_or_null("/root/Ranch/UILayer/BreedingPanel")
+@onready var build_panel = get_node_or_null("/root/Ranch/UILayer/BuildPanel")
+@onready var dragon_details_panel = get_node_or_null("/root/Ranch/UILayer/DragonDetailsPanel")
+@onready var settings_panel = get_node_or_null("/root/Ranch/UILayer/SettingsPanel")
+
 func _ready():
+	# Connect RanchState signals
 	RanchState.money_changed.connect(_on_money_changed)
 	RanchState.food_changed.connect(_on_food_changed)
 	RanchState.season_changed.connect(_on_season_changed)
 	RanchState.reputation_increased.connect(_on_reputation_changed)
 
+	# Connect button signals (only if not already connected in editor)
+	if menu_button and not menu_button.pressed.is_connected(_on_menu_button_pressed):
+		menu_button.pressed.connect(_on_menu_button_pressed)
+	if settings_button and not settings_button.pressed.is_connected(_on_settings_button_pressed):
+		settings_button.pressed.connect(_on_settings_button_pressed)
+	if orders_button and not orders_button.pressed.is_connected(_on_orders_button_pressed):
+		orders_button.pressed.connect(_on_orders_button_pressed)
+	if breeding_button and not breeding_button.pressed.is_connected(_on_breeding_button_pressed):
+		breeding_button.pressed.connect(_on_breeding_button_pressed)
+	if build_button and not build_button.pressed.is_connected(_on_build_button_pressed):
+		build_button.pressed.connect(_on_build_button_pressed)
+	if advance_season_button and not advance_season_button.pressed.is_connected(_on_advance_season_button_pressed):
+		advance_season_button.pressed.connect(_on_advance_season_button_pressed)
+
+	# Initialize display
 	_on_money_changed(RanchState.money)
-	_on_food_changed(RanchState.food)
-	_on_season_changed(RanchState.season)
+	_on_food_changed(RanchState.food_supply)
+	_on_season_changed(RanchState.current_season)
 	_on_reputation_changed(RanchState.reputation)
+
+	# Register tutorial anchors
+	_register_tutorial_anchors()
 
 func _on_money_changed(new_money):
 	money_label.text = "Money: $" + str(new_money)
@@ -29,7 +65,64 @@ func _on_reputation_changed(new_reputation):
 	reputation_label.text = "Reputation: " + str(new_reputation)
 
 func _on_menu_button_pressed():
+	AudioManager.play_sfx("ui_click.ogg")
 	pass # Stub
 
 func _on_settings_button_pressed():
-	pass # Stub
+	AudioManager.play_sfx("ui_click.ogg")
+	if settings_panel:
+		settings_panel.open_panel()
+
+## Orders button pressed
+func _on_orders_button_pressed():
+	AudioManager.play_sfx("ui_click.ogg")
+	if orders_panel and orders_panel.has_method("open_panel"):
+		orders_panel.open_panel()
+		# Emit tutorial event
+		if TutorialService:
+			TutorialService.process_event("panel_opened", {"panel": "orders"})
+
+## Breeding button pressed
+func _on_breeding_button_pressed():
+	AudioManager.play_sfx("ui_click.ogg")
+	if breeding_panel and breeding_panel.has_method("open_panel"):
+		breeding_panel.open_panel()
+		# Emit tutorial event
+		if TutorialService:
+			TutorialService.process_event("panel_opened", {"panel": "breeding"})
+
+## Build button pressed
+func _on_build_button_pressed():
+	AudioManager.play_sfx("ui_click.ogg")
+	if build_panel and build_panel.has_method("open_panel"):
+		build_panel.open_panel()
+		# Emit tutorial event
+		if TutorialService:
+			TutorialService.process_event("panel_opened", {"panel": "build"})
+
+## Advance season button pressed
+func _on_advance_season_button_pressed():
+	AudioManager.play_sfx("ui_click.ogg")
+	RanchState.advance_season()
+	# Emit tutorial event
+	if TutorialService:
+		TutorialService.process_event("season_advanced", {})
+
+## Register UI elements as tutorial anchors
+func _register_tutorial_anchors():
+	# Get the TutorialOverlay from the scene tree
+	var tutorial_overlay = get_tree().root.find_child("TutorialOverlay", true, false)
+	if not tutorial_overlay or not tutorial_overlay.has_method("register_anchor"):
+		print("[HUD] TutorialOverlay not found, skipping anchor registration")
+		return
+
+	# Register buttons as anchors
+	tutorial_overlay.register_anchor("orders_button", orders_button)
+	tutorial_overlay.register_anchor("breeding_button", breeding_button)
+	tutorial_overlay.register_anchor("build_button", build_button)
+
+	# Register panels if they exist
+	if dragon_details_panel:
+		tutorial_overlay.register_anchor("dragon_details", dragon_details_panel)
+
+	print("[HUD] Tutorial anchors registered")

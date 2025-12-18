@@ -34,6 +34,7 @@ func open_panel() -> void:
 	selected_parent_b = null
 	_update_ui()
 	show()
+	AudioManager.play_sfx("ui_confirm.ogg")
 
 
 ## Close the breeding panel
@@ -43,10 +44,11 @@ func close_panel() -> void:
 
 ## Select parent A button pressed
 func _on_select_parent_a_pressed() -> void:
+	AudioManager.play_sfx("ui_click.ogg")
 	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
 
 	if adult_dragons.is_empty():
-		_show_notification("No adult dragons available for breeding!")
+		_show_notification("No adult dragons available for breeding!", true)
 		return
 
 	# TODO: Show dragon selection dialog
@@ -59,10 +61,11 @@ func _on_select_parent_a_pressed() -> void:
 
 ## Select parent B button pressed
 func _on_select_parent_b_pressed() -> void:
+	AudioManager.play_sfx("ui_click.ogg")
 	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
 
 	if adult_dragons.is_empty():
-		_show_notification("No adult dragons available for breeding!")
+		_show_notification("No adult dragons available for breeding!", true)
 		return
 
 	# TODO: Show dragon selection dialog
@@ -93,6 +96,10 @@ func _update_ui() -> void:
 
 	# Enable/disable breed button
 	breed_button.disabled = not (selected_parent_a and selected_parent_b)
+
+	# Emit tutorial event if both parents selected
+	if selected_parent_a and selected_parent_b and TutorialService:
+		TutorialService.process_event("both_parents_selected", {})
 
 
 ## Update offspring predictions
@@ -145,11 +152,13 @@ func _calculate_predictions() -> Dictionary:
 
 	for trait_key in trait_keys:
 		# Generate Punnett square for this trait
-		var punnett: Dictionary = GeneticsEngine.generate_punnett_square(
+		var outcomes: Array = GeneticsEngine.generate_punnett_square(
 			selected_parent_a,
 			selected_parent_b,
 			trait_key
 		)
+		
+		var punnett: Dictionary = {"outcomes": outcomes}
 
 		# Count phenotypes
 		var phenotype_counts: Dictionary = {}
@@ -192,6 +201,7 @@ func _format_genotype(genotype: Dictionary) -> String:
 
 ## Breed button pressed
 func _on_breed_pressed() -> void:
+	AudioManager.play_sfx("ui_click.ogg")
 	if not selected_parent_a or not selected_parent_b:
 		return
 
@@ -203,14 +213,14 @@ func _on_breed_pressed() -> void:
 			break
 
 	if not has_breeding_pen:
-		_show_notification("You need a Breeding Pen to breed dragons!")
+		_show_notification("You need a Breeding Pen to breed dragons!", true)
 		return
 
 	# Create egg
 	var egg_id: String = RanchState.create_egg(selected_parent_a.id, selected_parent_b.id)
 
 	if egg_id.is_empty():
-		_show_notification("Breeding failed! Check if dragons are eligible.")
+		_show_notification("Breeding failed! Check if dragons are eligible.", true)
 		return
 
 	# Success!
@@ -221,7 +231,9 @@ func _on_breed_pressed() -> void:
 
 
 ## Show notification message
-func _show_notification(message: String) -> void:
+func _show_notification(message: String, is_error: bool = false) -> void:
+	if is_error:
+		AudioManager.play_sfx("ui_error.ogg")
 	# Find NotificationsPanel if it exists
 	var notifications_panel = get_tree().root.find_child("NotificationsPanel", true, false)
 	if notifications_panel and notifications_panel.has_method("show_notification"):

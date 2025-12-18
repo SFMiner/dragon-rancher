@@ -83,9 +83,9 @@ Implement AudioManager and wire up all sound effects and music.
 ---
 
 **Session 12 Acceptance Criteria:**
-- [ ] Egg creation plays sound
-- [ ] Order completion plays money sound
-- [ ] Button clicks have audio feedback
-- [ ] Background music loops seamlessly
-- [ ] Volume sliders work and persist
-- [ ] Audio doesn't clip or overlap excessively
+- [x] Egg creation plays sound
+- [x] Order completion plays money sound
+- [x] Button clicks have audio feedback
+- [x] Background music loops seamlessly
+- [x] Volume sliders work and persist
+- [x] Audio doesn't clip or overlap excessively

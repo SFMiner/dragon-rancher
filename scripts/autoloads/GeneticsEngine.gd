@@ -101,6 +101,13 @@ func calculate_phenotype(genotype: Dictionary) -> Dictionary:
 		if debug_mode:
 			print("  Trait '%s': %s -> %s" % [trait_key, normalized, pheno_data.get("name", "Unknown")])
 
+	# Calculate combined size phenotype if both loci present
+	if genotype.has("size_S") and genotype.has("size_G"):
+		var size_pheno: Dictionary = calculate_size_phenotype(genotype)
+		phenotype["size"] = size_pheno
+		if debug_mode:
+			print("  Combined Size: %s (scale: %.1fx)" % [size_pheno.get("name", "Unknown"), size_pheno.get("scale_factor", 1.0)])
+
 	return phenotype
 
 
@@ -283,3 +290,70 @@ func can_breed(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 		return {"success": false, "reason": "Both parents are the same sex"}
 
 	return {"success": true, "reason": "Breeding is possible"}
+
+
+## Calculate combined size from multi-locus size genes
+## genotype: Dictionary with genotype data
+## Returns: Dictionary with size category and scale factor
+func calculate_size_phenotype(genotype: Dictionary) -> Dictionary:
+	if not genotype.has("size_S") or not genotype.has("size_G"):
+		# No size genes, return default medium size
+		return {
+			"name": "Medium",
+			"scale_factor": 1.0,
+			"description": "Standard dragon size"
+		}
+
+	# Count dominant alleles
+	var dominant_count: int = 0
+
+	# Count S alleles
+	var s_alleles: Array = genotype.get("size_S", [])
+	for allele in s_alleles:
+		if allele == "S":
+			dominant_count += 1
+
+	# Count G alleles
+	var g_alleles: Array = genotype.get("size_G", [])
+	for allele in g_alleles:
+		if allele == "G":
+			dominant_count += 1
+
+	# Map dominant count to size category
+	match dominant_count:
+		4:  # SSGG
+			return {
+				"name": "Extra Large",
+				"scale_factor": 2.0,
+				"description": "Massive dragon (SSGG)"
+			}
+		3:  # SSGg or SsGG
+			return {
+				"name": "Large",
+				"scale_factor": 1.5,
+				"description": "Large dragon (3 dominant alleles)"
+			}
+		2:  # SsGg, SSgg, or ssGG
+			return {
+				"name": "Medium",
+				"scale_factor": 1.0,
+				"description": "Standard dragon size (2 dominant alleles)"
+			}
+		1:  # Ssgg or ssGg
+			return {
+				"name": "Small",
+				"scale_factor": 0.75,
+				"description": "Small dragon (1 dominant allele)"
+			}
+		0:  # ssgg
+			return {
+				"name": "Tiny",
+				"scale_factor": 0.5,
+				"description": "Tiny dragon (ssgg)"
+			}
+		_:
+			return {
+				"name": "Medium",
+				"scale_factor": 1.0,
+				"description": "Standard dragon size"
+			}

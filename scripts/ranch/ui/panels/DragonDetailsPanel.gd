@@ -40,12 +40,18 @@ func show_dragon(dragon: DragonData) -> void:
 	current_dragon = dragon
 	_update_display()
 	show()
+	AudioManager.play_sfx("ui_confirm.ogg")
+
+	# Emit tutorial event
+	if TutorialService:
+		TutorialService.process_event("panel_opened", {"panel": "dragon_details"})
 
 
 ## Close the panel
 func close_panel() -> void:
 	current_dragon = null
 	hide()
+	AudioManager.play_sfx("ui_click.ogg")
 
 
 ## Update all labels and displays
@@ -69,6 +75,21 @@ func _update_display() -> void:
 	# Update progress bars
 	health_bar.value = current_dragon.health
 	happiness_bar.value = current_dragon.happiness
+
+	# Add docility display if trait present
+	if current_dragon.phenotype.has("docility"):
+		var docility_pheno: Dictionary = current_dragon.phenotype["docility"]
+		var docility_name: String = docility_pheno.get("name", "Unknown")
+		var escape_pct: float = docility_pheno.get("escape_chance", 0.0) * 100.0
+		var fight_bonus: int = docility_pheno.get("fight_bonus", 0)
+
+		# Update phenotype label to include docility info
+		var docility_text: String = "\nTemperament: %s (%.0f%% escape, %+d fight)" % [
+			docility_name,
+			escape_pct,
+			fight_bonus
+		]
+		phenotype_label.text += docility_text
 
 	# Update sprite preview
 	_update_sprite_preview()
@@ -138,8 +159,19 @@ func _format_phenotype(phenotype: Dictionary) -> String:
 	var parts: Array[String] = []
 
 	for trait_key in phenotype.keys():
-		var value: String = phenotype[trait_key]
-		parts.append(value.capitalize())
+		# Skip combined traits (like "size" which is derived from size_S and size_G)
+		if trait_key == "size":
+			continue
+
+		var pheno_data = phenotype[trait_key]
+
+		# Handle dictionary phenotype data
+		if pheno_data is Dictionary:
+			var name: String = pheno_data.get("name", "Unknown")
+			parts.append(name)
+		# Handle legacy string phenotype data
+		elif pheno_data is String:
+			parts.append(pheno_data.capitalize())
 
 	return ", ".join(parts) if parts.size() > 0 else "No traits"
 
@@ -159,6 +191,7 @@ func _update_button_states() -> void:
 
 ## Select for breeding button pressed
 func _on_select_for_breeding_pressed() -> void:
+	AudioManager.play_sfx("ui_click.ogg")
 	if current_dragon == null:
 		return
 
@@ -183,6 +216,7 @@ func _on_select_for_breeding_pressed() -> void:
 
 ## Sell button pressed
 func _on_sell_pressed() -> void:
+	AudioManager.play_sfx("ui_click.ogg")
 	if current_dragon == null:
 		return
 
