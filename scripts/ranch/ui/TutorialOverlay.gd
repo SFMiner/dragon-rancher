@@ -20,12 +20,11 @@ var anchor_registry: Dictionary = {}
 
 
 func _ready() -> void:
-	# Start hidden
-	hide()
+	# Start hidden (already set in scene file)
+	# Backdrop mouse_filter is set to IGNORE in scene file by default
 
-	# Make sure backdrop doesn't block input when hidden
-	if backdrop:
-		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	print("[TutorialOverlay] Ready - visible: ", visible)
+	print("[TutorialOverlay] Backdrop mouse_filter: ", backdrop.mouse_filter if backdrop else "no backdrop")
 
 	# Connect button signals
 	next_button.pressed.connect(_on_next_pressed)
@@ -37,7 +36,7 @@ func _ready() -> void:
 		TutorialService.tutorial_completed.connect(_on_tutorial_completed)
 		TutorialService.tutorial_skipped.connect(_on_tutorial_skipped)
 
-	print("TutorialOverlay ready")
+	print("[TutorialOverlay] Ready complete")
 
 
 ## Register a UI element for highlighting
@@ -64,13 +63,14 @@ func clear_anchors() -> void:
 func _on_step_changed(step: TutorialStep) -> void:
 	if not step:
 		hide()
+		# Reset backdrop to not block input when tutorial hidden
 		if backdrop:
 			backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		return
 
 	current_step = step
 	_display_step(step)
-	# Enable backdrop to block input during tutorial
+	# Enable backdrop to block input during tutorial (force player to interact with tutorial)
 	if backdrop:
 		backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	show()
@@ -214,17 +214,19 @@ func _on_skip_pressed() -> void:
 ## Handle tutorial completion
 func _on_tutorial_completed() -> void:
 	print("Tutorial completed!")
+	hide()
+	# Reset backdrop to not block input
 	if backdrop:
 		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hide()
 
 
 ## Handle tutorial skipped
 func _on_tutorial_skipped() -> void:
 	print("Tutorial skipped!")
+	hide()
+	# Reset backdrop to not block input
 	if backdrop:
 		backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hide()
 
 
 ## Connect the _draw function to highlight_overlay

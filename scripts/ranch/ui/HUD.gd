@@ -52,6 +52,16 @@ func _ready():
 	# Register tutorial anchors
 	_register_tutorial_anchors()
 
+	print("[HUD] Ready complete - buttons available:")
+	print("  - orders_button: ", orders_button)
+	print("  - breeding_button: ", breeding_button)
+	print("  - build_button: ", build_button)
+	print("  - advance_season_button: ", advance_season_button)
+	if orders_button:
+		print("  - orders_button disabled: ", orders_button.disabled)
+	if breeding_button:
+		print("  - breeding_button disabled: ", breeding_button.disabled)
+
 func _on_money_changed(new_money):
 	money_label.text = "Money: $" + str(new_money)
 
@@ -65,16 +75,19 @@ func _on_reputation_changed(new_reputation):
 	reputation_label.text = "Reputation: " + str(new_reputation)
 
 func _on_menu_button_pressed():
+	print("[HUD] Menu button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	pass # Stub
 
 func _on_settings_button_pressed():
+	print("[HUD] Settings button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if settings_panel:
 		settings_panel.open_panel()
 
 ## Orders button pressed
 func _on_orders_button_pressed():
+	print("[HUD] Orders button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if orders_panel and orders_panel.has_method("open_panel"):
 		orders_panel.open_panel()
@@ -84,6 +97,7 @@ func _on_orders_button_pressed():
 
 ## Breeding button pressed
 func _on_breeding_button_pressed():
+	print("[HUD] Breeding button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if breeding_panel and breeding_panel.has_method("open_panel"):
 		breeding_panel.open_panel()
@@ -93,6 +107,7 @@ func _on_breeding_button_pressed():
 
 ## Build button pressed
 func _on_build_button_pressed():
+	print("[HUD] Build button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if build_panel and build_panel.has_method("open_panel"):
 		build_panel.open_panel()
@@ -102,6 +117,7 @@ func _on_build_button_pressed():
 
 ## Advance season button pressed
 func _on_advance_season_button_pressed():
+	print("[HUD] Advance Season button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	RanchState.advance_season()
 	# Emit tutorial event

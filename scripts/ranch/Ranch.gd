@@ -126,9 +126,6 @@ func _spawn_dragon(dragon_id: String) -> void:
 	var dragon_scene: PackedScene = load(dragon_scene_path)
 	var dragon_node = dragon_scene.instantiate()
 
-	# Suppress animation library errors (Dragon.tscn AnimationPlayer issue)
-	push_error_context_clear()
-
 	# Setup dragon with data
 	if dragon_node.has_method("setup"):
 		dragon_node.setup(dragon_data)
