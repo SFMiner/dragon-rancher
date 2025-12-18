@@ -1,0 +1,98 @@
+{
+  "version": "1.0",
+  "traits": [
+    {
+      "key": "fire",
+      "name": "Breath Type",
+      "description": "Determines what the dragon breathes",
+      "alleles": ["F", "f"],
+      "dominance_type": "simple",
+      "dominance_rank": ["F", "f"],
+      "phenotypes": {
+        "FF": {
+          "name": "Fire",
+          "sprite_suffix": "fire",
+          "color": "#FF4500",
+          "description": "Breathes powerful flames"
+        },
+        "Ff": {
+          "name": "Fire",
+          "sprite_suffix": "fire",
+          "color": "#FF4500",
+          "description": "Breathes powerful flames"
+        },
+        "ff": {
+          "name": "Smoke",
+          "sprite_suffix": "smoke",
+          "color": "#808080",
+          "description": "Breathes harmless smoke puffs"
+        }
+      },
+      "unlock_level": 0,
+      "is_multi_locus": false,
+      "related_loci": []
+    },
+    {
+      "key": "wings",
+      "name": "Wing Type",
+      "description": "Size and functionality of wings",
+      "alleles": ["w", "W"],
+      "dominance_type": "simple",
+      "dominance_rank": ["w", "W"],
+      "phenotypes": {
+        "ww": {
+          "name": "Vestigial",
+          "sprite_suffix": "vestigial_wings",
+          "color": "#D2B48C",
+          "description": "Tiny wing stubs, cannot fly"
+        },
+        "wW": {
+          "name": "Vestigial",
+          "sprite_suffix": "vestigial_wings",
+          "color": "#D2B48C",
+          "description": "Tiny wing stubs, cannot fly"
+        },
+        "WW": {
+          "name": "Functional",
+          "sprite_suffix": "functional_wings",
+          "color": "#4169E1",
+          "description": "Large functional wings, can fly"
+        }
+      },
+      "unlock_level": 0,
+      "is_multi_locus": false,
+      "related_loci": []
+    },
+    {
+      "key": "armor",
+      "name": "Scale Type",
+      "description": "Thickness and type of scales",
+      "alleles": ["A", "a"],
+      "dominance_type": "simple",
+      "dominance_rank": ["A", "a"],
+      "phenotypes": {
+        "AA": {
+          "name": "Heavy",
+          "sprite_suffix": "heavy_armor",
+          "color": "#2F4F4F",
+          "description": "Thick dark scales, excellent protection"
+        },
+        "Aa": {
+          "name": "Heavy",
+          "sprite_suffix": "heavy_armor",
+          "color": "#2F4F4F",
+          "description": "Thick dark scales, excellent protection"
+        },
+        "aa": {
+          "name": "Light",
+          "sprite_suffix": "light_armor",
+          "color": "#F0E68C",
+          "description": "Smooth light scales, more agile"
+        }
+      },
+      "unlock_level": 0,
+      "is_multi_locus": false,
+      "related_loci": []
+    }
+  ]
+}

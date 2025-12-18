@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "achievements": [
+    {
+      "id": "first_sale",
+      "name": "First Sale",
+      "description": "Fulfill your first order"
+    },
+    {
+      "id": "full_house",
+      "name": "Full House",
+      "description": "Own 6 dragons at once"
+    },
+    {
+      "id": "perfect_match",
+      "name": "Perfect Match",
+      "description": "Breed exact phenotype requested"
+    },
+    {
+      "id": "rare_breed",
+      "name": "Rare Breed",
+      "description": "Create dragon with 3+ rare traits"
+    },
+    {
+      "id": "wealthy",
+      "name": "Wealthy Rancher",
+      "description": "Earn $10,000 total"
+    },
+    {
+      "id": "genetics_master",
+      "name": "Genetics Master",
+      "description": "Successfully predict 50 offspring"
+    },
+    {
+      "id": "expansion",
+      "name": "Expansion",
+      "description": "Build 3 facilities"
+    },
+    {
+      "id": "matchmaker",
+      "name": "Matchmaker",
+      "description": "Complete 20 orders"
+    }
+  ]
+}

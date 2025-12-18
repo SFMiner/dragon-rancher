@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyx8k8q8v8v8v"]
+
+[ext_resource type="Script" path="res://scripts/ranch/ui/panels/DragonDetailsPanel.gd" id="1_details"]
+
+[node name="DragonDetailsPanel" type="PanelContainer"]
+script = ExtResource("1_details")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="DragonNameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Dragon Name"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+
+[node name="GenotypeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Genotype: ..."
+
+[node name="PhenotypeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Phenotype: ..."
+
+[node name="AgeLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Age: ... seasons"
+
+[node name="LifeStageLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Life Stage: ..."
+
+[node name="HealthProgressBar" type="ProgressBar" parent="VBoxContainer"]
+layout_mode = 2
+value = 50.0
+
+[node name="HappinessProgressBar" type="ProgressBar" parent="VBoxContainer"]
+layout_mode = 2
+value = 50.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SelectButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select for Breeding"
+
+[node name="SellButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sell"
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Close"

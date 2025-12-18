@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://bciyvj3x0v3hx"]
+
+[ext_resource type="Script" path="res://scripts/ranch/ui/HUD.gd" id="1_xqyf6"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xqyf6")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TopBar" type="Panel" parent="CanvasLayer"]
+anchor_right = 1.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/TopBar"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = 410.0
+grow_vertical = 2
+
+[node name="MoneyLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+text = "Money: $XXX"
+
+[node name="FoodLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+text = "Food: XXX"
+
+[node name="SeasonLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+text = "Season: X"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/TopBar"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -210.0
+offset_right = -10.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="ReputationLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+text = "Reputation: XXX"
+
+[node name="MenuButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+text = "Menu"
+
+[node name="SettingsButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+text = "Settings"

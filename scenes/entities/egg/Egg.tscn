@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj5k3w8ymqo7v"]
+
+[ext_resource type="Script" uid="uid://bcdyql7ht5egn" path="res://scripts/entities/Egg.gd" id="1_egg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.2, 0.2, 0.2, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.3, 0.8, 0.3, 1)
+
+[node name="Egg" type="Node2D"]
+script = ExtResource("1_egg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -32.0
+offset_top = 30.0
+offset_right = 32.0
+offset_bottom = 38.0
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+show_percentage = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3 uid="uid://ranch_main_scene"]
+
+[ext_resource type="Script" path="res://scripts/ranch/Ranch.gd" id="1_ranch"]
+[ext_resource type="Script" path="res://scripts/ranch/RanchCamera.gd" id="2_camera"]
+[ext_resource type="PackedScene" uid="uid://b3sq3o3o3o3o3" path="res://scenes/ranch/ui/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://b1yq2w2w2w2w2" path="res://scenes/ranch/ui/panels/BreedingPanel.tscn" id="4_breeding"]
+[ext_resource type="PackedScene" uid="uid://cyx8k8q8v8v8v" path="res://scenes/ranch/ui/panels/DragonDetailsPanel.tscn" id="5_details"]
+[ext_resource type="PackedScene" uid="uid://ck7q7x7u7v7v7" path="res://scenes/ranch/ui/panels/OrdersPanel.tscn" id="6_orders"]
+[ext_resource type="PackedScene" uid="uid://dklkr5u4x5g5g" path="res://scenes/ranch/ui/panels/BuildPanel.tscn" id="7_build"]
+[ext_resource type="PackedScene" uid="uid://b3x2vj3x0v3hx" path="res://scenes/ranch/ui/panels/NotificationsPanel.tscn" id="8_notifications"]
+
+[node name="Ranch" type="Node2D"]
+script = ExtResource("1_ranch")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -2000.0
+offset_top = -2000.0
+offset_right = 2000.0
+offset_bottom = 2000.0
+color = Color(0.4, 0.6, 0.3, 1)
+
+[node name="FacilitiesLayer" type="Node2D" parent="."]
+
+[node name="DragonsLayer" type="Node2D" parent="."]
+
+[node name="EggsLayer" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("2_camera")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UILayer" instance=ExtResource("3_hud")]
+
+[node name="BreedingPanel" parent="UILayer" instance=ExtResource("4_breeding")]
+
+[node name="DragonDetailsPanel" parent="UILayer" instance=ExtResource("5_details")]
+
+[node name="OrdersPanel" parent="UILayer" instance=ExtResource("6_orders")]
+
+[node name="BuildPanel" parent="UILayer" instance=ExtResource("7_build")]
+
+[node name="NotificationsPanel" parent="UILayer" instance=ExtResource("8_notifications")]

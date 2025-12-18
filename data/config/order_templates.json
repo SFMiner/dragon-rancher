@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "id": "simple_fire",
+      "type": "simple",
+      "required_traits": {"fire": "F_"},
+      "payment_min": 100,
+      "payment_max": 150,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 0,
+      "description": "Need a fire-breathing dragon for guard duty."
+    },
+    {
+      "id": "simple_wings",
+      "type": "simple",
+      "required_traits": {"wings": "WW"},
+      "payment_min": 120,
+      "payment_max": 180,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 0,
+      "description": "Looking for a dragon with functional wings for aerial patrol."
+    },
+    {
+      "id": "simple_armor",
+      "type": "simple",
+      "required_traits": {"armor": "A_"},
+      "payment_min": 90,
+      "payment_max": 140,
+      "deadline_min": 3,
+      "deadline_max": 5,
+      "reputation_required": 0,
+      "description": "Need an armored dragon for protection work."
+    },
+    {
+      "id": "complex_fire_wings",
+      "type": "complex",
+      "required_traits": {"fire": "F_", "wings": "WW"},
+      "payment_min": 250,
+      "payment_max": 350,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 1,
+      "description": "Seeking a flying fire-breather for mountain patrol."
+    },
+    {
+      "id": "complex_all_traits",
+      "type": "complex",
+      "required_traits": {"fire": "F_", "wings": "WW", "armor": "A_"},
+      "payment_min": 400,
+      "payment_max": 500,
+      "deadline_min": 5,
+      "deadline_max": 7,
+      "reputation_required": 2,
+      "description": "Premium dragon needed with all elite traits."
+    },
+    {
+      "id": "exact_pure_fire",
+      "type": "exact_genotype",
+      "required_traits": {"fire": "FF"},
+      "payment_min": 300,
+      "payment_max": 400,
+      "deadline_min": 5,
+      "deadline_max": 8,
+      "reputation_required": 2,
+      "description": "Breeding program requires pure fire-breathing genotype (FF)."
+    },
+    {
+      "id": "exact_vestigial",
+      "type": "exact_genotype",
+      "required_traits": {"wings": "ww"},
+      "payment_min": 200,
+      "payment_max": 300,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 1,
+      "description": "Research project needs dragon with vestigial wing genetics (ww)."
+    },
+    {
+      "id": "simple_smoke",
+      "type": "simple",
+      "required_traits": {"fire": "ff"},
+      "payment_min": 80,
+      "payment_max": 120,
+      "deadline_min": 2,
+      "deadline_max": 4,
+      "reputation_required": 0,
+      "description": "Looking for a gentle smoke-puffing dragon for children's parties."
+    },
+    {
+      "id": "urgent_fire",
+      "type": "simple",
+      "required_traits": {"fire": "F_"},
+      "payment_min": 200,
+      "payment_max": 250,
+      "deadline_min": 1,
+      "deadline_max": 2,
+      "reputation_required": 0,
+      "description": "[URGENT] Need fire-breathing dragon immediately for emergency!"
+    },
+    {
+      "id": "complex_light_flyer",
+      "type": "complex",
+      "required_traits": {"wings": "WW", "armor": "aa"},
+      "payment_min": 280,
+      "payment_max": 380,
+      "deadline_min": 4,
+      "deadline_max": 6,
+      "reputation_required": 1,
+      "description": "Messenger service needs light, agile flying dragon."
+    }
+  ]
+}
