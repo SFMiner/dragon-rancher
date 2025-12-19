@@ -33,6 +33,10 @@ extends Resource
 ## Unlocked features
 @export var unlocked_traits: Array[String] = []
 
+## P0 FIX: Achievement state (achievement_id -> unlock_season)
+## Prevents data loss when saving/loading achievement progress
+@export var achievement_state: Dictionary = {}
+
 
 ## Serialize to dictionary for JSON export
 func to_dict() -> Dictionary:
@@ -50,7 +54,8 @@ func to_dict() -> Dictionary:
 		"completed_orders": completed_orders,
 		"tutorial_state": tutorial_state,
 		"rng_state": rng_state,
-		"unlocked_traits": unlocked_traits
+		"unlocked_traits": unlocked_traits,
+		"achievement_state": achievement_state  # P0 FIX: Include achievements in save
 	}
 
 
@@ -81,6 +86,9 @@ static func from_dict(data: Dictionary) -> SaveData:
 		for gene_trait in traits_data:
 			if gene_trait is String:
 				save_data.unlocked_traits.append(gene_trait)
+
+	# P0 FIX: Load achievement state to prevent data loss
+	save_data.achievement_state = data.get("achievement_state", {})
 
 	return save_data
 

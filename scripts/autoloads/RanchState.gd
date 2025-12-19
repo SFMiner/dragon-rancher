@@ -47,17 +47,56 @@ var eggs: Dictionary = {}
 ## All facilities: facility_id -> FacilityData
 var facilities: Dictionary = {}
 
-## Active orders
-var active_orders: Array = []
+## Active orders (must be OrderData objects, not Dictionaries)
+var active_orders: Array[OrderData] = []
 
 ## Time speed multiplier (for UI feedback only, not core logic)
 var time_speed: float = 1.0
+
+## Facility definitions (loaded from JSON)
+## P1 FIX: Load facility definitions to avoid hardcoded costs/capacities
+var _facility_defs: Array = []
 
 ## Base dragon capacity (from starter ranch)
 const BASE_CAPACITY: int = 6
 
 ## Food consumption per dragon per season
 const FOOD_PER_DRAGON: int = 5
+
+
+func _ready() -> void:
+	## P1 FIX: Load facility definitions at startup
+	_load_facility_definitions()
+
+
+## Load facility definitions from JSON
+## P1 FIX: Centralize facility data to avoid duplication with facility_defs.json
+func _load_facility_definitions() -> void:
+	var file_path: String = "res://data/config/facility_defs.json"
+
+	if not FileAccess.file_exists(file_path):
+		push_error("[RanchState] Facility definitions file not found: " + file_path)
+		return
+
+	var file := FileAccess.open(file_path, FileAccess.READ)
+	if file == null:
+		push_error("[RanchState] Failed to open facility definitions file")
+		return
+
+	var json_string: String = file.get_as_text()
+	file.close()
+
+	var json := JSON.new()
+	var error := json.parse(json_string)
+
+	if error != OK:
+		push_error("[RanchState] Failed to parse facility definitions JSON: " + json.get_error_message())
+		return
+
+	var data: Dictionary = json.data
+	_facility_defs = data.get("facilities", [])
+
+	print("[RanchState] Loaded %d facility definitions" % _facility_defs.size())
 
 
 # === ORDER MANAGEMENT ===
@@ -207,20 +246,23 @@ func build_facility(facility_type: String) -> bool:
 	print("[RanchState] Built %s" % facility_type)
 	return true
 
+## P1 FIX: Look up facility cost from loaded JSON instead of hardcoding
 func _get_facility_cost(facility_type: String) -> int:
-	match facility_type:
-		"stable": return 300
-		"pasture": return 400
-		"nursery": return 800
-		"luxury_habitat": return 1500
-		_: return 500
+	for facility_def in _facility_defs:
+		if facility_def.get("type") == facility_type:
+			return facility_def.get("cost", 500)
+	# Fallback if facility type not found
+	push_warning("[RanchState] Unknown facility type: %s, using default cost 500" % facility_type)
+	return 500
 
+## P1 FIX: Look up facility capacity from loaded JSON instead of hardcoding
 func _get_facility_capacity(facility_type: String) -> int:
-	match facility_type:
-		"stable", "pasture": return 4
-		"nursery": return 6
-		"luxury_habitat": return 2
-		_: return 0
+	for facility_def in _facility_defs:
+		if facility_def.get("type") == facility_type:
+			return facility_def.get("capacity", 0)
+	# Fallback if facility type not found
+	push_warning("[RanchState] Unknown facility type: %s, using default capacity 0" % facility_type)
+	return 0
 
 func get_facility_bonus(bonus_type: String) -> float:
 	var total: float = 0.0
@@ -251,6 +293,11 @@ func _get_facility_capacity_value(facility_data) -> int:
 
 ## Create an egg from breeding two dragons
 func create_egg(parent_a_id: String, parent_b_id: String) -> String:
+	# P0 FIX: Validate parent IDs before lookup
+	if parent_a_id.is_empty() or parent_b_id.is_empty():
+		push_error("[RanchState] create_egg: empty parent ID")
+		return ""
+
 	var parent_a: DragonData = get_dragon(parent_a_id)
 	var parent_b: DragonData = get_dragon(parent_b_id)
 
@@ -414,7 +461,7 @@ func calculate_food_consumption() -> int:
 	return total
 
 
-## Process food consumption (called by advance_season)
+## Process food consumption (called by advance_season) - LEGACY VERSION
 func _process_food_consumption() -> void:
 	var needed: int = calculate_food_consumption()
 
@@ -424,15 +471,59 @@ func _process_food_consumption() -> void:
 		print("[RanchState] WARNING: Insufficient food! Dragons losing %d health" % health_loss)
 
 		for dragon_data in dragons.values():
+			if dragon_data == null:
+				continue
 			dragon_data.health = max(0.0, dragon_data.health - health_loss)
 
 
-## Check for dragon escapes based on docility (called by advance_season)
+## P0 PERFORMANCE: Optimized version that accepts pre-cached dragon list
+func _process_food_consumption_optimized(dragon_list: Array) -> void:
+	var needed: int = calculate_food_consumption()
+
+	if not consume_food(needed):
+		# Insufficient food - dragons lose health
+		var health_loss: float = 10.0
+		print("[RanchState] WARNING: Insufficient food! Dragons losing %d health" % health_loss)
+
+		for dragon_data in dragon_list:
+			if dragon_data == null:
+				continue
+			dragon_data.health = max(0.0, dragon_data.health - health_loss)
+
+
+## Check for dragon escapes based on docility (called by advance_season) - LEGACY VERSION
 func _check_dragon_escapes() -> void:
 	var escaped_dragons: Array[DragonData] = []
 
 	# Check each dragon for escape chance
 	for dragon_data in dragons.values():
+		if dragon_data.phenotype.has("docility"):
+			var docility_pheno: Dictionary = dragon_data.phenotype["docility"]
+			var escape_chance: float = docility_pheno.get("escape_chance", 0.0)
+
+			# Roll for escape
+			if RNGService.randf() < escape_chance:
+				escaped_dragons.append(dragon_data)
+				print("[RanchState] %s escaped! (docility: %s, chance: %.0f%%)" % [
+					dragon_data.name,
+					docility_pheno.get("name", "Unknown"),
+					escape_chance * 100.0
+				])
+
+	# Remove escaped dragons
+	for dragon_data in escaped_dragons:
+		remove_dragon(dragon_data.id)
+
+
+## P0 PERFORMANCE: Optimized version that accepts pre-cached dragon list
+func _check_dragon_escapes_optimized(dragon_list: Array) -> void:
+	var escaped_dragons: Array[DragonData] = []
+
+	# Check each dragon for escape chance
+	for dragon_data in dragon_list:
+		if dragon_data == null:
+			continue
+
 		if dragon_data.phenotype.has("docility"):
 			var docility_pheno: Dictionary = dragon_data.phenotype["docility"]
 			var escape_chance: float = docility_pheno.get("escape_chance", 0.0)
@@ -553,8 +644,21 @@ func advance_season() -> void:
 
 	print("\n[RanchState] ===== SEASON %d =====" % current_season)
 
+	# P0 FIX: Add null/empty checks before processing dragons
+	if dragons == null:
+		push_error("[RanchState] advance_season: dragons dictionary is null")
+		return
+
+	# P0 PERFORMANCE: Cache dragon values array to avoid redundant iterations
+	var dragon_list: Array = dragons.values()
+
 	# Age all dragons
-	for dragon_data in dragons.values():
+	for dragon_data in dragon_list:
+		# P0 FIX: Skip null dragon data
+		if dragon_data == null:
+			push_warning("[RanchState] advance_season: skipping null dragon")
+			continue
+
 		var old_stage: String = dragon_data.life_stage
 		Lifecycle.advance_age(dragon_data)
 
@@ -564,11 +668,11 @@ func advance_season() -> void:
 	# Process egg incubation
 	_process_egg_incubation()
 
-	# Process food consumption
-	_process_food_consumption()
+	# Process food consumption (passes cached list to avoid re-iteration)
+	_process_food_consumption_optimized(dragon_list)
 
-	# Check for dragon escapes (docility trait)
-	_check_dragon_escapes()
+	# Check for dragon escapes (passes cached list to avoid re-iteration)
+	_check_dragon_escapes_optimized(dragon_list)
 
 	# Check order deadlines
 	_check_order_deadlines()
@@ -717,8 +821,13 @@ func load_state(save_data: Dictionary) -> bool:
 		# Old format: keep as-is
 		facilities = facilities_data.duplicate(true)
 
-	# Load active orders
-	active_orders = save_data.get("active_orders", []).duplicate(true)
+	# Load active orders - convert dictionaries back to OrderData objects
+	var orders_data: Array = save_data.get("active_orders", [])
+	active_orders.clear()
+	for order_dict in orders_data:
+		var order := OrderData.new()
+		order.from_dict(order_dict)
+		active_orders.append(order)
 
 	# Restore RNG seed (optional, might not be in save data)
 	if save_data.has("rng_seed"):
@@ -761,10 +870,7 @@ func save_state() -> Dictionary:
 	# Serialize orders as array
 	var orders_array: Array[Dictionary] = []
 	for order in active_orders:
-		if order is OrderData:
-			orders_array.append(order.to_dict())
-		elif order is Dictionary:
-			orders_array.append(order)
+		orders_array.append(order.to_dict())
 
 	# Get unlocked traits (from TraitDB if available)
 	var unlocked: Array[String] = []

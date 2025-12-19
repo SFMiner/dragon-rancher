@@ -26,6 +26,7 @@ SaveSystem="*res://scripts/autoloads/SaveSystem.gd"
 OrderSystem="*res://scripts/autoloads/OrderSystem.gd"
 AudioManager="*res://scripts/autoloads/AudioManager.gd"
 TutorialService="*res://scripts/autoloads/TutorialService.gd"
+SceneManager="*res://scripts/util/SceneManager.gd"
 
 [rendering]
 

@@ -42,6 +42,11 @@ func load_traits() -> bool:
 	var json_text: String = file.get_as_text()
 	file.close()
 
+	# P0 FIX: Handle empty file
+	if json_text.is_empty():
+		push_error("[TraitDB] Trait definitions file is empty: %s" % TRAIT_DEFS_PATH)
+		return false
+
 	var json: JSON = JSON.new()
 	var parse_result: Error = json.parse(json_text)
 

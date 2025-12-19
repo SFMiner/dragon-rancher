@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://i8ve3nxt4lyu"]
+[gd_scene load_steps=12 format=3 uid="uid://i8ve3nxt4lyu"]
 
 [ext_resource type="Script" uid="uid://bm5ocattur71t" path="res://scripts/ranch/Ranch.gd" id="1_ranch"]
 [ext_resource type="Script" uid="uid://dqtxkv23n3sim" path="res://scripts/ranch/RanchCamera.gd" id="2_camera"]
@@ -9,7 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://dklkr5u4x5g5g" path="res://scenes/ranch/ui/panels/BuildPanel.tscn" id="7_build"]
 [ext_resource type="PackedScene" uid="uid://b3x2vj3x0v3hx" path="res://scenes/ranch/ui/panels/NotificationsPanel.tscn" id="8_notifications"]
 [ext_resource type="PackedScene" uid="uid://b5w7c6x8yqv8k" path="res://scenes/ranch/ui/panels/SettingsPanel.tscn" id="9_settings"]
-[ext_resource type="PackedScene" uid="uid://dq0eeykncyxkp" path="res://scenes/ranch/ui/TutorialOverlay.tscn" id="10_tutorial"]
+[ext_resource type="PackedScene" uid="uid://cpvx9j4k5l6m7" path="res://scenes/ranch/ui/panels/PausePanel.tscn" id="10_pause"]
+[ext_resource type="PackedScene" uid="uid://dq0eeykncyxkp" path="res://scenes/ranch/ui/TutorialOverlay.tscn" id="11_tutorial"]
 
 [node name="Ranch" type="Node2D"]
 script = ExtResource("1_ranch")
@@ -49,6 +50,11 @@ offset_top = 66.0
 
 [node name="SettingsPanel" parent="UILayer" instance=ExtResource("9_settings")]
 visible = false
+process_mode = 3
 
-[node name="TutorialOverlay" parent="." instance=ExtResource("10_tutorial")]
+[node name="PausePanel" parent="UILayer" instance=ExtResource("10_pause")]
+visible = false
+process_mode = 3
+
+[node name="TutorialOverlay" parent="." instance=ExtResource("11_tutorial")]
 visible = false

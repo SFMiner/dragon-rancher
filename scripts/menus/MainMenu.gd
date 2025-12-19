@@ -87,8 +87,8 @@ func _start_new_game() -> void:
 	if TutorialService:
 		TutorialService.reset_tutorial()
 
-	# Load ranch scene
-	get_tree().change_scene_to_file("res://scenes/ranch/Ranch.tscn")
+	# Load ranch scene with fade transition
+	SceneManager.change_scene("res://scenes/ranch/Ranch.tscn")
 
 
 ## Handle Continue button
@@ -97,7 +97,7 @@ func _on_continue_pressed() -> void:
 
 	# Load autosave
 	if SaveSystem.load_game(SaveSystem.AUTOSAVE_SLOT):
-		get_tree().change_scene_to_file("res://scenes/ranch/Ranch.tscn")
+		SceneManager.change_scene("res://scenes/ranch/Ranch.tscn")
 	else:
 		_show_error("Failed to load autosave. Please try loading from a save slot instead.")
 		_update_continue_button()

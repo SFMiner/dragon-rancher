@@ -256,7 +256,9 @@ func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: 
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			dragon_clicked.emit(self, dragon_data.id if dragon_data else "")
-			print("[Dragon] Clicked: %s" % dragon_data.name if dragon_data else "Unknown")
+			# P0 PERFORMANCE: Only allocate debug string in debug builds
+			if OS.is_debug_build():
+				print("[Dragon] Clicked: %s" % (dragon_data.name if dragon_data else "Unknown"))
 
 
 ## Enable/disable wandering

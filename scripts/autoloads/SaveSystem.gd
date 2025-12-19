@@ -82,6 +82,10 @@ func save_game(slot: int = 0) -> bool:
 		save_data.active_orders = _coerce_array_of_dicts(ranch_state_data.get("active_orders", []))
 		save_data.completed_orders = _coerce_array_of_dicts(ranch_state_data.get("completed_orders", []))
 		save_data.unlocked_traits = ranch_state_data.get("unlocked_traits", [])
+
+		# P0 FIX: Save achievement state to prevent data loss
+		if "achievements" in RanchState :
+			save_data.achievement_state = RanchState.achievements.duplicate(true)
 	else:
 		push_error("[SaveSystem] RanchState.save_state() not available")
 		save_failed.emit(slot, "RanchState not ready")
@@ -209,7 +213,9 @@ func load_game(slot: int = 0) -> bool:
 			"facilities": save_data.facilities,
 			"active_orders": save_data.active_orders,
 			"completed_orders": save_data.completed_orders,
-			"unlocked_traits": save_data.unlocked_traits
+			"unlocked_traits": save_data.unlocked_traits,
+			# P0 FIX: Load achievement state to prevent data loss
+			"achievements": save_data.achievement_state
 		}
 
 		if not RanchState.load_state(ranch_state_data):

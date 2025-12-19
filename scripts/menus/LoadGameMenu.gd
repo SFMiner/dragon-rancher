@@ -142,8 +142,8 @@ func _on_load_pressed(slot: int) -> void:
 	if SaveSystem.load_game(slot):
 		print("[LoadGameMenu] Game loaded successfully")
 		game_loaded.emit(slot)
-		# Switch to ranch scene
-		get_tree().change_scene_to_file("res://scenes/ranch/Ranch.tscn")
+		# Switch to ranch scene with fade transition
+		SceneManager.change_scene("res://scenes/ranch/Ranch.tscn")
 	else:
 		# Show error popup
 		_show_error_dialog("Failed to load save file. The file may be corrupted.")

@@ -8,6 +8,11 @@ extends PanelContainer
 var selected_parent_a: DragonData = null
 var selected_parent_b: DragonData = null
 
+## P0 PERFORMANCE: Cache Punnett square results to avoid recalculation
+var _cached_predictions: Dictionary = {}
+var _cached_parent_a_id: String = ""
+var _cached_parent_b_id: String = ""
+
 ## Node references
 @onready var parent_a_button: Button = $VBoxContainer/HBoxContainer/ParentA_Button
 @onready var parent_a_label: Label = $VBoxContainer/HBoxContainer/ParentA_Label
@@ -32,6 +37,10 @@ func open_panel() -> void:
 	# Reset selections
 	selected_parent_a = null
 	selected_parent_b = null
+	# P0 PERFORMANCE: Clear cache when opening panel
+	_cached_predictions.clear()
+	_cached_parent_a_id = ""
+	_cached_parent_b_id = ""
 	_update_ui()
 	show()
 	AudioManager.play_sfx("ui_confirm.ogg")
@@ -144,6 +153,14 @@ func _calculate_predictions() -> Dictionary:
 	if not selected_parent_a or not selected_parent_b:
 		return {}
 
+	# P0 PERFORMANCE: Check cache first to avoid expensive recalculation
+	var parent_a_id: String = selected_parent_a.id
+	var parent_b_id: String = selected_parent_b.id
+
+	if _cached_parent_a_id == parent_a_id and _cached_parent_b_id == parent_b_id:
+		# Cache hit - return cached result
+		return _cached_predictions
+
 	var predictions: Dictionary = {}
 
 	# Get all trait keys
@@ -156,7 +173,7 @@ func _calculate_predictions() -> Dictionary:
 			selected_parent_b,
 			trait_key
 		)
-		
+
 		var punnett: Dictionary = {"outcomes": outcomes}
 
 		# Count phenotypes
@@ -182,6 +199,11 @@ func _calculate_predictions() -> Dictionary:
 			trait_predictions[phenotype] = float(count) / float(total_outcomes)
 
 		predictions[trait_key] = trait_predictions
+
+	# P0 PERFORMANCE: Store in cache
+	_cached_predictions = predictions
+	_cached_parent_a_id = parent_a_id
+	_cached_parent_b_id = parent_b_id
 
 	return predictions
 

@@ -21,6 +21,7 @@ extends Control
 @onready var build_panel = get_node_or_null("/root/Ranch/UILayer/BuildPanel")
 @onready var dragon_details_panel = get_node_or_null("/root/Ranch/UILayer/DragonDetailsPanel")
 @onready var settings_panel = get_node_or_null("/root/Ranch/UILayer/SettingsPanel")
+@onready var pause_panel = get_node_or_null("/root/Ranch/UILayer/PausePanel")
 
 func _ready():
 	# Connect RanchState signals
@@ -77,7 +78,9 @@ func _on_reputation_changed(new_reputation):
 func _on_menu_button_pressed():
 	print("[HUD] Menu button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
-	pass # Stub
+	# Open pause menu
+	if pause_panel and pause_panel.has_method("open_panel"):
+		pause_panel.open_panel()
 
 func _on_settings_button_pressed():
 	print("[HUD] Settings button pressed!")

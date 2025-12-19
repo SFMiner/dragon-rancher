@@ -97,6 +97,13 @@ func weighted_choice(weights: Dictionary) -> Variant:
 	for weight in weights.values():
 		total_weight += float(weight)
 
+	# P0 FIX: Division by zero protection - handle zero/negative total weight
+	if total_weight <= 0.0:
+		push_error("[RNGService] weighted_choice() total weight is zero or negative: %f" % total_weight)
+		# Return first key as fallback
+		var keys = weights.keys()
+		return keys[0] if keys.size() > 0 else null
+
 	var roll: float = randf() * total_weight
 	var cumulative: float = 0.0
 
