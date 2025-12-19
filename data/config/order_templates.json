@@ -10,7 +10,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 0,
-      "description": "Need a fire-breathing dragon for guard duty."
+      "description": "Village fire marshal needs a fire-breather to clear brush and scare off poachers."
     },
     {
       "id": "simple_wings",
@@ -21,7 +21,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 0,
-      "description": "Looking for a dragon with functional wings for aerial patrol."
+      "description": "Courier guild wants strong wings for route scouting; steady flyer preferred."
     },
     {
       "id": "simple_armor",
@@ -32,7 +32,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 0,
-      "description": "Need an armored dragon for protection work."
+      "description": "Caravan hires a plated escort; heavy scales needed to tank arrows."
     },
     {
       "id": "complex_fire_wings",
@@ -43,7 +43,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "Seeking a flying fire-breather for mountain patrol."
+      "description": "Sky wardens seek a winged fire-breather to patrol ridge beacons."
     },
     {
       "id": "complex_all_traits",
@@ -54,7 +54,7 @@
       "deadline_min": 5,
       "deadline_max": 7,
       "reputation_required": 2,
-      "description": "Premium dragon needed with all elite traits."
+      "description": "Duke commissions a showpiece: fire breath, full wings, heavy armor for parades."
     },
     {
       "id": "exact_pure_fire",
@@ -65,7 +65,7 @@
       "deadline_min": 5,
       "deadline_max": 8,
       "reputation_required": 2,
-      "description": "Breeding program requires pure fire-breathing genotype (FF)."
+      "description": "Arcanist requests pure fire genetics (FF) for ritual catalysts."
     },
     {
       "id": "exact_vestigial",
@@ -76,7 +76,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "Research project needs dragon with vestigial wing genetics (ww)."
+      "description": "University study needs vestigial wings (ww) to observe ground gait."
     },
     {
       "id": "simple_smoke",
@@ -87,7 +87,7 @@
       "deadline_min": 2,
       "deadline_max": 4,
       "reputation_required": 0,
-      "description": "Looking for a gentle smoke-puffing dragon for children's parties."
+      "description": "Puppet theater wants a smoke-puffer (ff) for stage fog—must be gentle."
     },
     {
       "id": "urgent_fire",
@@ -98,7 +98,7 @@
       "deadline_min": 1,
       "deadline_max": 2,
       "reputation_required": 0,
-      "description": "[URGENT] Need fire-breathing dragon immediately for emergency!"
+      "description": "[URGENT] Firebreak crew needs any fire-breather tonight; speed over pedigree."
     },
     {
       "id": "complex_light_flyer",
@@ -109,7 +109,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "Messenger service needs light, agile flying dragon."
+      "description": "Messenger captain needs agile wings with light armor for rooftop drops."
     },
     {
       "id": "color_red_fire",
@@ -120,7 +120,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "Need a red dragon with fire breath for ceremonial guard."
+      "description": "Festival planner needs a red fire-breathing dragon for torchlit parade."
     },
     {
       "id": "color_pink_any",
@@ -131,7 +131,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 1,
-      "description": "Looking for a pink dragon for a royal garden exhibit."
+      "description": "Royal garden showcase requests a Pink dragon to charm guests—no fire needed."
     },
     {
       "id": "color_white_vestigial",
@@ -142,7 +142,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "White dragon with vestigial wings needed for temple grounds."
+      "description": "Temple caretakers want a white, flightless dragon to roam quiet courtyards."
     },
     {
       "id": "exact_red_pure",
@@ -153,7 +153,7 @@
       "deadline_min": 5,
       "deadline_max": 8,
       "reputation_required": 2,
-      "description": "Breeding program requires pure red dragon genetics (RR)."
+      "description": "Breeding lab seeks pure Red genotype (RR) for palette experiments."
     },
     {
       "id": "color_white_simple",
@@ -164,7 +164,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 1,
-      "description": "Need a white dragon for snow mountain patrol."
+      "description": "Snow patrol wants a white dragon to blend on mountain watch."
     },
     {
       "id": "metabolism_hyper_racing",
@@ -175,7 +175,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 3,
-      "description": "Racing league needs hyper-metabolism dragon for speed competitions!"
+      "description": "Racing league drafts a hyper-metabolism sprinter for circuit heats."
     },
     {
       "id": "metabolism_normal_reliable",
@@ -186,7 +186,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 3,
-      "description": "Long-term guard position requires reliable normal-metabolism dragon."
+      "description": "Estate guard needs reliable normal metabolism for long watches."
     },
     {
       "id": "metabolism_intermediate",
@@ -197,7 +197,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 3,
-      "description": "Need intermediate-metabolism dragon for balanced performance."
+      "description": "Courier service wants balanced metabolism for mixed sprint/endurance runs."
     },
     {
       "id": "size_extra_large",
@@ -208,7 +208,7 @@
       "deadline_min": 6,
       "deadline_max": 8,
       "reputation_required": 2,
-      "description": "Castle defense requires extra large dragon (SSGG genotype)."
+      "description": "Citadel wall crew requests extra-large frame (SSGG) to haul stone blocks."
     },
     {
       "id": "size_large",
@@ -219,7 +219,7 @@
       "deadline_min": 5,
       "deadline_max": 7,
       "reputation_required": 2,
-      "description": "Need large dragon for construction work (SSG_)."
+      "description": "Construction foreman needs a large dragon (SSG_) to pull scaffolds."
     },
     {
       "id": "size_tiny_pet",
@@ -230,7 +230,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 2,
-      "description": "Collector seeks tiny dragon for royal menagerie (ssgg)."
+      "description": "Collector seeks a tiny pocket dragon (ssgg) for the royal menagerie."
     },
     {
       "id": "hyper_small_courier",
@@ -241,7 +241,7 @@
       "deadline_min": 6,
       "deadline_max": 8,
       "reputation_required": 3,
-      "description": "Express delivery service needs fast, small flying dragon!"
+      "description": "Express mail wants hyper, small, winged dragon for dawn deliveries."
     },
     {
       "id": "docile_petting_zoo",
@@ -252,7 +252,7 @@
       "deadline_min": 5,
       "deadline_max": 7,
       "reputation_required": 4,
-      "description": "Petting zoo needs very docile dragon with zero escape risk (D1D1 genotype)."
+      "description": "Petting zoo needs D1D1 temperament—zero escape, endless hugs."
     },
     {
       "id": "docile_therapy",
@@ -263,7 +263,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 4,
-      "description": "Therapy program needs gentle dragon (must have D1 allele)."
+      "description": "Therapy center requests a D1_ gentle dragon for calming visits."
     },
     {
       "id": "normal_reliable",
@@ -274,7 +274,7 @@
       "deadline_min": 3,
       "deadline_max": 5,
       "reputation_required": 4,
-      "description": "General ranch work requires normal-tempered dragon."
+      "description": "Farm co-op wants a steady D2_ worker: no drama, just chores."
     },
     {
       "id": "aggressive_guard",
@@ -285,7 +285,7 @@
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 4,
-      "description": "Guard duty needs aggressive but controllable dragon (D2D3)."
+      "description": "Vault security asks for D2D3 edge—assertive but controllable."
     },
     {
       "id": "very_aggressive_arena",
@@ -296,7 +296,7 @@
       "deadline_min": 5,
       "deadline_max": 8,
       "reputation_required": 4,
-      "description": "Battle arena seeks very aggressive dragon for competition (D3D3 genotype)."
+      "description": "Arena master craves D3D3 fury for headline bouts."
     }
   ]
 }

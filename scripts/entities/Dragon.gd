@@ -8,7 +8,7 @@
 extends Node2D
 
 ## Dragon clicked signal (emitted when player clicks this dragon)
-signal dragon_clicked(dragon: Node2D)
+signal dragon_clicked(dragon: Node2D, dragon_id: String)
 
 ## Reference to dragon data
 var dragon_data: DragonData = null
@@ -60,9 +60,6 @@ func setup(data: DragonData) -> void:
 	update_visuals()
 
 	# Set name label
-	if name_label:
-		name_label.text = dragon_data.name
-
 	# Update movement speed based on life stage and metabolism
 	var speed_multiplier: float = Lifecycle.get_stage_speed_multiplier(dragon_data.life_stage)
 
@@ -76,6 +73,9 @@ func setup(data: DragonData) -> void:
 
 	# Pick initial wander target
 	_pick_new_wander_target()
+	if name_label:
+		name_label.text = dragon_data.name
+
 
 
 ## Update visual representation based on phenotype
@@ -255,7 +255,7 @@ func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: 
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			dragon_clicked.emit(self)
+			dragon_clicked.emit(self, dragon_data.id if dragon_data else "")
 			print("[Dragon] Clicked: %s" % dragon_data.name if dragon_data else "Unknown")
 
 

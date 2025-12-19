@@ -1,4 +1,4 @@
-## SESSION 17: Creative Content Generation
+	## SESSION 17: Creative Content Generation
 **Model:** ChatGPT 5.2  
 **Duration:** 3-4 hours  
 **Extended Thinking:** N/A  

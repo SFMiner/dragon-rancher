@@ -150,3 +150,7 @@ func _show_notification(message: String, is_error: bool = false) -> void:
 		notifications_panel.show_notification(message)
 	else:
 		print("[BuildPanel] Notification: " + message)
+
+
+func _on_close_button_pressed() -> void:
+	close_panel()

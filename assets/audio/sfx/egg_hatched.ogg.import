@@ -2,12 +2,13 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://c8s3m7odfayjw"
-valid=false
+uid="uid://dslhkj1owkhwc"
+path="res://.godot/imported/egg_hatched.ogg-39744c4f706603dd9520448022f80554.oggvorbisstr"
 
 [deps]
 
 source_file="res://assets/audio/sfx/egg_hatched.ogg"
+dest_files=["res://.godot/imported/egg_hatched.ogg-39744c4f706603dd9520448022f80554.oggvorbisstr"]
 
 [params]
 

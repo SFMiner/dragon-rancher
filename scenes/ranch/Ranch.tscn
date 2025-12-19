@@ -8,8 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://dgaq2j7gq3v0c" path="res://scenes/ranch/ui/panels/OrdersPanel.tscn" id="6_orders"]
 [ext_resource type="PackedScene" uid="uid://dklkr5u4x5g5g" path="res://scenes/ranch/ui/panels/BuildPanel.tscn" id="7_build"]
 [ext_resource type="PackedScene" uid="uid://b3x2vj3x0v3hx" path="res://scenes/ranch/ui/panels/NotificationsPanel.tscn" id="8_notifications"]
-[ext_resource type="PackedScene" path="res://scenes/ranch/ui/panels/SettingsPanel.tscn" id="9_settings"]
-[ext_resource type="PackedScene" path="res://scenes/ranch/ui/TutorialOverlay.tscn" id="10_tutorial"]
+[ext_resource type="PackedScene" uid="uid://b5w7c6x8yqv8k" path="res://scenes/ranch/ui/panels/SettingsPanel.tscn" id="9_settings"]
+[ext_resource type="PackedScene" uid="uid://dq0eeykncyxkp" path="res://scenes/ranch/ui/TutorialOverlay.tscn" id="10_tutorial"]
 
 [node name="Ranch" type="Node2D"]
 script = ExtResource("1_ranch")
@@ -33,8 +33,10 @@ script = ExtResource("2_camera")
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="HUD" parent="UILayer" instance=ExtResource("3_hud")]
+mouse_filter = 1
 
 [node name="BreedingPanel" parent="UILayer" instance=ExtResource("4_breeding")]
+offset_top = -206.0
 
 [node name="DragonDetailsPanel" parent="UILayer" instance=ExtResource("5_details")]
 
@@ -43,6 +45,7 @@ script = ExtResource("2_camera")
 [node name="BuildPanel" parent="UILayer" instance=ExtResource("7_build")]
 
 [node name="NotificationsPanel" parent="UILayer" instance=ExtResource("8_notifications")]
+offset_top = 66.0
 
 [node name="SettingsPanel" parent="UILayer" instance=ExtResource("9_settings")]
 visible = false

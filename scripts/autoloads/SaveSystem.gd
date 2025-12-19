@@ -78,9 +78,9 @@ func save_game(slot: int = 0) -> bool:
 		save_data.reputation = ranch_state_data.get("reputation", 0)
 		save_data.dragons = ranch_state_data.get("dragons", [])
 		save_data.eggs = ranch_state_data.get("eggs", [])
-		save_data.facilities = ranch_state_data.get("facilities", [])
-		save_data.active_orders = ranch_state_data.get("active_orders", [])
-		save_data.completed_orders = ranch_state_data.get("completed_orders", [])
+		save_data.facilities = _coerce_array_of_dicts(ranch_state_data.get("facilities", []))
+		save_data.active_orders = _coerce_array_of_dicts(ranch_state_data.get("active_orders", []))
+		save_data.completed_orders = _coerce_array_of_dicts(ranch_state_data.get("completed_orders", []))
 		save_data.unlocked_traits = ranch_state_data.get("unlocked_traits", [])
 	else:
 		push_error("[SaveSystem] RanchState.save_state() not available")
@@ -125,6 +125,25 @@ func save_game(slot: int = 0) -> bool:
 	print("[SaveSystem] Game saved successfully to slot %d" % slot)
 	save_completed.emit(slot)
 	return true
+
+
+## Helper to ensure arrays are stored as Array[Dictionary] even if legacy formats are present
+func _coerce_array_of_dicts(value) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+
+	if value is Array:
+		for item in value:
+			if item is Dictionary:
+				result.append(item)
+		return result
+
+	if value is Dictionary:
+		for item in value.values():
+			if item is Dictionary:
+				result.append(item)
+		return result
+
+	return result
 
 
 ## Load game from specific slot

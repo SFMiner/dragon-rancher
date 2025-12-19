@@ -1,3 +1,5 @@
 ranch_theme.gg:
 	Music by <a href="https://pixabay.com/users/backgroundmusicforvideos-46459014/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=255037">Maksym Malko</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=255037">Pixabay</a>
 	
+money_gain.ogg:
+	Sound Effect by <a href="https://pixabay.com/users/humordome-44873699/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=453274">Humor Dome</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=453274">Pixabay</a>

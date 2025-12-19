@@ -8,7 +8,7 @@
       "cost": 300,
       "reputation_required": 0,
       "bonuses": {},
-      "description": "Basic shelter for 4 dragons"
+      "description": "Basic shelter for 4 dragons; keeps them fed and out of bad weather."
     },
     {
       "type": "pasture",
@@ -17,7 +17,7 @@
       "cost": 400,
       "reputation_required": 0,
       "bonuses": {"happiness": 5},
-      "description": "Outdoor space for 4 dragons, slight happiness bonus"
+      "description": "Open grass for 4 dragons; fresh air grants a small happiness boost."
     },
     {
       "type": "breeding_pen",
@@ -26,7 +26,7 @@
       "cost": 500,
       "reputation_required": 0,
       "bonuses": {"breeding_success": 1.1},
-      "description": "Enables efficient breeding operations"
+      "description": "Dedicated breeding space; increases breeding success and comfort."
     },
     {
       "type": "nursery",
@@ -35,7 +35,7 @@
       "cost": 800,
       "reputation_required": 1,
       "bonuses": {"growth_speed": 1.2},
-      "description": "Houses 6 hatchlings with faster growth"
+      "description": "Warm pens for 6 young dragons; speeds up their growth."
     },
     {
       "type": "genetics_lab",
@@ -44,7 +44,7 @@
       "cost": 5000,
       "reputation_required": 2,
       "bonuses": {"show_genotypes": 1},
-      "description": "Reveals egg genotypes before hatching"
+      "description": "Reveals egg genotypes before hatching and supports trait research."
     },
     {
       "type": "luxury_habitat",
@@ -53,7 +53,7 @@
       "cost": 1500,
       "reputation_required": 1,
       "bonuses": {"happiness": 20},
-      "description": "Premium housing for 2 dragons with major happiness boost"
+      "description": "Plush lair for 2 dragons; huge happiness boost for elite guests."
     }
   ]
 }

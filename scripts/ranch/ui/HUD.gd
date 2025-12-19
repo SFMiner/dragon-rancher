@@ -6,8 +6,8 @@ extends Control
 @onready var reputation_label = $CanvasLayer/TopBar/HBoxContainer2/ReputationLabel
 
 ## Top bar buttons
-@onready var menu_button = get_node_or_null("CanvasLayer/TopBar/MenuButton")
-@onready var settings_button = get_node_or_null("CanvasLayer/TopBar/SettingsButton")
+@onready var menu_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/MenuButton")
+@onready var settings_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/SettingsButton")
 
 ## Bottom bar buttons
 @onready var orders_button = $CanvasLayer/BottomBar/OrdersButton
@@ -90,6 +90,7 @@ func _on_orders_button_pressed():
 	print("[HUD] Orders button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if orders_panel and orders_panel.has_method("open_panel"):
+		_close_other_panels(orders_panel)
 		orders_panel.open_panel()
 		# Emit tutorial event
 		if TutorialService:
@@ -100,6 +101,7 @@ func _on_breeding_button_pressed():
 	print("[HUD] Breeding button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if breeding_panel and breeding_panel.has_method("open_panel"):
+		_close_other_panels(breeding_panel)
 		breeding_panel.open_panel()
 		# Emit tutorial event
 		if TutorialService:
@@ -110,6 +112,7 @@ func _on_build_button_pressed():
 	print("[HUD] Build button pressed!")
 	AudioManager.play_sfx("ui_click.ogg")
 	if build_panel and build_panel.has_method("open_panel"):
+		_close_other_panels(build_panel)
 		build_panel.open_panel()
 		# Emit tutorial event
 		if TutorialService:
@@ -142,3 +145,22 @@ func _register_tutorial_anchors():
 		tutorial_overlay.register_anchor("dragon_details", dragon_details_panel)
 
 	print("[HUD] Tutorial anchors registered")
+
+
+## Close other main panels when opening one to avoid overlap
+func _close_other_panels(active_panel: Node):
+	var panels = [orders_panel, breeding_panel, build_panel]
+	for panel in panels:
+		if panel and panel != active_panel:
+			if panel.has_method("close_panel"):
+				panel.close_panel()
+			else:
+				panel.hide()
+
+
+func _on_test_button_1_pressed() -> void:
+	print("Test 1 works")
+
+
+func _on_test_button_2_pressed() -> void:
+	print("Test 2 works")

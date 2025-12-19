@@ -82,7 +82,7 @@ func calculate_phenotype(genotype: Dictionary) -> Dictionary:
 			continue
 
 		# Get alleles for this trait
-		var alleles: Array = genotype[trait_key]
+		var alleles: Array = _coerce_alleles(genotype[trait_key], trait_key)
 		if alleles.size() != 2:
 			push_warning("[GeneticsEngine] Invalid alleles for trait '%s'" % trait_key)
 			continue
@@ -232,7 +232,7 @@ func _get_random_allele_from_parent(parent: DragonData, trait_key: String) -> St
 		# Return recessive allele as default
 		return trait_def.get_recessive_allele()
 
-	var alleles: Array = parent.genotype[trait_key]
+	var alleles: Array = _coerce_alleles(parent.genotype[trait_key], trait_key)
 	if alleles.size() != 2:
 		push_warning("[GeneticsEngine] Invalid alleles for parent trait '%s'" % trait_key)
 		return ""
@@ -308,13 +308,13 @@ func calculate_size_phenotype(genotype: Dictionary) -> Dictionary:
 	var dominant_count: int = 0
 
 	# Count S alleles
-	var s_alleles: Array = genotype.get("size_S", [])
+	var s_alleles: Array = _coerce_alleles(genotype.get("size_S", []), "size_S")
 	for allele in s_alleles:
 		if allele == "S":
 			dominant_count += 1
 
 	# Count G alleles
-	var g_alleles: Array = genotype.get("size_G", [])
+	var g_alleles: Array = _coerce_alleles(genotype.get("size_G", []), "size_G")
 	for allele in g_alleles:
 		if allele == "G":
 			dominant_count += 1
@@ -357,3 +357,25 @@ func calculate_size_phenotype(genotype: Dictionary) -> Dictionary:
 				"scale_factor": 1.0,
 				"description": "Standard dragon size"
 			}
+
+
+## Helper to safely read allele arrays, handling legacy dictionary formats
+func _coerce_alleles(value, trait_key: String) -> Array:
+	if value is Array:
+		return value
+
+	if value is Dictionary:
+		# Legacy format: {"alleles": ["A","a"]}
+		if value.has("alleles") and value["alleles"] is Array:
+			return value["alleles"]
+
+		# Fallback: use dictionary values if exactly 2 entries
+		var vals: Array = []
+		for v in value.values():
+			vals.append(v)
+		if vals.size() == 2:
+			push_warning("[GeneticsEngine] Trait '%s' genotype stored as dict; coerced to array" % trait_key)
+			return vals
+
+	push_warning("[GeneticsEngine] Trait '%s' genotype not array/dict, got %s" % [trait_key, type_string(typeof(value))])
+	return []

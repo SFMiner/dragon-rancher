@@ -36,7 +36,6 @@ func open_panel() -> void:
 	show()
 	AudioManager.play_sfx("ui_confirm.ogg")
 
-
 ## Close the breeding panel
 func close_panel() -> void:
 	hide()
@@ -240,3 +239,7 @@ func _show_notification(message: String, is_error: bool = false) -> void:
 		notifications_panel.show_notification(message)
 	else:
 		print("[BreedingPanel] Notification: " + message)
+
+
+func _on_close_button_pressed() -> void:
+	close_panel()

@@ -179,8 +179,8 @@ func can_add_dragon() -> bool:
 func get_total_capacity() -> int:
 	var total: int = BASE_CAPACITY
 	for facility_data in facilities.values():
-		if facility_data.has("capacity"):
-			total += facility_data["capacity"]
+		var cap := _get_facility_capacity_value(facility_data)
+		total += cap
 	return total
 
 
@@ -225,9 +225,26 @@ func _get_facility_capacity(facility_type: String) -> int:
 func get_facility_bonus(bonus_type: String) -> float:
 	var total: float = 0.0
 	for facility_data in facilities.values():
-		if facility_data.has("bonuses") and facility_data["bonuses"].has(bonus_type):
-			total += facility_data["bonuses"][bonus_type]
+		if facility_data is FacilityData:
+			if bonus_type in facility_data.bonuses:
+				total += facility_data.bonuses[bonus_type]
+		elif facility_data is Dictionary:
+			if facility_data.has("bonuses") and facility_data["bonuses"].has(bonus_type):
+				total += facility_data["bonuses"][bonus_type]
 	return total
+
+
+## Helper to safely read capacity from FacilityData or legacy dictionaries
+func _get_facility_capacity_value(facility_data) -> int:
+	if facility_data is FacilityData:
+		return int(facility_data.capacity)
+
+	if facility_data is Dictionary:
+		if facility_data.has("capacity"):
+			return int(facility_data["capacity"])
+
+	push_warning("[RanchState] Facility capacity missing or invalid; using 0")
+	return 0
 
 
 # === EGG MANAGEMENT ===

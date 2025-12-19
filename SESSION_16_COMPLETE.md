@@ -181,7 +181,7 @@ Parent A: D1D3 → alleles [D1, D3]
 Parent B: D1D3 → alleles [D1, D3]
 
 Punnett square:
-       D1    D3
+	   D1    D3
    D1  D1D1  D1D3
    D3  D1D3  D3D3
 
@@ -204,26 +204,26 @@ Results:
 
 ```gdscript
 func _check_dragon_escapes() -> void:
-    var escaped_dragons: Array[DragonData] = []
+	var escaped_dragons: Array[DragonData] = []
 
-    # Check each dragon for escape chance
-    for dragon_data in dragons.values():
-        if dragon_data.phenotype.has("docility"):
-            var docility_pheno: Dictionary = dragon_data.phenotype["docility"]
-            var escape_chance: float = docility_pheno.get("escape_chance", 0.0)
+	# Check each dragon for escape chance
+	for dragon_data in dragons.values():
+		if dragon_data.phenotype.has("docility"):
+			var docility_pheno: Dictionary = dragon_data.phenotype["docility"]
+			var escape_chance: float = docility_pheno.get("escape_chance", 0.0)
 
-            # Roll for escape
-            if RNGService.randf() < escape_chance:
-                escaped_dragons.append(dragon_data)
-                print("[RanchState] %s escaped! (docility: %s, chance: %.0f%%)" % [
-                    dragon_data.name,
-                    docility_pheno.get("name", "Unknown"),
-                    escape_chance * 100.0
-                ])
+			# Roll for escape
+			if RNGService.randf() < escape_chance:
+				escaped_dragons.append(dragon_data)
+				print("[RanchState] %s escaped! (docility: %s, chance: %.0f%%)" % [
+					dragon_data.name,
+					docility_pheno.get("name", "Unknown"),
+					escape_chance * 100.0
+				])
 
-    # Remove escaped dragons
-    for dragon_data in escaped_dragons:
-        remove_dragon(dragon_data.id)
+	# Remove escaped dragons
+	for dragon_data in escaped_dragons:
+		remove_dragon(dragon_data.id)
 ```
 
 **How It Works:**
@@ -245,16 +245,16 @@ func _check_dragon_escapes() -> void:
 **Integrated into Season Progression** (line 554):
 ```gdscript
 func advance_season() -> void:
-    # ... age dragons, process eggs ...
+	# ... age dragons, process eggs ...
 
-    # Process food consumption
-    _process_food_consumption()
+	# Process food consumption
+	_process_food_consumption()
 
-    # Check for dragon escapes (docility trait)
-    _check_dragon_escapes()  # ← NEW!
+	# Check for dragon escapes (docility trait)
+	_check_dragon_escapes()  # ← NEW!
 
-    # Check order deadlines
-    _check_order_deadlines()
+	# Check order deadlines
+	_check_order_deadlines()
 ```
 
 **Strategic Implications:**
@@ -271,18 +271,18 @@ func advance_season() -> void:
 ```gdscript
 # Add docility display if trait present
 if current_dragon.phenotype.has("docility"):
-    var docility_pheno: Dictionary = current_dragon.phenotype["docility"]
-    var docility_name: String = docility_pheno.get("name", "Unknown")
-    var escape_pct: float = docility_pheno.get("escape_chance", 0.0) * 100.0
-    var fight_bonus: int = docility_pheno.get("fight_bonus", 0)
+	var docility_pheno: Dictionary = current_dragon.phenotype["docility"]
+	var docility_name: String = docility_pheno.get("name", "Unknown")
+	var escape_pct: float = docility_pheno.get("escape_chance", 0.0) * 100.0
+	var fight_bonus: int = docility_pheno.get("fight_bonus", 0)
 
-    # Update phenotype label to include docility info
-    var docility_text: String = "\nTemperament: %s (%.0f%% escape, %+d fight)" % [
-        docility_name,
-        escape_pct,
-        fight_bonus
-    ]
-    phenotype_label.text += docility_text
+	# Update phenotype label to include docility info
+	var docility_text: String = "\nTemperament: %s (%.0f%% escape, %+d fight)" % [
+		docility_name,
+		escape_pct,
+		fight_bonus
+	]
+	phenotype_label.text += docility_text
 ```
 
 **Display Format:**
@@ -687,7 +687,7 @@ Season 15: If still here, breed again!
 **Case 2: D1D3 × D1D3**
 ```
 Punnett square:
-       D1    D3
+	   D1    D3
   D1   D1D1  D1D3
   D3   D1D3  D3D3
 

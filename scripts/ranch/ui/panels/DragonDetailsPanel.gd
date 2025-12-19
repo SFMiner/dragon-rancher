@@ -134,10 +134,15 @@ func _get_dragon_color() -> Color:
 
 	# Color based on fire trait
 	if current_dragon.phenotype.has("fire"):
-		if current_dragon.phenotype["fire"] == "fire":
-			return Color(0.9, 0.3, 0.2)  # Red for fire
-		else:
-			return Color(0.6, 0.6, 0.6)  # Gray for no fire
+		var fire_pheno = current_dragon.phenotype["fire"]
+		if fire_pheno is Dictionary:
+			if fire_pheno.get("name", "").to_lower() == "fire":
+				return Color(0.9, 0.3, 0.2)  # Red for fire
+		elif fire_pheno is String:
+			if fire_pheno.to_lower() == "fire":
+				return Color(0.9, 0.3, 0.2)
+
+		return Color(0.6, 0.6, 0.6)  # Gray for no fire
 
 	return Color.GRAY
 
@@ -226,4 +231,8 @@ func _on_sell_pressed() -> void:
 		# TODO: Pass dragon to fulfill mode
 		orders_panel.open_panel()
 
+	close_panel()
+
+
+func _on_close_button_pressed() -> void:
 	close_panel()

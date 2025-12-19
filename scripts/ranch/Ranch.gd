@@ -135,7 +135,7 @@ func _spawn_dragon(dragon_id: String) -> void:
 
 	# Connect dragon_clicked signal if available
 	if dragon_node.has_signal("dragon_clicked"):
-		dragon_node.dragon_clicked.connect(_on_dragon_clicked.bind(dragon_id))
+		dragon_node.dragon_clicked.connect(_on_dragon_clicked)
 
 	# Add to scene
 	dragons_layer.add_child(dragon_node)
@@ -278,7 +278,7 @@ func _get_facility_color(facility_type: String) -> Color:
 
 
 ## Dragon clicked callback
-func _on_dragon_clicked(dragon_id: String) -> void:
+func _on_dragon_clicked(_dragon_node: Node2D, dragon_id: String) -> void:
 	var dragon_data: DragonData = RanchState.get_dragon(dragon_id)
 	if dragon_data == null:
 		return

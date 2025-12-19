@@ -49,8 +49,9 @@ func load_tutorial_steps(json_path: String) -> bool:
 	tutorial_steps.clear()
 	for step_data in data["steps"]:
 		if step_data is Dictionary:
-			var step = TutorialStep.from_dict(step_data)
-			tutorial_steps.append(step)
+			var from_step = TutorialStep.new()
+			from_step.from_dict(step_data)
+			tutorial_steps.append(from_step)
 
 	print("Loaded ", tutorial_steps.size(), " tutorial steps")
 	return true

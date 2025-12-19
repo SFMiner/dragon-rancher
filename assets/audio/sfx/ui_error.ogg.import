@@ -2,12 +2,13 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://dtxurqv38xk4q"
-valid=false
+uid="uid://di8y4er7ubw6a"
+path="res://.godot/imported/ui_error.ogg-daea22c0b55cf2f8b80c96b97cf1c4fa.oggvorbisstr"
 
 [deps]
 
 source_file="res://assets/audio/sfx/ui_error.ogg"
+dest_files=["res://.godot/imported/ui_error.ogg-daea22c0b55cf2f8b80c96b97cf1c4fa.oggvorbisstr"]
 
 [params]
 

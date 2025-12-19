@@ -37,22 +37,22 @@ Added Size as a multi-locus trait using two independent loci:
 ```json
 {
   "SS": {
-    "name": "S-Large",
-    "sprite_suffix": "",
-    "color": "#4A90E2",
-    "description": "Homozygous large (S locus)"
+	"name": "S-Large",
+	"sprite_suffix": "",
+	"color": "#4A90E2",
+	"description": "Homozygous large (S locus)"
   },
   "Ss": {
-    "name": "S-Large",
-    "sprite_suffix": "",
-    "color": "#4A90E2",
-    "description": "Heterozygous large (S locus)"
+	"name": "S-Large",
+	"sprite_suffix": "",
+	"color": "#4A90E2",
+	"description": "Heterozygous large (S locus)"
   },
   "ss": {
-    "name": "S-Small",
-    "sprite_suffix": "",
-    "color": "#7EB2E8",
-    "description": "Homozygous small (S locus)"
+	"name": "S-Small",
+	"sprite_suffix": "",
+	"color": "#7EB2E8",
+	"description": "Homozygous small (S locus)"
   }
 }
 ```
@@ -71,22 +71,22 @@ Added Size as a multi-locus trait using two independent loci:
 ```json
 {
   "GG": {
-    "name": "G-Tall",
-    "sprite_suffix": "",
-    "color": "#50C878",
-    "description": "Homozygous tall (G locus)"
+	"name": "G-Tall",
+	"sprite_suffix": "",
+	"color": "#50C878",
+	"description": "Homozygous tall (G locus)"
   },
   "Gg": {
-    "name": "G-Tall",
-    "sprite_suffix": "",
-    "color": "#50C878",
-    "description": "Heterozygous tall (G locus)"
+	"name": "G-Tall",
+	"sprite_suffix": "",
+	"color": "#50C878",
+	"description": "Heterozygous tall (G locus)"
   },
   "gg": {
-    "name": "G-Short",
-    "sprite_suffix": "",
-    "color": "#90EE90",
-    "description": "Homozygous short (G locus)"
+	"name": "G-Short",
+	"sprite_suffix": "",
+	"color": "#90EE90",
+	"description": "Homozygous short (G locus)"
   }
 }
 ```
@@ -120,61 +120,61 @@ This method calculates the combined size phenotype from both size loci:
 
 ```gdscript
 func calculate_size_phenotype(genotype: Dictionary) -> Dictionary:
-    if not genotype.has("size_S") or not genotype.has("size_G"):
-        # No size genes, return default medium size
-        return {
-            "name": "Medium",
-            "scale_factor": 1.0,
-            "description": "Standard dragon size"
-        }
+	if not genotype.has("size_S") or not genotype.has("size_G"):
+		# No size genes, return default medium size
+		return {
+			"name": "Medium",
+			"scale_factor": 1.0,
+			"description": "Standard dragon size"
+		}
 
-    # Count dominant alleles
-    var dominant_count: int = 0
+	# Count dominant alleles
+	var dominant_count: int = 0
 
-    # Count S alleles
-    var s_alleles: Array = genotype.get("size_S", [])
-    for allele in s_alleles:
-        if allele == "S":
-            dominant_count += 1
+	# Count S alleles
+	var s_alleles: Array = genotype.get("size_S", [])
+	for allele in s_alleles:
+		if allele == "S":
+			dominant_count += 1
 
-    # Count G alleles
-    var g_alleles: Array = genotype.get("size_G", [])
-    for allele in g_alleles:
-        if allele == "G":
-            dominant_count += 1
+	# Count G alleles
+	var g_alleles: Array = genotype.get("size_G", [])
+	for allele in g_alleles:
+		if allele == "G":
+			dominant_count += 1
 
-    # Map dominant count to size category
-    match dominant_count:
-        4:  # SSGG
-            return {
-                "name": "Extra Large",
-                "scale_factor": 2.0,
-                "description": "Massive dragon (SSGG)"
-            }
-        3:  # SSGg or SsGG
-            return {
-                "name": "Large",
-                "scale_factor": 1.5,
-                "description": "Large dragon (3 dominant alleles)"
-            }
-        2:  # SsGg, SSgg, or ssGG
-            return {
-                "name": "Medium",
-                "scale_factor": 1.0,
-                "description": "Standard dragon size (2 dominant alleles)"
-            }
-        1:  # Ssgg or ssGg
-            return {
-                "name": "Small",
-                "scale_factor": 0.75,
-                "description": "Small dragon (1 dominant allele)"
-            }
-        0:  # ssgg
-            return {
-                "name": "Tiny",
-                "scale_factor": 0.5,
-                "description": "Tiny dragon (ssgg)"
-            }
+	# Map dominant count to size category
+	match dominant_count:
+		4:  # SSGG
+			return {
+				"name": "Extra Large",
+				"scale_factor": 2.0,
+				"description": "Massive dragon (SSGG)"
+			}
+		3:  # SSGg or SsGG
+			return {
+				"name": "Large",
+				"scale_factor": 1.5,
+				"description": "Large dragon (3 dominant alleles)"
+			}
+		2:  # SsGg, SSgg, or ssGG
+			return {
+				"name": "Medium",
+				"scale_factor": 1.0,
+				"description": "Standard dragon size (2 dominant alleles)"
+			}
+		1:  # Ssgg or ssGg
+			return {
+				"name": "Small",
+				"scale_factor": 0.75,
+				"description": "Small dragon (1 dominant allele)"
+			}
+		0:  # ssgg
+			return {
+				"name": "Tiny",
+				"scale_factor": 0.5,
+				"description": "Tiny dragon (ssgg)"
+			}
 ```
 
 **How It Works:**
@@ -190,13 +190,13 @@ Added calculation of combined size phenotype:
 ```gdscript
 # Calculate combined size phenotype if both loci present
 if genotype.has("size_S") and genotype.has("size_G"):
-    var size_pheno: Dictionary = calculate_size_phenotype(genotype)
-    phenotype["size"] = size_pheno
-    if debug_mode:
-        print("  Combined Size: %s (scale: %.1fx)" % [
-            size_pheno.get("name", "Unknown"),
-            size_pheno.get("scale_factor", 1.0)
-        ])
+	var size_pheno: Dictionary = calculate_size_phenotype(genotype)
+	phenotype["size"] = size_pheno
+	if debug_mode:
+		print("  Combined Size: %s (scale: %.1fx)" % [
+			size_pheno.get("name", "Unknown"),
+			size_pheno.get("scale_factor", 1.0)
+		])
 ```
 
 **Result:**
@@ -220,8 +220,8 @@ var stage_scale: float = Lifecycle.get_stage_scale(dragon_data.life_stage)
 # Get scale based on size phenotype
 var size_scale: float = 1.0
 if dragon_data.phenotype.has("size"):
-    var size_pheno: Dictionary = dragon_data.phenotype["size"]
-    size_scale = size_pheno.get("scale_factor", 1.0)
+	var size_pheno: Dictionary = dragon_data.phenotype["size"]
+	size_scale = size_pheno.get("scale_factor", 1.0)
 
 # Combine both scales
 var final_scale: float = stage_scale * size_scale
@@ -336,9 +336,9 @@ Added metabolism multiplier to food consumption calculation:
 ```gdscript
 # Modified by metabolism trait
 if dragon_data.phenotype.has("metabolism"):
-    var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
-    var food_mult: float = metabolism_pheno.get("food_multiplier", 1.0)
-    consumption = int(consumption * food_mult)
+	var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+	var food_mult: float = metabolism_pheno.get("food_multiplier", 1.0)
+	consumption = int(consumption * food_mult)
 ```
 
 **Effect:**
@@ -361,9 +361,9 @@ var speed_multiplier: float = Lifecycle.get_stage_speed_multiplier(dragon_data.l
 
 # Apply metabolism speed multiplier if present
 if dragon_data.phenotype.has("metabolism"):
-    var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
-    var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
-    speed_multiplier *= metabolism_speed
+	var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+	var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
+	speed_multiplier *= metabolism_speed
 
 wander_speed = base_wander_speed * speed_multiplier
 ```
@@ -388,9 +388,9 @@ var speed_multiplier: float = Lifecycle.get_stage_speed_multiplier(dragon_data.l
 
 # Apply metabolism speed multiplier if present
 if dragon_data.phenotype.has("metabolism"):
-    var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
-    var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
-    speed_multiplier *= metabolism_speed
+	var metabolism_pheno: Dictionary = dragon_data.phenotype["metabolism"]
+	var metabolism_speed: float = metabolism_pheno.get("speed_multiplier", 1.0)
+	speed_multiplier *= metabolism_speed
 
 wander_speed = base_wander_speed * speed_multiplier
 ```
@@ -599,11 +599,11 @@ All criteria met ✓:
 - [x] **SsGg × SsGg → size distribution correct**
   - 9:3:3:1 genotype ratio for dihybrid cross
   - Size distribution:
-    - 1/16 SSGG (Extra Large, 4 dominant)
-    - 2/16 SSGg + 2/16 SsGG (Large, 3 dominant)
-    - 1/16 SSgg + 4/16 SsGg + 1/16 ssGG (Medium, 2 dominant)
-    - 2/16 Ssgg + 2/16 ssGg (Small, 1 dominant)
-    - 1/16 ssgg (Tiny, 0 dominant)
+	- 1/16 SSGG (Extra Large, 4 dominant)
+	- 2/16 SSGg + 2/16 SsGG (Large, 3 dominant)
+	- 1/16 SSgg + 4/16 SsGg + 1/16 ssGG (Medium, 2 dominant)
+	- 2/16 Ssgg + 2/16 ssGg (Small, 1 dominant)
+	- 1/16 ssgg (Tiny, 0 dominant)
 
 - [x] **Dragon sprites scale correctly by size**
   - Tiny (0.5x), Small (0.75x), Medium (1.0x), Large (1.5x), Extra Large (2.0x)
@@ -668,7 +668,7 @@ phenotype["size_G"] = {...}  # From TraitDef lookup
 
 # Step 2: Calculate combined phenotype (explicit)
 if genotype.has("size_S") and genotype.has("size_G"):
-    phenotype["size"] = calculate_size_phenotype(genotype)
+	phenotype["size"] = calculate_size_phenotype(genotype)
 ```
 
 ### Additive Gene Effects
@@ -679,11 +679,11 @@ var dominant_count: int = 0
 
 # Count from size_S locus
 for allele in genotype["size_S"]:
-    if allele == "S": dominant_count += 1
+	if allele == "S": dominant_count += 1
 
 # Count from size_G locus
 for allele in genotype["size_G"]:
-    if allele == "G": dominant_count += 1
+	if allele == "G": dominant_count += 1
 
 # dominant_count ranges from 0 to 4
 ```
@@ -727,7 +727,7 @@ var speed_multiplier = Lifecycle.get_stage_speed_multiplier(life_stage)
 
 # Multiply by metabolism
 if phenotype.has("metabolism"):
-    speed_multiplier *= metabolism_pheno["speed_multiplier"]
+	speed_multiplier *= metabolism_pheno["speed_multiplier"]
 
 wander_speed = base_wander_speed * speed_multiplier
 ```
@@ -737,7 +737,7 @@ wander_speed = base_wander_speed * speed_multiplier
 var consumption = base_consumption
 
 if phenotype.has("metabolism"):
-    consumption *= metabolism_pheno["food_multiplier"]
+	consumption *= metabolism_pheno["food_multiplier"]
 ```
 
 3. **Lifespan** (Future: Lifecycle.gd)
@@ -746,7 +746,7 @@ if phenotype.has("metabolism"):
 var base_lifespan = 12  # seasons
 
 if phenotype.has("metabolism"):
-    base_lifespan *= metabolism_pheno["lifespan_multiplier"]
+	base_lifespan *= metabolism_pheno["lifespan_multiplier"]
 ```
 
 ### Combined Scale Calculation

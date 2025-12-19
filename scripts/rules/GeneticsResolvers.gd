@@ -172,8 +172,33 @@ static func get_trait_alleles(genotype: Dictionary, trait_key: String) -> Array:
 		return []
 
 	var alleles = genotype[trait_key]
+
+	# Coerce legacy dictionary format (e.g., {"alleles": [...]})
+	if alleles is Dictionary:
+		if alleles.has("alleles") and alleles["alleles"] is Array:
+			alleles = alleles["alleles"]
+		else:
+			# Fallback: use values if exactly 2
+			var vals: Array = []
+			for v in alleles.values():
+				vals.append(v)
+			if vals.size() == 2:
+				alleles = vals
+			else:
+				push_warning("[GeneticsResolvers] get_trait_alleles: invalid dict format for trait '%s'" % trait_key)
+				return []
+
+	# Coerce string formats like "Ff"
+	if alleles is String:
+		var s: String = alleles
+		if s.length() == 2:
+			alleles = [s[0], s[1]]
+		else:
+			push_warning("[GeneticsResolvers] get_trait_alleles: invalid string format for trait '%s': %s" % [trait_key, s])
+			return []
+
 	if not alleles is Array or alleles.size() != 2:
-		push_warning("[GeneticsResolvers] get_trait_alleles: invalid alleles for trait '%s'" % trait_key)
+		push_warning("[GeneticsResolvers] get_trait_alleles: invalid alleles for trait '%s' (type: %s)" % [trait_key, type_string(typeof(alleles))])
 		return []
 
 	return [str(alleles[0]), str(alleles[1])]

@@ -1,196 +1,144 @@
 {
-	"steps": [
-		{
-			"id": "tut_01_welcome",
-			"title": "Welcome to Dragon Ranch!",
-			"body": "Welcome, new dragon breeder! You've inherited a small ranch where you'll breed dragons to fulfill customer orders. Click 'Next' to begin your tutorial.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "next_clicked",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_02_view_dragons",
-			"title": "Meet Your Starter Dragons",
-			"body": "These are your first two dragons! Click on any dragon to view its details, including its genetic traits. Try clicking on a dragon now.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "panel_opened",
-				"payload": {
-					"panel": "dragon_details"
-				}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_03_open_breeding",
-			"title": "Time to Breed!",
-			"body": "To fulfill orders, you'll need to breed dragons with specific traits. Click the 'Breeding' button to open the breeding panel.",
-			"anchor": "breeding_button",
-			"highlight_mode": "anchor",
-			"advance_condition": {
-				"event_type": "panel_opened",
-				"payload": {
-					"panel": "breeding"
-				}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_04_select_parents",
-			"title": "Select Breeding Pair",
-			"body": "Choose two adult dragons to breed. Their offspring will inherit traits from both parents following genetic rules. Select both parent slots now.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "both_parents_selected",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_05_breed",
-			"title": "Create Your First Egg",
-			"body": "Great! Now click the 'Breed' button to create an egg. The egg will inherit genetic traits from both parents according to Mendelian inheritance.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "egg_created",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_06_advance_season",
-			"title": "Time Passes in Seasons",
-			"body": "Your egg needs time to hatch. Time in Dragon Ranch progresses by seasons. Click the 'Advance Season' button to move time forward.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "season_advanced",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_07_egg_hatches",
-			"title": "Your Dragon Hatches!",
-			"body": "Continue advancing seasons until your egg hatches into a hatchling, then grows into an adult dragon. Adult dragons can be sold to fulfill orders.",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "dragon_matured",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_08_view_orders",
-			"title": "Check Customer Orders",
-			"body": "Customers place orders for dragons with specific traits. Click the 'Orders' button to see available orders.",
-			"anchor": "orders_button",
-			"highlight_mode": "anchor",
-			"advance_condition": {
-				"event_type": "panel_opened",
-				"payload": {
-					"panel": "orders"
-				}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_09_fulfill_order",
-			"title": "Fulfill Your First Order",
-			"body": "Select an order and choose a dragon that matches the requirements. Fulfilling orders earns you money to expand your ranch!",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "order_completed",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_10_build_facility",
-			"title": "Expand Your Ranch",
-			"body": "Use your earnings to buy new facilities! Click the 'Build' button to see what you can purchase. Facilities increase your capacity and unlock new features.",
-			"anchor": "build_button",
-			"highlight_mode": "anchor",
-			"advance_condition": {
-				"event_type": "panel_opened",
-				"payload": {
-					"panel": "build"
-				}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_11_complete",
-			"title": "Tutorial Complete!",
-			"body": "Congratulations! You've learned the basics of running a dragon ranch. Continue breeding dragons, fulfilling orders, and expanding your facilities. Understanding genetics will help you breed better dragons faster. Good luck!",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "next_clicked",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_12_color_unlocked",
-			"title": "New Trait Unlocked: Color!",
-			"body": "You've reached reputation level 1! The Color trait is now unlocked. Dragons can now have Red (RR), Pink (RW), or White (WW) scales.\n\nColor uses incomplete dominance: breeding RR × WW always produces Pink (RW) offspring, not pure Red or White!",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "next_clicked",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_13_color_breeding",
-			"title": "Breeding with Incomplete Dominance",
-			"body": "Unlike simple dominance (Fire, Wings, Armor), Color follows incomplete dominance:\n• RR × RR = 100% Red (RR)\n• RR × WW = 100% Pink (RW)\n• RW × RW = 25% Red (RR), 50% Pink (RW), 25% White (WW)\n\nOpen the Breeding panel to see color predictions.",
-			"anchor": "breeding_button",
-			"highlight_mode": "anchor",
-			"advance_condition": {
-				"event_type": "panel_opened",
-				"payload": {
-					"panel": "breeding"
-				}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		},
-		{
-			"id": "tut_14_color_orders",
-			"title": "Customers Want Colored Dragons!",
-			"body": "Now that Color is unlocked, customers will start requesting dragons of specific colors. Try breeding a Pink dragon (RW) by crossing Red (RR) and White (WW) parents. Check the Orders panel for color-based orders!",
-			"anchor": "",
-			"highlight_mode": "screen_center",
-			"advance_condition": {
-				"event_type": "next_clicked",
-				"payload": {}
-			},
-			"on_enter_actions": [],
-			"on_exit_actions": []
-		}
-	]
+  "steps": [
+    {
+      "id": "tut_01_welcome",
+      "title": "Welcome to the Ranch",
+      "body": "You run a dragon ranch. Breed dragons and fill orders to grow. Press Next to start.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "next_clicked", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_02_view_dragons",
+      "title": "Click a Dragon",
+      "body": "Click any dragon in the yard to open its details and see its traits.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "panel_opened", "payload": { "panel": "dragon_details" } },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_03_open_breeding",
+      "title": "Open Breeding",
+      "body": "Click the ?? Breed button to open the Breeding panel.",
+      "anchor": "breeding_button",
+      "highlight_mode": "anchor",
+      "advance_condition": { "event_type": "panel_opened", "payload": { "panel": "breeding" } },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_04_select_parents",
+      "title": "Pick Parents",
+      "body": "Select two adult dragons for Parent A and Parent B slots.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "both_parents_selected", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_05_breed",
+      "title": "Create an Egg",
+      "body": "Press Breed to make an egg. The egg inherits traits from both parents.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "egg_created", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_06_advance_season",
+      "title": "Advance a Season",
+      "body": "Press Advance Season to let time pass and progress eggs and dragons.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "season_advanced", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_07_egg_hatches",
+      "title": "Watch It Grow",
+      "body": "Advance seasons until the egg hatches and the hatchling matures to adult.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "dragon_matured", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_08_view_orders",
+      "title": "Check Orders",
+      "body": "Open Orders to see customers and their required traits.",
+      "anchor": "orders_button",
+      "highlight_mode": "anchor",
+      "advance_condition": { "event_type": "panel_opened", "payload": { "panel": "orders" } },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_09_fulfill_order",
+      "title": "Fulfill an Order",
+      "body": "Choose an order, pick a matching dragon, and fulfill it to earn money.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "order_completed", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_10_build_facility",
+      "title": "Build Facilities",
+      "body": "Open Build to add capacity and bonuses. Buy what you can afford.",
+      "anchor": "build_button",
+      "highlight_mode": "anchor",
+      "advance_condition": { "event_type": "panel_opened", "payload": { "panel": "build" } },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_11_complete",
+      "title": "Tutorial Complete",
+      "body": "Keep breeding, selling, and building. Use traits to hit tougher orders. Press Next to finish.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "next_clicked", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_12_color_unlocked",
+      "title": "Trait Unlocked: Color",
+      "body": "Reputation 1 unlocks Color. Dragons can be Red (RR), Pink (RW), or White (WW).",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "next_clicked", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_13_color_breeding",
+      "title": "Breeding Color",
+      "body": "Color is incomplete dominance: RR+WW -> all RW; RW+RW -> 25% RR, 50% RW, 25% WW. Use Breed panel to preview.",
+      "anchor": "breeding_button",
+      "highlight_mode": "anchor",
+      "advance_condition": { "event_type": "panel_opened", "payload": { "panel": "breeding" } },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    },
+    {
+      "id": "tut_14_color_orders",
+      "title": "Color Orders Arrive",
+      "body": "Customers now ask for specific colors. Try breeding a Pink (RW) dragon and check Orders.",
+      "anchor": "",
+      "highlight_mode": "screen_center",
+      "advance_condition": { "event_type": "next_clicked", "payload": {} },
+      "on_enter_actions": [],
+      "on_exit_actions": []
+    }
+  ]
 }

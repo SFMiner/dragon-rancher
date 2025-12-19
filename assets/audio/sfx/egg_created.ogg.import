@@ -3,11 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://blk62dxa5rd1"
-valid=false
+path="res://.godot/imported/egg_created.ogg-ba1bae0048d164ed6e57ec3870bbf50b.oggvorbisstr"
 
 [deps]
 
 source_file="res://assets/audio/sfx/egg_created.ogg"
+dest_files=["res://.godot/imported/egg_created.ogg-ba1bae0048d164ed6e57ec3870bbf50b.oggvorbisstr"]
 
 [params]
 

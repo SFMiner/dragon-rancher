@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "messages": {
+    "order_completed": "Order completed! +${amount}",
+    "egg_hatched": "{dragon_name} has hatched!",
+    "reputation_increased": "Reputation increased to {level}!",
+    "trait_unlocked": "New trait unlocked: {trait_name}!",
+    "dragon_escaped": "{dragon_name} escaped! (Lost)",
+    "dragon_died": "{dragon_name} has died of old age.",
+    "achievement_unlocked": "Achievement unlocked: {achievement_name}",
+    "autosave_complete": "Game saved.",
+    "season_advanced": "Season advanced to {season}."
+  }
+}

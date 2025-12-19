@@ -32,28 +32,28 @@ Added Color trait to the trait definitions database with incomplete dominance:
 ```json
 {
   "RR": {
-    "name": "Red",
-    "sprite_suffix": "red",
-    "color": "#E63946",
-    "description": "Bright red scales"
+	"name": "Red",
+	"sprite_suffix": "red",
+	"color": "#E63946",
+	"description": "Bright red scales"
   },
   "RW": {
-    "name": "Pink",
-    "sprite_suffix": "pink",
-    "color": "#F2A2B0",
-    "description": "Pink scales (blend of red and white)"
+	"name": "Pink",
+	"sprite_suffix": "pink",
+	"color": "#F2A2B0",
+	"description": "Pink scales (blend of red and white)"
   },
   "WR": {
-    "name": "Pink",
-    "sprite_suffix": "pink",
-    "color": "#F2A2B0",
-    "description": "Pink scales (blend of red and white)"
+	"name": "Pink",
+	"sprite_suffix": "pink",
+	"color": "#F2A2B0",
+	"description": "Pink scales (blend of red and white)"
   },
   "WW": {
-    "name": "White",
-    "sprite_suffix": "white",
-    "color": "#F5F5F5",
-    "description": "Pure white scales"
+	"name": "White",
+	"sprite_suffix": "white",
+	"color": "#F5F5F5",
+	"description": "Pure white scales"
   }
 }
 ```
@@ -452,25 +452,25 @@ RW × RW → 25% Red, 50% Pink, 25% White
 ```gdscript
 # Test incomplete dominance
 func test_color_incomplete_dominance():
-    var parent_rr = create_dragon_with_genotype({"color": ["R", "R"]})
-    var parent_ww = create_dragon_with_genotype({"color": ["W", "W"]})
+	var parent_rr = create_dragon_with_genotype({"color": ["R", "R"]})
+	var parent_ww = create_dragon_with_genotype({"color": ["W", "W"]})
 
-    var offspring = GeneticsEngine.breed_dragons(parent_rr, parent_ww)
-    var phenotype = GeneticsEngine.calculate_phenotype(offspring)
+	var offspring = GeneticsEngine.breed_dragons(parent_rr, parent_ww)
+	var phenotype = GeneticsEngine.calculate_phenotype(offspring)
 
-    assert(phenotype["color"]["name"] == "Pink")
+	assert(phenotype["color"]["name"] == "Pink")
 
 # Test 1:2:1 ratio
 func test_color_ratio():
-    var parent_rw_a = create_dragon_with_genotype({"color": ["R", "W"]})
-    var parent_rw_b = create_dragon_with_genotype({"color": ["R", "W"]})
+	var parent_rw_a = create_dragon_with_genotype({"color": ["R", "W"]})
+	var parent_rw_b = create_dragon_with_genotype({"color": ["R", "W"]})
 
-    var punnett = GeneticsEngine.generate_punnett_square(parent_rw_a, parent_rw_b, "color")
+	var punnett = GeneticsEngine.generate_punnett_square(parent_rw_a, parent_rw_b, "color")
 
-    # Verify outcomes
-    assert(has_outcome(punnett, "RR", 0.25))
-    assert(has_outcome(punnett, "RW", 0.50))
-    assert(has_outcome(punnett, "WW", 0.25))
+	# Verify outcomes
+	assert(has_outcome(punnett, "RR", 0.25))
+	assert(has_outcome(punnett, "RW", 0.50))
+	assert(has_outcome(punnett, "WW", 0.25))
 ```
 
 ---

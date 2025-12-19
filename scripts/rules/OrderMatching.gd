@@ -26,7 +26,7 @@ static func _check_trait_requirement(dragon: DragonData, trait_key: String, requ
 	if not dragon.genotype.has(trait_key):
 		return false
 
-	var alleles: Array = dragon.genotype[trait_key]
+	var alleles: Array = GeneticsResolvers.get_trait_alleles(dragon.genotype, trait_key)
 	if alleles.size() != 2:
 		return false
 
@@ -34,22 +34,32 @@ static func _check_trait_requirement(dragon: DragonData, trait_key: String, requ
 	var normalized: String = GeneticsResolvers.normalize_genotype(alleles)
 
 	# Parse requirement pattern
-	if requirement.length() == 2:
+	if requirement.ends_with("_"):
+		# Dominant allele present (e.g., "F_" or multi-char like "D1_")
+		var required_allele: String = requirement.substr(0, requirement.length() - 1)
+		for allele in alleles:
+			if str(allele) == required_allele:
+				return true
+		return false
+
+	elif requirement.length() == 2:
 		# Exact genotype match (e.g., "FF", "Ff", "ff")
 		var req_normalized: String = GeneticsResolvers.normalize_genotype([requirement[0], requirement[1]])
 		return normalized == req_normalized
 
-	elif requirement.ends_with("_"):
-		# Dominant allele present (e.g., "F_" means has at least one F)
-		var required_allele: String = requirement[0]
-		return required_allele in alleles
-
 	else:
-		# Phenotype name match
+		# Phenotype name match, tolerant to dict/string
 		if not dragon.phenotype.has(trait_key):
 			return false
 
-		var pheno_name: String = dragon.phenotype[trait_key].get("name", "").to_lower()
+		var pheno = dragon.phenotype[trait_key]
+		var pheno_name: String = ""
+		if pheno is Dictionary:
+			pheno_name = pheno.get("name", "").to_lower()
+		elif pheno is String:
+			pheno_name = pheno.to_lower()
+		else:
+			return false
 		return pheno_name == requirement.to_lower()
 
 	return false

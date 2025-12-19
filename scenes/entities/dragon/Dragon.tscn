@@ -40,6 +40,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ClickArea" type="Area2D" parent="."]
+input_pickable = true
+collision_layer = 1
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
 shape = SubResource("RectangleShape2D_click")

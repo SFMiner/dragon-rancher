@@ -28,3 +28,7 @@ func open_panel():
 func close_panel():
 	hide()
 	AudioManager.play_sfx("ui_click.ogg")
+
+
+func _on_close_button_pressed() -> void:
+	close_panel()

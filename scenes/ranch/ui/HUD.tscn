@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bciyvj3x0v3hx"]
 
-[ext_resource type="Script" path="res://scripts/ranch/ui/HUD.gd" id="1_xqyf6"]
+[ext_resource type="Script" uid="uid://bg1as1fdim2f1" path="res://scripts/ranch/ui/HUD.gd" id="1_xqyf6"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -9,11 +9,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_xqyf6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="TopBar" type="Panel" parent="CanvasLayer"]
+anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 40.0
 
@@ -56,16 +58,11 @@ text = "Reputation: XXX"
 layout_mode = 2
 text = "Menu"
 
-[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MenuButton" to="." method="_on_menu_button_pressed"]
-
 [node name="SettingsButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
 layout_mode = 2
 text = "Settings"
 
-[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/SettingsButton" to="." method="_on_settings_button_pressed"]
-
 [node name="BottomBar" type="HBoxContainer" parent="CanvasLayer"]
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -83,22 +80,21 @@ alignment = 1
 layout_mode = 2
 text = "📋 Orders"
 
-[connection signal="pressed" from="CanvasLayer/BottomBar/OrdersButton" to="." method="_on_orders_button_pressed"]
-
 [node name="BreedingButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
 text = "🧬 Breed"
-
-[connection signal="pressed" from="CanvasLayer/BottomBar/BreedingButton" to="." method="_on_breeding_button_pressed"]
 
 [node name="BuildButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
 text = "🏗️ Build"
 
-[connection signal="pressed" from="CanvasLayer/BottomBar/BuildButton" to="." method="_on_build_button_pressed"]
-
 [node name="AdvanceSeasonButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
 text = "⏩ Advance Season"
 
+[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MenuButton" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/BottomBar/OrdersButton" to="." method="_on_orders_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/BottomBar/BreedingButton" to="." method="_on_breeding_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/BottomBar/BuildButton" to="." method="_on_build_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/AdvanceSeasonButton" to="." method="_on_advance_season_button_pressed"]

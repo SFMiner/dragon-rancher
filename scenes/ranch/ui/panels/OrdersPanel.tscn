@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dgaq2j7gq3v0c"]
 
-[ext_resource type="Script" path="res://scripts/ranch/ui/panels/OrdersPanel.gd" id="1_wke2m"]
+[ext_resource type="Script" uid="uid://di8nfastuqsqy" path="res://scripts/ranch/ui/panels/OrdersPanel.gd" id="1_wke2m"]
 
 [node name="OrdersPanel" type="PanelContainer"]
 anchors_preset = 8
@@ -35,3 +35,11 @@ size_flags_horizontal = 3
 [node name="RefreshButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Refresh Orders"
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Close"
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

@@ -22,6 +22,10 @@ func _ready():
 	hide()
 
 
+func _on_close_button_pressed() -> void:
+	close_panel()
+
+
 ## Open the panel
 func open_panel() -> void:
 	refresh_display()
@@ -188,22 +192,8 @@ func _get_matching_dragons(order: OrderData) -> Array[DragonData]:
 
 ## Check if a dragon matches an order's requirements
 func _dragon_matches_order(dragon: DragonData, order: OrderData) -> bool:
-	# Check each required trait
-	for trait_key in order.required_traits.keys():
-		var required_pattern: String = order.required_traits[trait_key]
-
-		# Get dragon's phenotype for this trait
-		if not dragon.phenotype.has(trait_key):
-			return false  # Dragon doesn't have this trait
-
-		var dragon_phenotype: String = dragon.phenotype[trait_key]
-
-		# Simple pattern matching (could be more sophisticated)
-		# Pattern "_" means any value
-		if required_pattern != "_" and dragon_phenotype != required_pattern:
-			return false  # Doesn't match required phenotype
-
-	return true  # All traits match
+	# Reuse shared order-matching logic (handles genotype, allele wildcards, phenotype names)
+	return OrderMatching.does_dragon_match(dragon, order)
 
 
 ## Show notification message
