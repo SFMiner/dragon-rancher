@@ -37,6 +37,7 @@ script = ExtResource("2_camera")
 mouse_filter = 1
 
 [node name="BreedingPanel" parent="UILayer" instance=ExtResource("4_breeding")]
+visible = false
 offset_top = -206.0
 
 [node name="DragonDetailsPanel" parent="UILayer" instance=ExtResource("5_details")]

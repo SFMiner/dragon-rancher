@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5w7c6x8yqv8k"]
+[gd_scene load_steps=4 format=3 uid="uid://b5w7c6x8yqv8k"]
 
 [ext_resource type="Script" uid="uid://ds2ne8o5xb145" path="res://scripts/ranch/ui/panels/SettingsPanel.gd" id="1_f5jig"]
 [ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="1_gym2w"]
+
+[sub_resource type="Theme" id="Theme_gym2w"]
 
 [node name="SettingsPanel" type="PanelContainer"]
 anchors_preset = 15
@@ -20,28 +22,34 @@ size_flags_vertical = 4
 
 [node name="MasterVolumeLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Master Volume"
 
 [node name="MasterVolumeSlider" type="HSlider" parent="VBoxContainer"]
 layout_mode = 2
+theme = SubResource("Theme_gym2w")
 min_value = -40.0
 max_value = 0.0
 
 [node name="MusicVolumeLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Music Volume"
 
 [node name="MusicVolumeSlider" type="HSlider" parent="VBoxContainer"]
 layout_mode = 2
+theme = SubResource("Theme_gym2w")
 min_value = -40.0
 max_value = 0.0
 
 [node name="SfxVolumeLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "SFX Volume"
 
 [node name="SfxVolumeSlider" type="HSlider" parent="VBoxContainer"]
 layout_mode = 2
+theme = SubResource("Theme_gym2w")
 min_value = -40.0
 max_value = 0.0
 

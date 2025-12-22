@@ -46,7 +46,11 @@ func _ready() -> void:
 	# Start idle animation if available
 	if animation_player and animation_player.has_animation("idle"):
 		animation_player.play("idle")
+	refresh_from_data()
 
+	# Update visuals when season advances (age may change in RanchState)
+	if Engine.has_singleton("RanchState") or typeof(RanchState) != TYPE_NIL:
+		RanchState.season_changed.connect(_on_season_changed)
 
 ## Setup dragon with data
 func setup(data: DragonData) -> void:
@@ -83,8 +87,8 @@ func update_visuals() -> void:
 	if dragon_data == null:
 		return
 
-	# Get scale based on life stage
-	var stage_scale: float = Lifecycle.get_stage_scale(dragon_data.life_stage)
+	# Get scale based on life stage and age progression
+	var stage_scale: float = _compute_age_stage_scale()
 
 	# Get scale based on size phenotype
 	var size_scale: float = 1.0
@@ -299,3 +303,41 @@ func refresh_from_data() -> void:
 		# Update name label
 		if name_label:
 			name_label.text = dragon_data.name
+
+
+## Called when RanchState advances season (dragon ages elsewhere)
+func _on_season_changed(new_season: int) -> void:
+	if dragon_data:
+		refresh_from_data()
+
+
+## Compute a smooth scale multiplier based on age progression inside the current life stage
+func _compute_age_stage_scale() -> float:
+	if dragon_data == null:
+		return 1.0
+
+	var age: int = dragon_data.age
+	var stage: String = dragon_data.life_stage
+
+	match stage:
+		Lifecycle.STAGE_HATCHLING:
+			var start_age: int = 0
+			var end_age: int = Lifecycle.HATCHLING_MAX_AGE
+			var start_scale: float = Lifecycle.get_stage_scale(Lifecycle.STAGE_HATCHLING)
+			var end_scale: float = Lifecycle.get_stage_scale(Lifecycle.STAGE_JUVENILE)
+			var span: int = max(1, end_age - start_age)
+			var t: float = clamp(float(age - start_age) / float(span), 0.0, 1.0)
+			return lerp(start_scale, end_scale, t)
+
+		Lifecycle.STAGE_JUVENILE:
+			var start_age = Lifecycle.HATCHLING_MAX_AGE + 1
+			var end_age = Lifecycle.JUVENILE_MAX_AGE
+			var start_scale = Lifecycle.get_stage_scale(Lifecycle.STAGE_JUVENILE)
+			var end_scale = Lifecycle.get_stage_scale(Lifecycle.STAGE_ADULT)
+			var span2: int = max(1, end_age - start_age)
+			var t2: float = clamp(float(age - start_age) / float(span2), 0.0, 1.0)
+			return lerp(start_scale, end_scale, t2)
+		Lifecycle.STAGE_ADULT, Lifecycle.STAGE_ELDER:
+			return Lifecycle.get_stage_scale(stage)
+		_:
+			return Lifecycle.get_stage_scale(stage)

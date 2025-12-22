@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dgaq2j7gq3v0c"]
 
-[ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="1_0i5ci"]
+[ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_0i5ci"]
 [ext_resource type="Script" uid="uid://di8nfastuqsqy" path="res://scripts/ranch/ui/panels/OrdersPanel.gd" id="1_wke2m"]
 
 [node name="OrdersPanel" type="PanelContainer"]
@@ -23,6 +23,7 @@ layout_mode = 2
 
 [node name="HeaderLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_type_variation = &"HeaderLabel"
 text = "Available Orders"
 horizontal_alignment = 1
 

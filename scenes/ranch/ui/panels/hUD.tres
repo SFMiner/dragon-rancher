@@ -1,0 +1,37 @@
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://b4qxgy6oyosdc"]
+
+[ext_resource type="FontFile" uid="uid://cu6r0fhal4gwx" path="res://assets/fonts/Motley.ttf" id="1_17mok"]
+[ext_resource type="FontFile" uid="uid://cs5nnb6hjqn5l" path="res://assets/fonts/Inter.ttf" id="2_riwns"]
+[ext_resource type="StyleBox" uid="uid://d2tyd07745b8k" path="res://scenes/ranch/ui/panels/PanelContainerFlatStylebox.tres" id="3_b1bpd"]
+[ext_resource type="StyleBox" uid="uid://cytnlkc80qma7" path="res://scenes/ranch/ui/panels/hug_PANEL_STYLEBOX.tres" id="3_riwns"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ok778"]
+bg_color = Color(7.797182e-06, 0.66228074, 0.8331636, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ykpxs"]
+bg_color = Color(0, 0.7137255, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tarxf"]
+bg_color = Color(1, 1, 0, 1)
+
+[resource]
+BoldLabel/base_type = &"Label"
+BoldLabel/fonts/font = ExtResource("1_17mok")
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/fonts/font = ExtResource("1_17mok")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_ok778")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_ykpxs")
+HSlider/styles/slider = SubResource("StyleBoxFlat_tarxf")
+HeaderLabel/base_type = &"Label"
+HeaderLabel/font_sizes/font_size = 22
+HeaderLabel/fonts/font = ExtResource("1_17mok")
+Label/colors/font_color = Color(0, 0, 0, 1)
+Label/fonts/font = ExtResource("2_riwns")
+Panel/styles/panel = ExtResource("3_riwns")
+PanelContainer/styles/panel = ExtResource("3_b1bpd")
+Subtitle/base_type = &"Label"
+Subtitle/font_sizes/font_size = 25
+Subtitle/fonts/font = ExtResource("1_17mok")
+TitleLabel/base_type = &"Label"
+TitleLabel/font_sizes/font_size = 28
+TitleLabel/fonts/font = ExtResource("1_17mok")

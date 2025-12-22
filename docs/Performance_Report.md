@@ -451,16 +451,16 @@ func _create_placeholder_sprite() -> void:
 **Issue:**
 ```gdscript
 func _on_money_changed(new_money):
-    money_label.text = "Money: $" + str(new_money)
+    money_label.text = str(new_money)
 
 func _on_food_changed(new_food):
-    food_label.text = "Food: " + str(new_food)
+    food_label.text = str(new_food)
 
 func _on_season_changed(new_season):
-    season_label.text = "Season: " + str(new_season)
+    season_label.text = str(new_season)
 
 func _on_reputation_changed(new_reputation):
-    reputation_label.text = "Reputation: " + str(new_reputation)
+    reputation_label.text = "str(new_reputation)
 ```
 
 **Problem:** String concatenation with `+` operator creates intermediate strings

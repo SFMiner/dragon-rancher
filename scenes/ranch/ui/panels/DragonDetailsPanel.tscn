@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyx8k8q8v8v8v"]
 
 [ext_resource type="Script" uid="uid://d3rm4bt45702d" path="res://scripts/ranch/ui/panels/DragonDetailsPanel.gd" id="1_details"]
-[ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="1_vbebw"]
+[ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_vbebw"]
 
 [node name="DragonDetailsPanel" type="PanelContainer"]
 anchors_preset = 8
@@ -43,6 +43,10 @@ text = "Phenotype: ..."
 [node name="AgeLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Age: ... seasons"
+
+[node name="SexLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Life Stage: ..."
 
 [node name="LifeStageLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2

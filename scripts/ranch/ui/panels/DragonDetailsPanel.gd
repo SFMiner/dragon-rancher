@@ -13,6 +13,7 @@ var current_dragon: DragonData = null
 @onready var genotype_label: Label = $VBoxContainer/GenotypeLabel
 @onready var phenotype_label: Label = $VBoxContainer/PhenotypeLabel
 @onready var age_label: Label = $VBoxContainer/AgeLabel
+@onready var sex_label: Label = $VBoxContainer/SexLabel
 @onready var life_stage_label: Label = $VBoxContainer/LifeStageLabel
 @onready var health_bar: ProgressBar = $VBoxContainer/HealthProgressBar
 @onready var happiness_bar: ProgressBar = $VBoxContainer/HappinessProgressBar
@@ -68,8 +69,9 @@ func _update_display() -> void:
 	# Update phenotype
 	phenotype_label.text = "Phenotype: " + _format_phenotype(current_dragon.phenotype)
 
-	# Update age and life stage
+	# Update age, sex, and life stage
 	age_label.text = "Age: %d seasons (%s)" % [current_dragon.age, current_dragon.life_stage.capitalize()]
+	sex_label.text = "Sex: " + current_dragon.sex.capitalize()
 	life_stage_label.text = "Life Stage: " + current_dragon.life_stage.capitalize()
 
 	# Update progress bars

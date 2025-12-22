@@ -13,7 +13,7 @@ extends Control
 @onready var orders_button = $CanvasLayer/BottomBar/OrdersButton
 @onready var breeding_button = $CanvasLayer/BottomBar/BreedingButton
 @onready var build_button = $CanvasLayer/BottomBar/BuildButton
-@onready var advance_season_button = $CanvasLayer/BottomBar/AdvanceSeasonButton
+@onready var advance_season_button = $CanvasLayer/BottoadmBar/AdvanceSeasonButton
 
 ## Panel references
 @onready var orders_panel = get_node_or_null("/root/Ranch/UILayer/OrdersPanel")
@@ -64,16 +64,16 @@ func _ready():
 		print("  - breeding_button disabled: ", breeding_button.disabled)
 
 func _on_money_changed(new_money):
-	money_label.text = "Money: $" + str(new_money)
+	money_label.text = "$" + str(new_money)
 
 func _on_food_changed(new_food):
-	food_label.text = "Food: " + str(new_food)
+	food_label.text = str(new_food)
 
 func _on_season_changed(new_season):
-	season_label.text = "Season: " + str(new_season)
+	season_label.text = str(new_season)
 
 func _on_reputation_changed(new_reputation):
-	reputation_label.text = "Reputation: " + str(new_reputation)
+	reputation_label.text = str(new_reputation)
 
 func _on_menu_button_pressed():
 	print("[HUD] Menu button pressed!")

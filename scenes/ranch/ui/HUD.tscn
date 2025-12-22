@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://bciyvj3x0v3hx"]
+[gd_scene load_steps=4 format=3 uid="uid://bciyvj3x0v3hx"]
 
+[ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_juke8"]
 [ext_resource type="Script" uid="uid://bg1as1fdim2f1" path="res://scripts/ranch/ui/HUD.gd" id="1_xqyf6"]
+
+[sub_resource type="Theme" id="Theme_xsnkw"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -10,6 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("1_juke8")
 script = ExtResource("1_xqyf6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -18,6 +22,7 @@ script = ExtResource("1_xqyf6")
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 40.0
+theme = ExtResource("1_juke8")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/TopBar"]
 layout_mode = 1
@@ -27,17 +32,37 @@ offset_left = 10.0
 offset_right = 410.0
 grow_vertical = 2
 
+[node name="MoneyLabel2" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_xsnkw")
+theme_type_variation = &"BoldLabel"
+text = "Money: "
+
 [node name="MoneyLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
 layout_mode = 2
-text = "Money: $XXX"
+text = "$XXX"
+
+[node name="FoodLabel2" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_xsnkw")
+theme_type_variation = &"BoldLabel"
+text = "    Food: "
 
 [node name="FoodLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
 layout_mode = 2
-text = "Food: XXX"
+theme = ExtResource("1_juke8")
+text = "XXX"
+
+[node name="SeasonLabel2" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_xsnkw")
+theme_type_variation = &"BoldLabel"
+text = "    Season: "
 
 [node name="SeasonLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer"]
 layout_mode = 2
-text = "Season: X"
+theme = ExtResource("1_juke8")
+text = "X"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/TopBar"]
 layout_mode = 1
@@ -50,9 +75,15 @@ offset_right = -10.0
 grow_horizontal = 0
 grow_vertical = 2
 
+[node name="ReputationLabel2" type="Label" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_type_variation = &"BoldLabel"
+text = "Reputation:"
+
 [node name="ReputationLabel" type="Label" parent="CanvasLayer/TopBar/HBoxContainer2"]
 layout_mode = 2
-text = "Reputation: XXX"
+text = "XXX"
 
 [node name="MenuButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
 layout_mode = 2
