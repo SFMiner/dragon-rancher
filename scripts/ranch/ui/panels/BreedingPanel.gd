@@ -180,13 +180,17 @@ func _calculate_predictions() -> Dictionary:
 		var phenotype_counts: Dictionary = {}
 		var total_outcomes: int = 0
 
-		for genotype in punnett.get("outcomes", []):
+		for outcome in punnett.get("outcomes", []):
 			total_outcomes += 1
 
-			# Calculate phenotype for this genotype
-			var test_genotype: Dictionary = {trait_key: genotype}
-			var phenotype_dict: Dictionary = GeneticsEngine.calculate_phenotype(test_genotype)
-			var phenotype: String = phenotype_dict.get(trait_key, "unknown")
+			# Use Punnett outcome phenotype data directly to avoid invalid allele warnings
+			var phenotype: String = "unknown"
+			if outcome is Dictionary:
+				var phenotype_data = outcome.get("phenotype_data", null)
+				if phenotype_data is Dictionary:
+					phenotype = phenotype_data.get("name", "unknown")
+				elif outcome.get("phenotype") is String:
+					phenotype = outcome.get("phenotype")
 
 			if not phenotype_counts.has(phenotype):
 				phenotype_counts[phenotype] = 0

@@ -85,7 +85,7 @@ func _on_egg_created(egg_id: String) -> void:
 
 
 ## Egg hatched in RanchState
-func _on_egg_hatched(egg_id: String, dragon_id: String) -> void:
+func _on_egg_hatched(egg_id: String, _dragon_id: String) -> void:
 	# Remove egg node
 	if egg_nodes.has(egg_id):
 		var egg_node = egg_nodes[egg_id]
@@ -198,23 +198,29 @@ func _spawn_facility(facility_id: String) -> void:
 	# Create simple visual representation
 	var sprite := Sprite2D.new()
 
-	# Create placeholder texture
-	var placeholder_size: int = 128
-	var image := Image.create(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
+	var sprite_path: String = "res://assets/sprites/%s.png" % facility_data.type
+	if ResourceLoader.exists(sprite_path):
+		var texture: Texture2D = load(sprite_path)
+		if texture:
+			sprite.texture = texture
+	else:
+		# Create placeholder texture
+		var placeholder_size: int = 128
+		var image := Image.create(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
 
-	# Color based on facility type
-	var color: Color = _get_facility_color(facility_data.type)
+		# Color based on facility type
+		var color: Color = _get_facility_color(facility_data.type)
 
-	# Draw simple square
-	for y in range(placeholder_size):
-		for x in range(placeholder_size):
-			if x < 4 or y < 4 or x >= placeholder_size - 4 or y >= placeholder_size - 4:
-				image.set_pixel(x, y, Color.BLACK)
-			else:
-				image.set_pixel(x, y, color)
+		# Draw simple square
+		for y in range(placeholder_size):
+			for x in range(placeholder_size):
+				if x < 4 or y < 4 or x >= placeholder_size - 4 or y >= placeholder_size - 4:
+					image.set_pixel(x, y, Color.BLACK)
+				else:
+					image.set_pixel(x, y, color)
 
-	var texture := ImageTexture.create_from_image(image)
-	sprite.texture = texture
+		var texture := ImageTexture.create_from_image(image)
+		sprite.texture = texture
 
 	facility_node.add_child(sprite)
 
@@ -249,7 +255,7 @@ func _get_facility_grid_position(index: int) -> Vector2:
 	var grid_size: int = 200
 	var columns: int = 5
 
-	var row: int = index / columns
+	var row: int = int(float(index) / float(columns))
 	var col: int = index % columns
 
 	var x: float = -RANCH_WIDTH / 2 + 200 + col * grid_size
@@ -290,6 +296,6 @@ func _on_dragon_clicked(_dragon_node: Node2D, dragon_id: String) -> void:
 
 
 ## Egg ready to hatch callback
-func _on_egg_ready_to_hatch(egg: Egg, egg_id: String) -> void:
+func _on_egg_ready_to_hatch(_egg: Egg, egg_id: String) -> void:
 	print("[Ranch] Egg ready to hatch: " + egg_id)
 	# Hatching is handled by RanchState during advance_season

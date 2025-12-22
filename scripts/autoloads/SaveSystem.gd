@@ -259,8 +259,8 @@ func _try_load_backup(slot: int) -> bool:
 	var save_path = _get_save_path(slot)
 	DirAccess.copy_absolute(backup_path, save_path)
 
-	var err_msg = "Loaded from backup"
-	print("[SaveSystem] " + err_msg)
+	var info_msg = "Loaded from backup"
+	print("[SaveSystem] " + info_msg)
 	return load_game(slot)
 
 
@@ -364,3 +364,11 @@ func _on_order_completed(_order_id: String, _payment: int) -> void:
 	if autosave_enabled:
 		print("[SaveSystem] Auto-saving after order completion...")
 		save_game(AUTOSAVE_SLOT)
+
+
+## Explicit autosave trigger for settings or other systems that want a quick save
+func trigger_autosave_if_enabled() -> void:
+	if not autosave_enabled:
+		return
+	print("[SaveSystem] Auto-saving (triggered)...")
+	save_game(AUTOSAVE_SLOT)

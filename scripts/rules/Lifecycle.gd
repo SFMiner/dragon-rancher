@@ -198,8 +198,8 @@ static func is_prime_breeding_age(dragon: DragonData) -> bool:
 
 	# Prime breeding age is middle third of adult stage
 	var adult_range: int = ADULT_MAX_AGE - JUVENILE_MAX_AGE
-	var prime_start: int = JUVENILE_MAX_AGE + (adult_range / 3)
-	var prime_end: int = ADULT_MAX_AGE - (adult_range / 3)
+	var prime_start: int = JUVENILE_MAX_AGE + int(float(adult_range) / 3.0)
+	var prime_end: int = ADULT_MAX_AGE - int(float(adult_range) / 3.0)
 
 	return dragon.age >= prime_start and dragon.age <= prime_end
 

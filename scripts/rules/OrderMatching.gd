@@ -62,8 +62,6 @@ static func _check_trait_requirement(dragon: DragonData, trait_key: String, requ
 			return false
 		return pheno_name == requirement.to_lower()
 
-	return false
-
 
 ## Get list of matching dragons for an order
 static func get_matching_dragons(dragons: Array[DragonData], order: OrderData) -> Array[DragonData]:

@@ -98,8 +98,8 @@ func _on_refresh_button_pressed() -> void:
 	# Generate new orders
 	var new_orders: Array = OrderSystem.generate_orders(RanchState.reputation)
 
-	# Replace active orders
-	RanchState.active_orders = new_orders
+	# Replace active orders safely to satisfy typed array
+	RanchState.replace_active_orders(new_orders)
 
 	refresh_display()
 	_show_notification("Orders refreshed!")

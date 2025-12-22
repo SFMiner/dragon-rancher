@@ -24,7 +24,7 @@ func _ready() -> void:
 	# Backdrop mouse_filter is set to IGNORE in scene file by default
 
 	print("[TutorialOverlay] Ready - visible: ", visible)
-	print("[TutorialOverlay] Backdrop mouse_filter: ", backdrop.mouse_filter if backdrop else "no backdrop")
+	print("[TutorialOverlay] Backdrop mouse_filter: ", str(backdrop.mouse_filter) if backdrop else "no backdrop")
 
 	# Connect button signals
 	next_button.pressed.connect(_on_next_pressed)

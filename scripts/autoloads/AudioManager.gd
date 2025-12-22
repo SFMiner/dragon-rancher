@@ -30,10 +30,10 @@ func _ready():
 func _on_egg_created(_egg):
 	play_sfx("egg_created.ogg")
 
-func _on_egg_hatched(_dragon):
+func _on_egg_hatched(_egg_id: String, _dragon_id: String):
 	play_sfx("egg_hatched.ogg")
 
-func _on_order_completed(_order):
+func _on_order_completed(_order_id: String, _payment: int):
 	play_sfx("order_completed.ogg")
 
 func _on_money_changed(new_total: int):

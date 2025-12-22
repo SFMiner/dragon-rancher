@@ -27,11 +27,11 @@ func _ready() -> void:
 
 ## Set the RNG seed for deterministic random generation
 ## This should be called when loading a save or starting a new game
-func set_seed(seed: int) -> void:
-	current_seed = seed
-	_rng.seed = seed
+func set_seed(new_seed: int) -> void:
+	current_seed = new_seed
+	_rng.seed = new_seed
 	if debug_mode:
-		print("[RNGService] Seed set to: %d" % seed)
+		print("[RNGService] Seed set to: %d" % new_seed)
 
 
 ## Get the current seed (for save system)

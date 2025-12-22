@@ -61,14 +61,14 @@ func load_dragon_names() -> bool:
 	var data = json.data
 	if data is Dictionary and data.has("names"):
 		var names: Array = data["names"]
-		for name in names:
-			if name is String:
-				_dragon_names.append(name)
+		for dragon_name in names:
+			if dragon_name is String:
+				_dragon_names.append(dragon_name)
 	elif data is Array:
 		# Support direct array format
-		for name in data:
-			if name is String:
-				_dragon_names.append(name)
+		for dragon_name in data:
+			if dragon_name is String:
+				_dragon_names.append(dragon_name)
 
 	if _dragon_names.is_empty():
 		push_warning("[IdGen] No names loaded, using fallback")
@@ -83,7 +83,7 @@ func load_dragon_names() -> bool:
 ## Format: "dragon_<timestamp>_<counter>"
 func generate_dragon_id() -> String:
 	_id_counter += 1
-	var timestamp: int = Time.get_unix_time_from_system()
+	var timestamp: int = int(Time.get_unix_time_from_system())
 	return "dragon_%d_%d" % [timestamp, _id_counter]
 
 
@@ -91,7 +91,7 @@ func generate_dragon_id() -> String:
 ## Format: "egg_<timestamp>_<counter>"
 func generate_egg_id() -> String:
 	_id_counter += 1
-	var timestamp: int = Time.get_unix_time_from_system()
+	var timestamp: int = int(Time.get_unix_time_from_system())
 	return "egg_%d_%d" % [timestamp, _id_counter]
 
 
@@ -99,7 +99,7 @@ func generate_egg_id() -> String:
 ## Format: "facility_<timestamp>_<counter>"
 func generate_facility_id() -> String:
 	_id_counter += 1
-	var timestamp: int = Time.get_unix_time_from_system()
+	var timestamp: int = int(Time.get_unix_time_from_system())
 	return "facility_%d_%d" % [timestamp, _id_counter]
 
 
@@ -107,7 +107,7 @@ func generate_facility_id() -> String:
 ## Format: "order_<timestamp>_<counter>"
 func generate_order_id() -> String:
 	_id_counter += 1
-	var timestamp: int = Time.get_unix_time_from_system()
+	var timestamp: int = int(Time.get_unix_time_from_system())
 	return "order_%d_%d" % [timestamp, _id_counter]
 
 
@@ -118,20 +118,21 @@ func generate_random_name() -> String:
 		return "Dragon_%d" % _id_counter
 
 	# Try to find unused name (up to 10 attempts)
+	var candidate: String = ""
 	for i in range(10):
-		var name: String = RNGService.choice(_dragon_names)
-		if not _used_names.has(name):
-			_used_names[name] = true
-			return name
+		candidate = RNGService.choice(_dragon_names)
+		if not _used_names.has(candidate):
+			_used_names[candidate] = true
+			return candidate
 
 	# If all names used or can't find unused, just pick random
-	var name: String = RNGService.choice(_dragon_names)
-	return name
+	candidate = RNGService.choice(_dragon_names)
+	return candidate
 
 
 ## Get a random name with prefix (for themed naming)
 ## Example: get_random_name_with_prefix("Fire") -> "Ember", "Blaze", etc.
-func get_random_name_with_theme(theme: String) -> String:
+func get_random_name_with_theme(_theme: String) -> String:
 	# For now, just return random name
 	# Future: implement themed name filtering
 	return generate_random_name()
@@ -148,15 +149,15 @@ func get_name_count() -> int:
 
 
 ## Check if a specific name exists in the database
-func has_name(name: String) -> bool:
-	return name in _dragon_names
+func has_name(dragon_name: String) -> bool:
+	return dragon_name in _dragon_names
 
 
 ## Add a custom name to the pool (for mods/user content)
-func add_custom_name(name: String) -> void:
-	if name.is_empty() or name in _dragon_names:
+func add_custom_name(dragon_name: String) -> void:
+	if dragon_name.is_empty() or dragon_name in _dragon_names:
 		return
-	_dragon_names.append(name)
+	_dragon_names.append(dragon_name)
 
 
 ## Get fallback names if JSON fails to load

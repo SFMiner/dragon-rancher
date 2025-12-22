@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7h6i5j4k3l2m"]
+[gd_scene load_steps=5 format=3 uid="uid://b7h6i5j4k3l2m"]
 
-[ext_resource type="Script" path="res://scripts/menus/MainMenu.gd" id="1_main_menu"]
-[ext_resource type="PackedScene" uid="uid://c8j3k2lm9n4o5" path="res://scenes/menus/LoadGameMenu.tscn" id="2_load_game_menu"]
+[ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="1_ldf1p"]
+[ext_resource type="Script" uid="uid://c6iewfeemvc8g" path="res://scripts/menus/MainMenu.gd" id="1_main_menu"]
+[ext_resource type="PackedScene" uid="uid://c8j3k2lnan4o5" path="res://scenes/menus/LoadGameMenu.tscn" id="2_load_game_menu"]
+
+[sub_resource type="Theme" id="Theme_ldf1p"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -10,6 +13,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_ldf1p")
 script = ExtResource("1_main_menu")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -35,13 +39,16 @@ theme_override_constants/separation = 30
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_type_variation = &"HeaderLarge"
+theme = SubResource("Theme_ldf1p")
+theme_type_variation = &"TitleLabel"
 theme_override_font_sizes/font_size = 48
 text = "Dragon Ranch"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("1_ldf1p")
+theme_type_variation = &"Subtitle"
 text = "Breed legendary dragons!"
 horizontal_alignment = 1
 
@@ -101,6 +108,5 @@ layout_mode = 1
 title = "Start New Game?"
 initial_position = 2
 size = Vector2i(400, 150)
-dialog_text = "Starting a new game will overwrite the auto-save. Continue?"
 ok_button_text = "Start New Game"
-cancel_button_text = "Cancel"
+dialog_text = "Starting a new game will overwrite the auto-save. Continue?"

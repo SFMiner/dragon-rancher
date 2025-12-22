@@ -26,10 +26,10 @@ func show_notification(text: String, type: String = "info"):
 	tween.tween_property(notification_label, "modulate:a", 0, 3.0).from(1.0)
 	tween.tween_callback(notification_label.queue_free)
 
-func _on_order_completed(order_id, price):
+func _on_order_completed(_order_id, price):
 	show_notification("Order completed! +$" + str(price), "success")
 
-func _on_dragon_added(dragon_id):
+func _on_dragon_added(_dragon_id):
 	show_notification("Dragon hatched!", "info")
 
 func _on_reputation_increased(amount):

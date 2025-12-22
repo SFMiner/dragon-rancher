@@ -172,8 +172,8 @@ func _format_phenotype(phenotype: Dictionary) -> String:
 
 		# Handle dictionary phenotype data
 		if pheno_data is Dictionary:
-			var name: String = pheno_data.get("name", "Unknown")
-			parts.append(name)
+			var pheno_name: String = pheno_data.get("name", "Unknown")
+			parts.append(pheno_name)
 		# Handle legacy string phenotype data
 		elif pheno_data is String:
 			parts.append(pheno_data.capitalize())

@@ -183,19 +183,20 @@ func connect_to_ranch_state() -> void:
 
 ## Signal handlers for RanchState events
 
-func _on_dragon_added(dragon_data: DragonData) -> void:
-	process_event("dragon_spawned", {"dragon_id": dragon_data.id})
+func _on_dragon_added(dragon_id: String) -> void:
+	process_event("dragon_spawned", {"dragon_id": dragon_id})
 
 	# Check if dragon matured to adult
-	if dragon_data.life_stage == "adult":
-		process_event("dragon_matured", {"dragon_id": dragon_data.id})
+	var dragon_data: DragonData = RanchState.get_dragon(dragon_id)
+	if dragon_data and dragon_data.life_stage == "adult":
+		process_event("dragon_matured", {"dragon_id": dragon_id})
 
 
-func _on_egg_created(egg_id: int) -> void:
+func _on_egg_created(egg_id: String) -> void:
 	process_event("egg_created", {"egg_id": egg_id})
 
 
-func _on_order_completed(order_id: int, payment: int) -> void:
+func _on_order_completed(order_id: String, payment: int) -> void:
 	process_event("order_completed", {"order_id": order_id, "payment": payment})
 
 

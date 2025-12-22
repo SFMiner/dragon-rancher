@@ -1,0 +1,32 @@
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://brj4bvmookk5t"]
+
+[ext_resource type="FontFile" uid="uid://cu6r0fhal4gwx" path="res://assets/fonts/Motley.ttf" id="1_6ttnk"]
+[ext_resource type="FontFile" uid="uid://cs5nnb6hjqn5l" path="res://assets/fonts/Inter.ttf" id="2_giojo"]
+[ext_resource type="StyleBox" uid="uid://d2tyd07745b8k" path="res://scenes/ranch/ui/panels/PanelContainerFlatStylebox.tres" id="3_ok778"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yupne"]
+bg_color = Color(0.89664483, 0.3615174, 0.7682652, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 6
+
+[resource]
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/fonts/font = ExtResource("1_6ttnk")
+HeaderLabel/base_type = &"Label"
+HeaderLabel/font_sizes/font_size = 22
+HeaderLabel/fonts/font = ExtResource("1_6ttnk")
+Label/fonts/font = ExtResource("2_giojo")
+Panel/styles/panel = SubResource("StyleBoxFlat_yupne")
+PanelContainer/styles/panel = ExtResource("3_ok778")
+Subtitle/base_type = &"Label"
+Subtitle/font_sizes/font_size = 25
+Subtitle/fonts/font = ExtResource("1_6ttnk")
+TitleLabel/base_type = &"Label"
+TitleLabel/font_sizes/font_size = 28
+TitleLabel/fonts/font = ExtResource("1_6ttnk")

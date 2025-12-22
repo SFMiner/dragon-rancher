@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5w7c6x8yqv8k"]
+[gd_scene load_steps=3 format=3 uid="uid://b5w7c6x8yqv8k"]
 
 [ext_resource type="Script" uid="uid://ds2ne8o5xb145" path="res://scripts/ranch/ui/panels/SettingsPanel.gd" id="1_f5jig"]
+[ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="1_gym2w"]
 
 [node name="SettingsPanel" type="PanelContainer"]
 anchors_preset = 15
@@ -8,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_gym2w")
 script = ExtResource("1_f5jig")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

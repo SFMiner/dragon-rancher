@@ -139,6 +139,14 @@ func _check_order_deadlines() -> void:
 		active_orders.erase(order)
 
 
+## Replace the current list of active orders safely
+func replace_active_orders(new_orders: Array) -> void:
+	active_orders.clear()
+	for order in new_orders:
+		if order is OrderData:
+			active_orders.append(order)
+
+
 # === DRAGON MANAGEMENT ===
 
 ## Add a dragon to the ranch

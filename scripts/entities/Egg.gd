@@ -22,8 +22,8 @@ var egg_data: EggData = null
 
 func _ready() -> void:
 	# Connect to season changes if RanchState exists
-	# For now, we'll manually call update when needed
-	pass
+	if RanchState and RanchState.has_signal("season_changed"):
+		RanchState.season_changed.connect(_on_season_changed)
 
 
 ## Setup egg with data
@@ -47,7 +47,7 @@ func update_visuals() -> void:
 		return
 
 	# Try to load egg sprite
-	var sprite_path: String = "res://assets/sprites/eggs/egg.png"
+	var sprite_path: String = "res://assets/sprites/dragon_egg.png"
 	if ResourceLoader.exists(sprite_path):
 		var texture: Texture2D = load(sprite_path)
 		if sprite and texture:
@@ -147,11 +147,7 @@ func play_hatch_animation() -> void:
 
 
 ## Called when season changes (decrement incubation timer)
-func on_season_changed() -> void:
-	if egg_data == null:
-		return
-
-	egg_data.decrement_incubation()
+func _on_season_changed(_season: int) -> void:
 	update_timer_display()
 
 
