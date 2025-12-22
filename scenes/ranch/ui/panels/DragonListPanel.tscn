@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://bfvybpr0q2pqd"]
+
+[ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/ranch/ui/panels/DragonListPanel.gd" id="1_script"]
+
+[node name="DragonListPanel" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -220.0
+offset_right = 380.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("1_script")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "Dragon Roster"
+horizontal_alignment = 1
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="RowsContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Close"
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

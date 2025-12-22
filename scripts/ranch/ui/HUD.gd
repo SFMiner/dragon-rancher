@@ -13,12 +13,14 @@ extends Control
 @onready var orders_button = $CanvasLayer/BottomBar/OrdersButton
 @onready var breeding_button = $CanvasLayer/BottomBar/BreedingButton
 @onready var build_button = $CanvasLayer/BottomBar/BuildButton
+@onready var dragons_button = get_node_or_null("CanvasLayer/BottomBar/DragonsButton")
 @onready var advance_season_button = $CanvasLayer/BottoadmBar/AdvanceSeasonButton
 
 ## Panel references
 @onready var orders_panel = get_node_or_null("/root/Ranch/UILayer/OrdersPanel")
 @onready var breeding_panel = get_node_or_null("/root/Ranch/UILayer/BreedingPanel")
 @onready var build_panel = get_node_or_null("/root/Ranch/UILayer/BuildPanel")
+@onready var dragon_list_panel = get_node_or_null("/root/Ranch/UILayer/DragonListPanel")
 @onready var dragon_details_panel = get_node_or_null("/root/Ranch/UILayer/DragonDetailsPanel")
 @onready var settings_panel = get_node_or_null("/root/Ranch/UILayer/SettingsPanel")
 @onready var pause_panel = get_node_or_null("/root/Ranch/UILayer/PausePanel")
@@ -41,6 +43,8 @@ func _ready():
 		breeding_button.pressed.connect(_on_breeding_button_pressed)
 	if build_button and not build_button.pressed.is_connected(_on_build_button_pressed):
 		build_button.pressed.connect(_on_build_button_pressed)
+	if dragons_button and not dragons_button.pressed.is_connected(_on_dragons_button_pressed):
+		dragons_button.pressed.connect(_on_dragons_button_pressed)
 	if advance_season_button and not advance_season_button.pressed.is_connected(_on_advance_season_button_pressed):
 		advance_season_button.pressed.connect(_on_advance_season_button_pressed)
 
@@ -57,6 +61,7 @@ func _ready():
 	print("  - orders_button: ", orders_button)
 	print("  - breeding_button: ", breeding_button)
 	print("  - build_button: ", build_button)
+	print("  - dragons_button: ", dragons_button)
 	print("  - advance_season_button: ", advance_season_button)
 	if orders_button:
 		print("  - orders_button disabled: ", orders_button.disabled)
@@ -121,6 +126,16 @@ func _on_build_button_pressed():
 		if TutorialService:
 			TutorialService.process_event("panel_opened", {"panel": "build"})
 
+## Dragons button pressed
+func _on_dragons_button_pressed():
+	print("[HUD] Dragons button pressed!")
+	AudioManager.play_sfx("ui_click.ogg")
+	if dragon_list_panel and dragon_list_panel.has_method("open_panel"):
+		_close_other_panels(dragon_list_panel)
+		dragon_list_panel.open_panel()
+		if TutorialService:
+			TutorialService.process_event("panel_opened", {"panel": "dragon_list"})
+
 ## Advance season button pressed
 func _on_advance_season_button_pressed():
 	print("[HUD] Advance Season button pressed!")
@@ -146,13 +161,15 @@ func _register_tutorial_anchors():
 	# Register panels if they exist
 	if dragon_details_panel:
 		tutorial_overlay.register_anchor("dragon_details", dragon_details_panel)
+	if dragon_list_panel:
+		tutorial_overlay.register_anchor("dragon_list", dragon_list_panel)
 
 	print("[HUD] Tutorial anchors registered")
 
 
 ## Close other main panels when opening one to avoid overlap
 func _close_other_panels(active_panel: Node):
-	var panels = [orders_panel, breeding_panel, build_panel]
+	var panels = [orders_panel, breeding_panel, build_panel, dragon_list_panel]
 	for panel in panels:
 		if panel and panel != active_panel:
 			if panel.has_method("close_panel"):

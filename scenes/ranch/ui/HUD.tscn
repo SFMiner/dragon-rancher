@@ -109,23 +109,28 @@ alignment = 1
 
 [node name="OrdersButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
-text = "📋 Orders"
+text = "Orders"
 
 [node name="BreedingButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
-text = "🧬 Breed"
+text = "Breed"
 
 [node name="BuildButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
-text = "🏗️ Build"
+text = "Build"
+
+[node name="DragonsButton" type="Button" parent="CanvasLayer/BottomBar"]
+layout_mode = 2
+text = "Dragons"
 
 [node name="AdvanceSeasonButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
-text = "⏩ Advance Season"
+text = "Advance Season"
 
 [connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/OrdersButton" to="." method="_on_orders_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BreedingButton" to="." method="_on_breeding_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BuildButton" to="." method="_on_build_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/BottomBar/DragonsButton" to="." method="_on_dragons_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/AdvanceSeasonButton" to="." method="_on_advance_season_button_pressed"]
