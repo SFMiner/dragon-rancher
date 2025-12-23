@@ -13,9 +13,6 @@ class_name DragonData
 ## Display name for the dragon
 @export var name: String = ""
 
-## Biological sex: "male" or "female"
-@export var sex: String = ""
-
 ## Genotype dictionary: trait_key -> [allele1, allele2]
 ## Example: {"fire": ["F", "f"], "wings": ["w", "W"]}
 @export var genotype: Dictionary = {}
@@ -63,7 +60,6 @@ func to_dict() -> Dictionary:
 	return {
 		"id": id,
 		"name": name,
-		"sex": sex,
 		"genotype": genotype.duplicate(true),
 		"phenotype": phenotype.duplicate(true),
 		"age": age,
@@ -83,7 +79,6 @@ func from_dict(data: Dictionary) -> void:
 	"""Deserialize dragon data from dictionary."""
 	id = data.get("id", "")
 	name = data.get("name", "")
-	sex = data.get("sex", "")
 	genotype = data.get("genotype", {}).duplicate(true)
 	phenotype = data.get("phenotype", {}).duplicate(true)
 	age = data.get("age", 0)
@@ -108,10 +103,6 @@ func is_valid() -> bool:
 	
 	if name.is_empty():
 		push_warning("DragonData.is_valid: name is empty")
-		return false
-	
-	if sex not in ["male", "female"]:
-		push_warning("DragonData.is_valid: invalid sex '%s'" % sex)
 		return false
 	
 	if genotype.is_empty():

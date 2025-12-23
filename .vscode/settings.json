@@ -1,3 +1,4 @@
 {
-    "chatgpt.openOnStartup": true
+    "chatgpt.openOnStartup": true,
+    "godotTools.editorPath.godot4": "c:\\Users\\seanm\\Nextcloud2\\Gamedev\\GodotGames\\Godot_v4.5-stable_win64.exe"
 }

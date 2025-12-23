@@ -69,7 +69,6 @@ func test_homozygous_cross() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Fire Dragon"
-	parent_a.sex = "female"
 	parent_a.genotype = {
 		"fire": ["F", "F"],
 		"wings": ["w", "w"],
@@ -81,7 +80,6 @@ func test_homozygous_cross() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Smoke Dragon"
-	parent_b.sex = "male"
 	parent_b.genotype = {
 		"fire": ["f", "f"],
 		"wings": ["W", "W"],
@@ -117,7 +115,6 @@ func test_heterozygous_cross() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Hybrid A"
-	parent_a.sex = "female"
 	parent_a.genotype = {"fire": ["F", "f"]}
 	parent_a.life_stage = "adult"
 	parent_a.health = 100.0
@@ -125,7 +122,6 @@ func test_heterozygous_cross() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Hybrid B"
-	parent_b.sex = "male"
 	parent_b.genotype = {"fire": ["F", "f"]}
 	parent_b.life_stage = "adult"
 	parent_b.health = 100.0
@@ -177,7 +173,6 @@ func test_wings_trait() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Vestigial Wings"
-	parent_a.sex = "female"
 	parent_a.genotype = {"wings": ["w", "w"]}
 	parent_a.life_stage = "adult"
 	parent_a.health = 100.0
@@ -185,7 +180,6 @@ func test_wings_trait() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Functional Wings"
-	parent_b.sex = "male"
 	parent_b.genotype = {"wings": ["W", "W"]}
 	parent_b.life_stage = "adult"
 	parent_b.health = 100.0
@@ -219,7 +213,6 @@ func test_armor_trait() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Heavy Armor Hybrid"
-	parent_a.sex = "female"
 	parent_a.genotype = {"armor": ["A", "a"]}
 	parent_a.life_stage = "adult"
 	parent_a.health = 100.0
@@ -227,7 +220,6 @@ func test_armor_trait() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Light Armor"
-	parent_b.sex = "male"
 	parent_b.genotype = {"armor": ["a", "a"]}
 	parent_b.life_stage = "adult"
 	parent_b.health = 100.0
@@ -267,7 +259,6 @@ func test_statistical_distribution() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Hybrid A"
-	parent_a.sex = "female"
 	parent_a.genotype = {"fire": ["F", "f"]}
 	parent_a.life_stage = "adult"
 	parent_a.health = 100.0
@@ -275,7 +266,6 @@ func test_statistical_distribution() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Hybrid B"
-	parent_b.sex = "male"
 	parent_b.genotype = {"fire": ["F", "f"]}
 	parent_b.life_stage = "adult"
 	parent_b.health = 100.0
@@ -316,7 +306,6 @@ func test_multiple_traits() -> bool:
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
 	parent_a.name = "Mixed A"
-	parent_a.sex = "female"
 	parent_a.genotype = {
 		"fire": ["F", "f"],
 		"wings": ["w", "W"],
@@ -328,7 +317,6 @@ func test_multiple_traits() -> bool:
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
 	parent_b.name = "Mixed B"
-	parent_b.sex = "male"
 	parent_b.genotype = {
 		"fire": ["f", "f"],
 		"wings": ["W", "W"],

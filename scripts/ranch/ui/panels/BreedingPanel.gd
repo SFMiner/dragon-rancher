@@ -50,13 +50,28 @@ func close_panel() -> void:
 	hide()
 
 
+func _get_available_adult_dragons(excluded: DragonData) -> Array[DragonData]:
+	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
+	if excluded == null:
+		return adult_dragons
+
+	var filtered: Array[DragonData] = []
+	for dragon in adult_dragons:
+		if dragon == excluded:
+			continue
+		if not excluded.id.is_empty() and dragon.id == excluded.id:
+			continue
+		filtered.append(dragon)
+	return filtered
+
+
 ## Select parent A button pressed
 func _on_select_parent_a_pressed() -> void:
 	AudioManager.play_sfx("ui_click.ogg")
-	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
+	var adult_dragons: Array[DragonData] = _get_available_adult_dragons(selected_parent_b)
 
 	if adult_dragons.is_empty():
-		_show_notification("No adult dragons available for breeding!", true)
+		_show_notification("No other adult dragons available for breeding!", true)
 		return
 
 	# TODO: Show dragon selection dialog
@@ -70,16 +85,16 @@ func _on_select_parent_a_pressed() -> void:
 ## Select parent B button pressed
 func _on_select_parent_b_pressed() -> void:
 	AudioManager.play_sfx("ui_click.ogg")
-	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
+	var adult_dragons: Array[DragonData] = _get_available_adult_dragons(selected_parent_a)
 
 	if adult_dragons.is_empty():
-		_show_notification("No adult dragons available for breeding!", true)
+		_show_notification("No other adult dragons available for breeding!", true)
 		return
 
 	# TODO: Show dragon selection dialog
-	# For now, select second adult dragon if available
-	if adult_dragons.size() > 1:
-		selected_parent_b = adult_dragons[1]
+	# For now, select first available adult dragon
+	if adult_dragons.size() > 0:
+		selected_parent_b = adult_dragons[0]
 		_update_ui()
 		_update_predictions()
 

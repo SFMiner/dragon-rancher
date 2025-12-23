@@ -354,7 +354,6 @@ func hatch_egg(egg_id: String) -> String:
 	var dragon := DragonData.new()
 	dragon.id = IdGen.generate_dragon_id()
 	dragon.name = IdGen.generate_random_name()
-	dragon.sex = "male" if RNGService.randf() > 0.5 else "female"
 	dragon.genotype = egg.genotype.duplicate(true)
 	dragon.phenotype = GeneticsEngine.calculate_phenotype(dragon.genotype)
 	dragon.age = 0
@@ -720,7 +719,6 @@ func start_new_game() -> void:
 		var dragon := DragonData.new()
 		dragon.id = IdGen.generate_dragon_id()
 		dragon.name = IdGen.generate_random_name()
-		dragon.sex = "male" if i == 0 else "female"
 		dragon.genotype = TraitDB.get_random_genotype(reputation)
 		dragon.phenotype = GeneticsEngine.calculate_phenotype(dragon.genotype)
 		dragon.age = 4  # Young adult

@@ -6,15 +6,15 @@ extends Control
 @onready var reputation_label = $CanvasLayer/TopBar/HBoxContainer2/ReputationLabel
 
 ## Top bar buttons
-@onready var menu_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/MenuButton")
-@onready var settings_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/SettingsButton")
+@onready var menu_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/MarginContainer/MenuButton")
+@onready var settings_button = get_node_or_null("CanvasLayer/TopBar/HBoxContainer2/MarginContainer2/SettingsButton")
 
 ## Bottom bar buttons
 @onready var orders_button = $CanvasLayer/BottomBar/OrdersButton
 @onready var breeding_button = $CanvasLayer/BottomBar/BreedingButton
 @onready var build_button = $CanvasLayer/BottomBar/BuildButton
 @onready var dragons_button = get_node_or_null("CanvasLayer/BottomBar/DragonsButton")
-@onready var advance_season_button = $CanvasLayer/BottoadmBar/AdvanceSeasonButton
+@onready var advance_season_button = $CanvasLayer/BottomBar/AdvanceSeasonButton
 
 ## Panel references
 @onready var orders_panel = get_node_or_null("/root/Ranch/UILayer/OrdersPanel")

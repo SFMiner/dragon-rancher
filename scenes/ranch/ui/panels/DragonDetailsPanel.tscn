@@ -44,10 +44,6 @@ text = "Phenotype: ..."
 layout_mode = 2
 text = "Age: ... seasons"
 
-[node name="SexLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "Life Stage: ..."
-
 [node name="LifeStageLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Life Stage: ..."

@@ -100,7 +100,6 @@ func _create_test_dragon(life_stage: String) -> DragonData:
 	var dragon := DragonData.new()
 	dragon.id = IdGen.generate_dragon_id()
 	dragon.name = IdGen.generate_random_name()
-	dragon.sex = "male" if randf() > 0.5 else "female"
 
 	# Generate random genotype
 	dragon.genotype = TraitDB.get_random_genotype(0)
@@ -242,7 +241,6 @@ func _hatch_egg(egg_node: Node2D) -> void:
 	var hatchling := DragonData.new()
 	hatchling.id = IdGen.generate_dragon_id()
 	hatchling.name = IdGen.generate_random_name()
-	hatchling.sex = "male" if randf() > 0.5 else "female"
 	hatchling.genotype = egg_node.egg_data.genotype.duplicate(true)
 	hatchling.phenotype = GeneticsEngine.calculate_phenotype(hatchling.genotype)
 	hatchling.life_stage = "hatchling"
@@ -301,7 +299,6 @@ func _on_dragon_clicked(dragon_node: Node2D) -> void:
 	print("\n=== Dragon Info ===")
 	print("Name: %s" % data.name)
 	print("ID: %s" % data.id)
-	print("Sex: %s" % data.sex)
 	print("Age: %d seasons" % data.age)
 	print("Life Stage: %s" % info["stage_display_name"])
 	print("Genotype: %s" % GeneticsResolvers.format_genotype_display(data.genotype))

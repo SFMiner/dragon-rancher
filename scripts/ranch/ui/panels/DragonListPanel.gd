@@ -5,7 +5,6 @@
 extends PanelContainer
 
 const NAME_SORT_KEY := "name"
-const SEX_SORT_KEY := "sex"
 
 @onready var header_container: HBoxContainer = $VBoxContainer/HeaderContainer
 @onready var rows_container: VBoxContainer = $VBoxContainer/ScrollContainer/RowsContainer
@@ -73,7 +72,6 @@ func _rebuild_header_buttons() -> void:
 		child.queue_free()
 
 	header_container.add_child(_create_header_button("Name", NAME_SORT_KEY, 140))
-	header_container.add_child(_create_header_button("Sex", SEX_SORT_KEY, 80))
 
 	for trait_key in trait_keys:
 		var display_name: String = trait_display_names.get(trait_key, trait_key.capitalize())
@@ -117,8 +115,6 @@ func _get_sort_value(dragon: DragonData, key: String):
 	match key:
 		NAME_SORT_KEY:
 			return dragon.name.to_lower()
-		SEX_SORT_KEY:
-			return dragon.sex.to_lower()
 		_:
 			return _get_genotype_string(dragon, key).to_lower()
 
@@ -131,11 +127,6 @@ func _build_row(dragon: DragonData) -> HBoxContainer:
 	name_label.text = dragon.name
 	name_label.custom_minimum_size.x = 140
 	row.add_child(name_label)
-
-	var sex_label := Label.new()
-	sex_label.text = dragon.sex.capitalize()
-	sex_label.custom_minimum_size.x = 80
-	row.add_child(sex_label)
 
 	for trait_key in trait_keys:
 		var genotype_label := Label.new()

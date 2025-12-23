@@ -244,13 +244,11 @@ func _get_random_allele_from_parent(parent: DragonData, trait_key: String) -> St
 
 ## Create a starter dragon with default genotype
 ## reputation_level: Current player reputation (determines unlocked traits)
-## sex: "male" or "female"
 ## Returns: DragonData
-func create_starter_dragon(reputation_level: int, sex: String) -> DragonData:
+func create_starter_dragon(reputation_level: int) -> DragonData:
 	var dragon: DragonData = DragonData.new()
 	dragon.genotype = TraitDB.get_default_genotype(reputation_level)
 	dragon.phenotype = calculate_phenotype(dragon.genotype)
-	dragon.sex = sex
 	dragon.life_stage = "adult"
 	dragon.age = 4  # Young adult
 	dragon.health = 100.0
@@ -260,13 +258,11 @@ func create_starter_dragon(reputation_level: int, sex: String) -> DragonData:
 
 ## Create a random dragon with random genotype
 ## reputation_level: Current player reputation (determines unlocked traits)
-## sex: "male" or "female"
 ## Returns: DragonData
-func create_random_dragon(reputation_level: int, sex: String) -> DragonData:
+func create_random_dragon(reputation_level: int) -> DragonData:
 	var dragon: DragonData = DragonData.new()
 	dragon.genotype = TraitDB.get_random_genotype(reputation_level)
 	dragon.phenotype = calculate_phenotype(dragon.genotype)
-	dragon.sex = sex
 	dragon.life_stage = "adult"
 	dragon.age = 4  # Young adult
 	dragon.health = 100.0
@@ -286,8 +282,8 @@ func can_breed(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 	if not parent_b.can_breed():
 		return {"success": false, "reason": "%s cannot breed (wrong stage or health)" % parent_b.name}
 
-	if parent_a.sex == parent_b.sex:
-		return {"success": false, "reason": "Both parents are the same sex"}
+	if parent_a == parent_b or (not parent_a.id.is_empty() and parent_a.id == parent_b.id):
+		return {"success": false, "reason": "A dragon cannot breed with itself"}
 
 	return {"success": true, "reason": "Breeding is possible"}
 

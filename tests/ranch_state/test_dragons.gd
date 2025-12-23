@@ -44,7 +44,6 @@ func test_add_remove_dragons() -> bool:
 	# Create a test dragon
 	var dragon := DragonData.new()
 	dragon.name = "Test Dragon"
-	dragon.sex = "male"
 	dragon.genotype = {"fire": ["F", "f"]}
 	dragon.phenotype = GeneticsEngine.calculate_phenotype(dragon.genotype)
 	dragon.life_stage = "adult"
@@ -79,7 +78,6 @@ func test_adult_filtering() -> bool:
 	# Add a hatchling
 	var hatchling := DragonData.new()
 	hatchling.name = "Baby"
-	hatchling.sex = "female"
 	hatchling.genotype = {"fire": ["f", "f"]}
 	hatchling.phenotype = GeneticsEngine.calculate_phenotype(hatchling.genotype)
 	hatchling.life_stage = "hatchling"

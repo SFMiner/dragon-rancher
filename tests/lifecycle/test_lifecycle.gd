@@ -169,7 +169,6 @@ func test_age_advancement() -> bool:
 	var dragon := DragonData.new()
 	dragon.id = "test"
 	dragon.name = "Test"
-	dragon.sex = "male"
 	dragon.genotype = {}
 	dragon.life_stage = "hatchling"
 	dragon.age = 0
@@ -295,7 +294,6 @@ func test_lifecycle_info() -> bool:
 	var dragon := DragonData.new()
 	dragon.id = "test"
 	dragon.name = "Test"
-	dragon.sex = "male"
 	dragon.genotype = {}
 	dragon.life_stage = "adult"
 	dragon.age = 8

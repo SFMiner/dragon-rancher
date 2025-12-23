@@ -289,7 +289,6 @@ func test_save_load_with_dragons() -> void:
 	var test_dragon = DragonData.new()
 	test_dragon.id = "test_dragon_save_load"
 	test_dragon.name = "Test Dragon"
-	test_dragon.sex = "male"
 	test_dragon.genotype = {"fire": ["F", "f"], "wings": ["W", "w"]}
 	test_dragon.phenotype = {"fire": "present", "wings": "present"}
 	test_dragon.age = 5

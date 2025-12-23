@@ -1,9 +1,21 @@
-[gd_scene load_steps=4 format=3 uid="uid://bciyvj3x0v3hx"]
+[gd_scene load_steps=5 format=3 uid="uid://bciyvj3x0v3hx"]
 
 [ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_juke8"]
 [ext_resource type="Script" uid="uid://bg1as1fdim2f1" path="res://scripts/ranch/ui/HUD.gd" id="1_xqyf6"]
 
 [sub_resource type="Theme" id="Theme_xsnkw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juke8"]
+bg_color = Color(0, 0.6862745, 0.6745098, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3882353, 0.8980392, 0.83137256, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -70,8 +82,8 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -210.0
-offset_right = -10.0
+offset_left = -263.0
+offset_right = 1.0
 grow_horizontal = 0
 grow_vertical = 2
 
@@ -85,11 +97,23 @@ text = "Reputation:"
 layout_mode = 2
 text = "XXX"
 
-[node name="MenuButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 5
+
+[node name="MenuButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2/MarginContainer"]
 layout_mode = 2
 text = "Menu"
 
-[node name="SettingsButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2"]
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer/TopBar/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 5
+
+[node name="SettingsButton" type="Button" parent="CanvasLayer/TopBar/HBoxContainer2/MarginContainer2"]
 layout_mode = 2
 text = "Settings"
 
@@ -105,30 +129,41 @@ offset_right = 300.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+theme = ExtResource("1_juke8")
 alignment = 1
 
 [node name="OrdersButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Orders"
 
 [node name="BreedingButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Breed"
 
 [node name="BuildButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Build"
 
 [node name="DragonsButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Dragons"
 
 [node name="AdvanceSeasonButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Advance Season"
 
-[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MenuButton" to="." method="_on_menu_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MarginContainer/MenuButton" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/TopBar/HBoxContainer2/MarginContainer2/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/OrdersButton" to="." method="_on_orders_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BreedingButton" to="." method="_on_breeding_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BuildButton" to="." method="_on_build_button_pressed"]
