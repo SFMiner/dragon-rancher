@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqs2bq3x6r0m2"]
+
+[ext_resource type="Script" path="res://scripts/ranch/ui/panels/ShopPanel.gd" id="1_shop"]
+[ext_resource type="Theme" uid="uid://brj4bvmookk5t" path="res://scenes/ranch/ui/panels/PanelTheme.tres" id="2_theme"]
+
+[node name="ShopPanel" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_shop")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "Shop"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemListContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FoodRowSmall" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/ItemListContainer"]
+layout_mode = 2
+
+[node name="ItemLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowSmall"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Food Pack (10)"
+
+[node name="PriceLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowSmall"]
+layout_mode = 2
+text = "$10"
+
+[node name="BuyButton" type="Button" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowSmall"]
+layout_mode = 2
+text = "Buy"
+
+[node name="FoodRowMedium" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/ItemListContainer"]
+layout_mode = 2
+
+[node name="ItemLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowMedium"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Food Crate (50)"
+
+[node name="PriceLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowMedium"]
+layout_mode = 2
+text = "$45"
+
+[node name="BuyButton" type="Button" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowMedium"]
+layout_mode = 2
+text = "Buy"
+
+[node name="FoodRowLarge" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/ItemListContainer"]
+layout_mode = 2
+
+[node name="ItemLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowLarge"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Food Barrel (100)"
+
+[node name="PriceLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowLarge"]
+layout_mode = 2
+text = "$80"
+
+[node name="BuyButton" type="Button" parent="VBoxContainer/ScrollContainer/ItemListContainer/FoodRowLarge"]
+layout_mode = 2
+text = "Buy"
+
+[node name="ComingSoonLabel" type="Label" parent="VBoxContainer/ScrollContainer/ItemListContainer"]
+layout_mode = 2
+text = "More items coming soon."
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Close"
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

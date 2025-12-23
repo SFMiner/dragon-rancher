@@ -2,12 +2,13 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://dq183sw4tvj1b"
-valid=false
+uid="uid://6te63bejx4ed"
+path="res://.godot/imported/order_completed.ogg-13e36f3c8742b8e65c0502ee3c7aae03.oggvorbisstr"
 
 [deps]
 
 source_file="res://assets/audio/sfx/order_completed.ogg"
+dest_files=["res://.godot/imported/order_completed.ogg-13e36f3c8742b8e65c0502ee3c7aae03.oggvorbisstr"]
 
 [params]
 

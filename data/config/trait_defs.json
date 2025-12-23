@@ -38,21 +38,21 @@
       "description": "Size and functionality of wings",
       "alleles": ["w", "W"],
       "dominance_type": "simple",
-      "dominance_rank": ["w", "W"],
+      "dominance_rank": ["W", "w"],
       "phenotypes": {
-        "ww": {
-          "name": "Vestigial",
-          "sprite_suffix": "vestigial_wings",
-          "color": "#D2B48C",
-          "description": "Tiny wing stubs, cannot fly"
-        },
-        "wW": {
-          "name": "Vestigial",
-          "sprite_suffix": "vestigial_wings",
-          "color": "#D2B48C",
-          "description": "Tiny wing stubs, cannot fly"
-        },
         "WW": {
+          "name": "Vestigial",
+          "sprite_suffix": "vestigial_wings",
+          "color": "#D2B48C",
+          "description": "Tiny wing stubs, cannot fly"
+        },
+        "Ww": {
+          "name": "Vestigial",
+          "sprite_suffix": "vestigial_wings",
+          "color": "#D2B48C",
+          "description": "Tiny wing stubs, cannot fly"
+        },
+        "ww": {
           "name": "Functional",
           "sprite_suffix": "functional_wings",
           "color": "#4169E1",

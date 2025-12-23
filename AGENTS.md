@@ -26,3 +26,14 @@
 - Follow existing concise, present-tense messages (e.g., `Add music and money_start.ogg`, `Session 15 done`). One feature/fix per commit when possible.
 - PRs should describe gameplay impact and touched systems (autoloader, data config, UI); link any tracking issue or session doc.
 - Include test evidence: command used and pass result. Add short notes or screenshots if UI changes affect HUD/panels.
+
+## Latest Changes
+- Dragons are hermaphrodites (no male/female split).
+- Fixed W/wingless allele so functional wings are not treated as dominant.
+- Added a theme.
+- OrdersPanel randomizes better.
+- BreedingPanel allows selecting the dragons to breed.
+- Added DragonListPanel to show all owned dragons.
+- Hatchlings scale up gradually until they're adults.
+- Added a Store button to buy food and other items.
+- Dragons breed only twice per season, laying 2-6 eggs at a time.

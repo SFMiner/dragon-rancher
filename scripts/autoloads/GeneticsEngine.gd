@@ -285,6 +285,12 @@ func can_breed(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 	if parent_a == parent_b or (not parent_a.id.is_empty() and parent_a.id == parent_b.id):
 		return {"success": false, "reason": "A dragon cannot breed with itself"}
 
+	if parent_a.breedings_this_season >= 2:
+		return {"success": false, "reason": "%s has reached the breeding limit for this season" % parent_a.name}
+
+	if parent_b.breedings_this_season >= 2:
+		return {"success": false, "reason": "%s has reached the breeding limit for this season" % parent_b.name}
+
 	return {"success": true, "reason": "Breeding is possible"}
 
 

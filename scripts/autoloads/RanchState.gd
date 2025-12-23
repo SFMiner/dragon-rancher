@@ -57,6 +57,8 @@ var time_speed: float = 1.0
 ## P1 FIX: Load facility definitions to avoid hardcoded costs/capacities
 var _facility_defs: Array = []
 
+var food_needed : int = 0
+
 ## Base dragon capacity (from starter ranch)
 const BASE_CAPACITY: int = 6
 
@@ -68,6 +70,8 @@ func _ready() -> void:
 	## P1 FIX: Load facility definitions at startup
 	_load_facility_definitions()
 
+func get_food_needs() -> int:
+	return calculate_food_consumption()
 
 ## Load facility definitions from JSON
 ## P1 FIX: Centralize facility data to avoid duplication with facility_defs.json
@@ -299,47 +303,55 @@ func _get_facility_capacity_value(facility_data) -> int:
 
 # === EGG MANAGEMENT ===
 
-## Create an egg from breeding two dragons
-func create_egg(parent_a_id: String, parent_b_id: String) -> String:
+## Create eggs from breeding two dragons
+## Returns: Array of egg IDs
+func create_egg(parent_a_id: String, parent_b_id: String) -> Array[String]:
 	# P0 FIX: Validate parent IDs before lookup
 	if parent_a_id.is_empty() or parent_b_id.is_empty():
 		push_error("[RanchState] create_egg: empty parent ID")
-		return ""
+		return []
 
 	var parent_a: DragonData = get_dragon(parent_a_id)
 	var parent_b: DragonData = get_dragon(parent_b_id)
 
 	if parent_a == null or parent_b == null:
 		push_error("[RanchState] create_egg: parent not found")
-		return ""
+		return []
 
 	# Check breeding eligibility
 	var can_breed_check: Dictionary = GeneticsEngine.can_breed(parent_a, parent_b)
 	if not can_breed_check["success"]:
 		push_warning("[RanchState] Cannot breed: %s" % can_breed_check["reason"])
-		return ""
+		return []
 
 	# Breed dragons to get offspring genotype
 	var offspring_genotype: Dictionary = GeneticsEngine.breed_dragons(parent_a, parent_b)
 
-	# Create egg data
-	var egg := EggData.new()
-	egg.id = IdGen.generate_egg_id()
-	egg.genotype = offspring_genotype
-	egg.parent_a_id = parent_a_id
-	egg.parent_b_id = parent_b_id
-	egg.incubation_seasons_remaining = RNGService.randi_range(2, 3)
-	egg.created_season = current_season
+	var egg_count: int = RNGService.randi_range(1, 3) + RNGService.randi_range(1, 3)
+	var egg_ids: Array[String] = []
 
-	# Add to eggs dictionary
-	eggs[egg.id] = egg
+	for i in range(egg_count):
+		var egg := EggData.new()
+		egg.id = IdGen.generate_egg_id()
+		egg.genotype = offspring_genotype
+		egg.parent_a_id = parent_a_id
+		egg.parent_b_id = parent_b_id
+		egg.incubation_seasons_remaining = RNGService.randi_range(2, 3)
+		egg.created_season = current_season
 
-	# Emit signal
-	egg_created.emit(egg.id)
+		# Add to eggs dictionary
+		eggs[egg.id] = egg
+		egg_ids.append(egg.id)
 
-	print("[RanchState] Created egg: %s (parents: %s + %s)" % [egg.id, parent_a.name, parent_b.name])
+		# Emit signal per egg
+		egg_created.emit(egg.id)
 
-	return egg.id
+	parent_a.breedings_this_season += 1
+	parent_b.breedings_this_season += 1
+
+	print("[RanchState] Created %d eggs (parents: %s + %s)" % [egg_ids.size(), parent_a.name, parent_b.name])
+
+	return egg_ids
 
 
 ## Hatch an egg into a dragon
@@ -439,7 +451,6 @@ func consume_food(amount: int) -> bool:
 	if food_supply < amount:
 		push_warning("[RanchState] Insufficient food: need %d, have %d" % [amount, food_supply])
 		return false
-
 	food_supply -= amount
 	food_changed.emit(food_supply)
 	return true
@@ -471,7 +482,7 @@ func calculate_food_consumption() -> int:
 ## Process food consumption (called by advance_season) - LEGACY VERSION
 func _process_food_consumption() -> void:
 	var needed: int = calculate_food_consumption()
-
+	
 	if not consume_food(needed):
 		# Insufficient food - dragons lose health
 		var health_loss: float = 10.0
@@ -665,6 +676,8 @@ func advance_season() -> void:
 		if dragon_data == null:
 			push_warning("[RanchState] advance_season: skipping null dragon")
 			continue
+
+		dragon_data.breedings_this_season = 0
 
 		var old_stage: String = dragon_data.life_stage
 		Lifecycle.advance_age(dragon_data)

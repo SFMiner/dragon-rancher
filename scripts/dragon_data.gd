@@ -52,6 +52,9 @@ class_name DragonData
 ## Season when this dragon was born/hatched
 @export var born_season: int = 0
 
+## Number of breedings performed this season
+@export var breedings_this_season: int = 0
+
 
 # === SERIALIZATION ===
 
@@ -71,7 +74,8 @@ func to_dict() -> Dictionary:
 		"parent_b_id": parent_b_id,
 		"children_ids": children_ids.duplicate(),
 		"facility_id": facility_id,
-		"born_season": born_season
+		"born_season": born_season,
+		"breedings_this_season": breedings_this_season
 	}
 
 
@@ -91,6 +95,7 @@ func from_dict(data: Dictionary) -> void:
 	children_ids = Array(data.get("children_ids", []), TYPE_STRING, "", null)
 	facility_id = data.get("facility_id", "")
 	born_season = data.get("born_season", 0)
+	breedings_this_season = data.get("breedings_this_season", 0)
 
 
 # === VALIDATION ===
@@ -126,6 +131,10 @@ func is_valid() -> bool:
 	
 	if happiness < 0.0 or happiness > 100.0:
 		push_warning("DragonData.is_valid: happiness out of range: %f" % happiness)
+		return false
+
+	if breedings_this_season < 0:
+		push_warning("DragonData.is_valid: breedings_this_season is negative")
 		return false
 	
 	return true

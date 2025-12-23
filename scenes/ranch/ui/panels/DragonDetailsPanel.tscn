@@ -73,9 +73,3 @@ text = "Sell"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Close"
-
-[node name="CloseButton" type="Button" parent="."]
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-text = "Close"

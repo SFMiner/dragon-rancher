@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bfvybpr0q2pqd"]
 
+[ext_resource type="Script" uid="uid://bm30ewhimpf1m" path="res://scripts/ranch/ui/panels/DragonListPanel.gd" id="1_script"]
 [ext_resource type="Theme" uid="uid://b4qxgy6oyosdc" path="res://scenes/ranch/ui/panels/hUD.tres" id="1_theme"]
-[ext_resource type="Script" path="res://scripts/ranch/ui/panels/DragonListPanel.gd" id="1_script"]
 
 [node name="DragonListPanel" type="PanelContainer"]
 anchors_preset = 8
@@ -30,12 +30,11 @@ horizontal_alignment = 1
 [node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-alignment = 0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="RowsContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
 layout_mode = 2

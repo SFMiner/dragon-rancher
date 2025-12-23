@@ -20,6 +20,15 @@ var _cached_parent_b_id: String = ""
 @onready var parent_b_label: Label = $VBoxContainer/HBoxContainer/ParentB_Label
 @onready var prediction_results: VBoxContainer = $VBoxContainer/PredictionResults
 @onready var breed_button: Button = $VBoxContainer/BreedButton
+@onready var parent_select_popup: PopupPanel = $ParentSelectPopup
+@onready var parent_select_title: Label = $ParentSelectPopup/VBoxContainer/TitleLabel
+@onready var parent_select_list: ItemList = $ParentSelectPopup/VBoxContainer/ParentList
+@onready var parent_select_confirm: Button = $ParentSelectPopup/VBoxContainer/ButtonRow/SelectButton
+@onready var parent_select_cancel: Button = $ParentSelectPopup/VBoxContainer/ButtonRow/CancelButton
+
+var _selecting_parent_key: String = ""
+var _selectable_dragons: Array[DragonData] = []
+var _selectable_disabled: Array[bool] = []
 
 
 func _ready() -> void:
@@ -27,6 +36,10 @@ func _ready() -> void:
 	parent_a_button.pressed.connect(_on_select_parent_a_pressed)
 	parent_b_button.pressed.connect(_on_select_parent_b_pressed)
 	breed_button.pressed.connect(_on_breed_pressed)
+	parent_select_confirm.pressed.connect(_on_parent_select_confirm_pressed)
+	parent_select_cancel.pressed.connect(_on_parent_select_cancel_pressed)
+	parent_select_list.item_activated.connect(_on_parent_item_activated)
+	parent_select_list.item_selected.connect(_on_parent_item_selected)
 
 	# Initially hide the panel
 	hide()
@@ -50,53 +63,122 @@ func close_panel() -> void:
 	hide()
 
 
-func _get_available_adult_dragons(excluded: DragonData) -> Array[DragonData]:
-	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
-	if excluded == null:
-		return adult_dragons
-
-	var filtered: Array[DragonData] = []
-	for dragon in adult_dragons:
-		if dragon == excluded:
-			continue
-		if not excluded.id.is_empty() and dragon.id == excluded.id:
-			continue
-		filtered.append(dragon)
-	return filtered
-
-
 ## Select parent A button pressed
 func _on_select_parent_a_pressed() -> void:
 	AudioManager.play_sfx("ui_click.ogg")
-	var adult_dragons: Array[DragonData] = _get_available_adult_dragons(selected_parent_b)
-
-	if adult_dragons.is_empty():
-		_show_notification("No other adult dragons available for breeding!", true)
-		return
-
-	# TODO: Show dragon selection dialog
-	# For now, select first adult dragon
-	if adult_dragons.size() > 0:
-		selected_parent_a = adult_dragons[0]
-		_update_ui()
-		_update_predictions()
+	_open_parent_selection("a")
 
 
 ## Select parent B button pressed
 func _on_select_parent_b_pressed() -> void:
 	AudioManager.play_sfx("ui_click.ogg")
-	var adult_dragons: Array[DragonData] = _get_available_adult_dragons(selected_parent_a)
+	_open_parent_selection("b")
 
+
+func _open_parent_selection(parent_key: String) -> void:
+	var adult_dragons: Array[DragonData] = RanchState.get_adult_dragons()
 	if adult_dragons.is_empty():
-		_show_notification("No other adult dragons available for breeding!", true)
+		_show_notification("No adult dragons available for breeding!", true)
 		return
 
-	# TODO: Show dragon selection dialog
-	# For now, select first available adult dragon
-	if adult_dragons.size() > 0:
-		selected_parent_b = adult_dragons[0]
-		_update_ui()
-		_update_predictions()
+	_selecting_parent_key = parent_key
+	parent_select_title.text = "Select Parent A" if parent_key == "a" else "Select Parent B"
+	_build_parent_select_list(adult_dragons)
+	parent_select_confirm.disabled = true
+	parent_select_popup.popup_centered()
+
+
+func _build_parent_select_list(adult_dragons: Array[DragonData]) -> void:
+	parent_select_list.clear()
+	_selectable_dragons = adult_dragons.duplicate()
+	_selectable_dragons.sort_custom(func(a, b): return a.name.to_lower() < b.name.to_lower())
+	_selectable_disabled = []
+
+	for dragon in _selectable_dragons:
+		var label := "%s  %s" % [dragon.name, _format_genotype_pairs(dragon.genotype)]
+		var disabled := false
+
+		if dragon.breedings_this_season >= 2:
+			label += " (limit reached)"
+			disabled = true
+
+		if _selecting_parent_key == "a" and selected_parent_b and _is_same_dragon(dragon, selected_parent_b):
+			label += " (already selected)"
+			disabled = true
+		elif _selecting_parent_key == "b" and selected_parent_a and _is_same_dragon(dragon, selected_parent_a):
+			label += " (already selected)"
+			disabled = true
+
+		var index := parent_select_list.add_item(label)
+		parent_select_list.set_item_disabled(index, disabled)
+		_selectable_disabled.append(disabled)
+
+
+func _is_same_dragon(a: DragonData, b: DragonData) -> bool:
+	if a == b:
+		return true
+	if a == null or b == null:
+		return false
+	if not a.id.is_empty() and a.id == b.id:
+		return true
+	return false
+
+
+func _format_genotype_pairs(genotype: Dictionary) -> String:
+	if genotype.is_empty():
+		return "--"
+
+	var parts: Array[String] = []
+	var trait_keys: Array = genotype.keys()
+	trait_keys.sort()
+
+	for trait_key in trait_keys:
+		var alleles: Array = genotype[trait_key]
+		if alleles.size() >= 2:
+			parts.append(GeneticsResolvers.normalize_genotype([alleles[0], alleles[1]]))
+
+	return " ".join(parts) if parts.size() > 0 else "--"
+
+
+func _on_parent_item_selected(index: int) -> void:
+	if index < 0 or index >= _selectable_disabled.size():
+		parent_select_confirm.disabled = true
+		return
+	parent_select_confirm.disabled = _selectable_disabled[index]
+
+
+func _on_parent_item_activated(index: int) -> void:
+	if index < 0 or index >= _selectable_dragons.size():
+		return
+	if _selectable_disabled[index]:
+		return
+	_apply_parent_selection(_selectable_dragons[index])
+
+
+func _on_parent_select_confirm_pressed() -> void:
+	var selected_indices: PackedInt32Array = parent_select_list.get_selected_items()
+	if selected_indices.is_empty():
+		return
+	var index: int = selected_indices[0]
+	if index < 0 or index >= _selectable_dragons.size():
+		return
+	if _selectable_disabled[index]:
+		return
+	_apply_parent_selection(_selectable_dragons[index])
+
+
+func _on_parent_select_cancel_pressed() -> void:
+	parent_select_popup.hide()
+
+
+func _apply_parent_selection(dragon: DragonData) -> void:
+	if _selecting_parent_key == "a":
+		selected_parent_a = dragon
+	else:
+		selected_parent_b = dragon
+	parent_select_popup.hide()
+	_update_ui()
+	_update_predictions()
 
 
 ## Update UI based on current selections
@@ -257,14 +339,28 @@ func _on_breed_pressed() -> void:
 		return
 
 	# Create egg
-	var egg_id: String = RanchState.create_egg(selected_parent_a.id, selected_parent_b.id)
+	var egg_ids: Array[String] = RanchState.create_egg(selected_parent_a.id, selected_parent_b.id)
 
-	if egg_id.is_empty():
+	if egg_ids.is_empty():
 		_show_notification("Breeding failed! Check if dragons are eligible.", true)
 		return
 
 	# Success!
-	_show_notification("Breeding successful! Egg will hatch in %d seasons." % RanchState.eggs[egg_id].incubation_seasons_remaining)
+	var min_incubation: int = 999
+	var max_incubation: int = 0
+	for egg_id in egg_ids:
+		if RanchState.eggs.has(egg_id):
+			var incubation: int = RanchState.eggs[egg_id].incubation_seasons_remaining
+			min_incubation = min(min_incubation, incubation)
+			max_incubation = max(max_incubation, incubation)
+
+	var incubation_text: String = ""
+	if min_incubation == max_incubation:
+		incubation_text = "%d seasons" % min_incubation
+	else:
+		incubation_text = "%d-%d seasons" % [min_incubation, max_incubation]
+
+	_show_notification("Breeding successful! %d eggs will hatch in %s." % [egg_ids.size(), incubation_text])
 
 	# Close panel
 	close_panel()

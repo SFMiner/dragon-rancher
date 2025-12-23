@@ -244,7 +244,7 @@ func _process(delta: float) -> void:
 ## Pick a new random wander target near current position
 func _pick_new_wander_target() -> void:
 	# Wander within a radius around spawn point
-	var wander_radius: float = 100.0
+	var wander_radius: float = 200.0
 	var angle: float = randf() * TAU
 	var distance: float = randf() * wander_radius
 
@@ -306,7 +306,7 @@ func refresh_from_data() -> void:
 
 
 ## Called when RanchState advances season (dragon ages elsewhere)
-func _on_season_changed(new_season: int) -> void:
+func _on_season_changed(_new_season: int) -> void:
 	if dragon_data:
 		refresh_from_data()
 

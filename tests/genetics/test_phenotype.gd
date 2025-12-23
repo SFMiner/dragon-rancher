@@ -94,19 +94,19 @@ func test_fire_phenotypes() -> bool:
 	return true
 
 
-## Test wings trait phenotypes (w is dominant - teaching moment!)
+## Test wings trait phenotypes (W is dominant)
 func test_wings_phenotypes() -> bool:
 	print("Test: Wings trait phenotypes (vestigial dominant)")
 
-	# Test ww -> Vestigial
+	# Test ww -> Functional
 	var genotype_ww: Dictionary = {"wings": ["w", "w"]}
 	var phenotype_ww: Dictionary = GeneticsEngine.calculate_phenotype(genotype_ww)
 
-	if phenotype_ww["wings"]["name"] != "Vestigial":
-		print("  FAILED: ww should be Vestigial, got %s\n" % phenotype_ww["wings"]["name"])
+	if phenotype_ww["wings"]["name"] != "Functional":
+		print("  FAILED: ww should be Functional, got %s\n" % phenotype_ww["wings"]["name"])
 		return false
 
-	# Test wW -> Vestigial (w is dominant!)
+	# Test wW -> Vestigial (W is dominant)
 	var genotype_wW: Dictionary = {"wings": ["w", "W"]}
 	var phenotype_wW: Dictionary = GeneticsEngine.calculate_phenotype(genotype_wW)
 
@@ -114,15 +114,15 @@ func test_wings_phenotypes() -> bool:
 		print("  FAILED: wW should be Vestigial, got %s\n" % phenotype_wW["wings"]["name"])
 		return false
 
-	# Test WW -> Functional
+	# Test WW -> Vestigial
 	var genotype_WW: Dictionary = {"wings": ["W", "W"]}
 	var phenotype_WW: Dictionary = GeneticsEngine.calculate_phenotype(genotype_WW)
 
-	if phenotype_WW["wings"]["name"] != "Functional":
-		print("  FAILED: WW should be Functional, got %s\n" % phenotype_WW["wings"]["name"])
+	if phenotype_WW["wings"]["name"] != "Vestigial":
+		print("  FAILED: WW should be Vestigial, got %s\n" % phenotype_WW["wings"]["name"])
 		return false
 
-	print("  PASSED: Wings phenotypes correct (ww=Vestigial, wW=Vestigial, WW=Functional)\n")
+	print("  PASSED: Wings phenotypes correct (ww=Functional, wW=Vestigial, WW=Vestigial)\n")
 	return true
 
 

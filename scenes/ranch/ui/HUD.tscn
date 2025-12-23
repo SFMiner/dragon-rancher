@@ -123,9 +123,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -300.0
+offset_left = -360.0
 offset_top = -80.0
-offset_right = 300.0
+offset_right = 360.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -150,6 +150,12 @@ theme = ExtResource("1_juke8")
 theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
 text = "Build"
 
+[node name="ShopButton" type="Button" parent="CanvasLayer/BottomBar"]
+layout_mode = 2
+theme = ExtResource("1_juke8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_juke8")
+text = "Shop"
+
 [node name="DragonsButton" type="Button" parent="CanvasLayer/BottomBar"]
 layout_mode = 2
 theme = ExtResource("1_juke8")
@@ -167,5 +173,6 @@ text = "Advance Season"
 [connection signal="pressed" from="CanvasLayer/BottomBar/OrdersButton" to="." method="_on_orders_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BreedingButton" to="." method="_on_breeding_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/BuildButton" to="." method="_on_build_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/BottomBar/ShopButton" to="." method="_on_shop_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/DragonsButton" to="." method="_on_dragons_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/BottomBar/AdvanceSeasonButton" to="." method="_on_advance_season_button_pressed"]

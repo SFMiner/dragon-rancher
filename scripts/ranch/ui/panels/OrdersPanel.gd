@@ -8,6 +8,7 @@ extends PanelContainer
 
 ## Currently selected order for fulfillment
 var selected_order: OrderData = null
+var preferred_dragon_id: String = ""
 
 
 func _ready():
@@ -28,6 +29,17 @@ func _on_close_button_pressed() -> void:
 
 ## Open the panel
 func open_panel() -> void:
+	preferred_dragon_id = ""
+	refresh_display()
+	show()
+	AudioManager.play_sfx("ui_confirm.ogg")
+
+
+func open_panel_with_dragon(dragon: DragonData) -> void:
+	if dragon == null:
+		open_panel()
+		return
+	preferred_dragon_id = dragon.id
 	refresh_display()
 	show()
 	AudioManager.play_sfx("ui_confirm.ogg")
@@ -65,16 +77,26 @@ func _on_fulfill_order_pressed(order: OrderData) -> void:
 	AudioManager.play_sfx("ui_click.ogg")
 	selected_order = order
 
-	# Get matching dragons
-	var matching_dragons: Array[DragonData] = _get_matching_dragons(order)
+	var dragon: DragonData = null
+	if not preferred_dragon_id.is_empty():
+		dragon = RanchState.get_dragon(preferred_dragon_id)
+		if dragon == null:
+			_show_notification("Selected dragon not found.", true)
+			return
+		if not _dragon_matches_order(dragon, order):
+			_show_notification("Selected dragon does not match this order.", true)
+			return
+	else:
+		# Get matching dragons
+		var matching_dragons: Array[DragonData] = _get_matching_dragons(order)
 
-	if matching_dragons.is_empty():
-		_show_notification("No dragons match this order!", true)
-		return
+		if matching_dragons.is_empty():
+			_show_notification("No dragons match this order!", true)
+			return
 
-	# For now, auto-select first matching dragon
-	# TODO: Show dragon selection dialog
-	var dragon: DragonData = matching_dragons[0]
+		# For now, auto-select first matching dragon
+		# TODO: Show dragon selection dialog
+		dragon = matching_dragons[0]
 
 	# Attempt to fulfill
 	var success: bool = RanchState.fulfill_order(order.id, dragon.id)

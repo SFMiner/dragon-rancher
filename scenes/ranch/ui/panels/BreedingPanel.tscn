@@ -21,6 +21,7 @@ script = ExtResource("1_breeding")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 7
 
 [node name="HeaderLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -32,6 +33,7 @@ horizontal_alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 4
 
 [node name="ParentA_Button" type="Button" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -55,6 +57,7 @@ text = "Parent B genotype"
 
 [node name="PredictionLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_type_variation = &"HeaderLabel"
 text = "Predicted Offspring"
 horizontal_alignment = 1
 
@@ -66,6 +69,40 @@ size_flags_vertical = 3
 layout_mode = 2
 disabled = true
 text = "Breed"
+
+[node name="ParentSelectPopup" type="PopupPanel" parent="."]
+oversampling_override = 1.0
+size = Vector2i(148, 350)
+theme = ExtResource("1_tlnnn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ParentSelectPopup"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 144.0
+offset_bottom = 346.0
+size_flags_vertical = 3
+
+[node name="TitleLabel" type="Label" parent="ParentSelectPopup/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+text = "Select Parent"
+
+[node name="ParentList" type="ItemList" parent="ParentSelectPopup/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="ParentSelectPopup/VBoxContainer"]
+layout_mode = 2
+
+[node name="SelectButton" type="Button" parent="ParentSelectPopup/VBoxContainer/ButtonRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select"
+
+[node name="CancelButton" type="Button" parent="ParentSelectPopup/VBoxContainer/ButtonRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
 
 [node name="CloseButton" type="TextureButton" parent="."]
 custom_minimum_size = Vector2(40, 20)

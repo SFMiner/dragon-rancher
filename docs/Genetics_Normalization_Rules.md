@@ -56,7 +56,7 @@ genotype["fire"] = ["f", "f"]  # Use uppercase: ["F", "F"] or normalized
 | Trait | Alleles | Notes |
 |-------|---------|-------|
 | `fire` | `F`, `f` | F = Fire (dominant), f = Smoke (recessive) |
-| `wings` | `w`, `W` | w = Vestigial (DOMINANT), W = Functional (recessive) — **Teaching moment!** |
+| `wings` | `w`, `W` | W = Vestigial (DOMINANT), w = Functional (recessive) — **Teaching moment!** |
 | `armor` | `A`, `a` | A = Heavy (dominant), a = Light (recessive) |
 | `color` | `R`, `W` | Incomplete dominance: RR=Red, RW=Pink, WW=White |
 | `size_s` | `S`, `s` | S = Large (dominant), s = small (recessive) |
@@ -70,7 +70,7 @@ All alleles are stored in their canonical uppercase form:
 - Dominant alleles: `F`, `A`, `S`, `G`, `M`
 - Recessive alleles: `f`, `a`, `s`, `g`, `m` (stored as lowercase)
 - Multi-allele: `D1`, `D2`, `D3` (number suffix)
-- Wings exception: `w` (dominant), `W` (recessive) — reversed!
+- Wings exception: `W` (dominant), `w` (recessive) — reversed!
 
 ---
 
@@ -117,7 +117,7 @@ static func normalize_genotype(alleles: Array) -> String:
 ### 3.4 Special Cases
 
 #### Wings Trait Sorting
-The wings trait has reversed dominance (w dominant, W recessive). After alphabetical sort:
+The wings trait has reversed dominance (W dominant, w recessive). After alphabetical sort:
 - `["w", "W"]` → `"Ww"` (capital W sorts first)
 - Phenotype table must use `"Ww"` as the key for heterozygous
 
@@ -170,11 +170,11 @@ var phenotypes: Dictionary = {
 #### Wings (`wings`) — **Reversed Dominance**
 | Genotype | Phenotype | Sprite Suffix |
 |----------|-----------|---------------|
-| `WW` | Functional | `functional` |
+| `WW` | Vestigial | `vestigial` |
 | `Ww` | Vestigial | `vestigial` |
-| `ww` | Vestigial | `vestigial` |
+| `ww` | Functional | `functional` |
 
-**Note:** `w` (vestigial) is DOMINANT. This is a teaching moment about dominant ≠ "better."
+**Note:** `W` (vestigial) is DOMINANT. This is a teaching moment about dominant ≠ "better."
 
 #### Armor (`armor`)
 | Genotype | Phenotype | Sprite Suffix |
@@ -496,9 +496,9 @@ func test_phenotype_lookup():
     assert(get_phenotype("fire", "ff").name == "Smoke")
     
     # Wings trait (reversed!)
-    assert(get_phenotype("wings", "ww").name == "Vestigial")
+    assert(get_phenotype("wings", "ww").name == "Functional")
     assert(get_phenotype("wings", "Ww").name == "Vestigial")
-    assert(get_phenotype("wings", "WW").name == "Functional")
+    assert(get_phenotype("wings", "WW").name == "Vestigial")
 ```
 
 ---
@@ -508,7 +508,7 @@ func test_phenotype_lookup():
 1. **Trait keys are lowercase strings:** `"fire"`, `"wings"`, `"armor"`
 2. **Alleles are arrays of strings:** `["F", "f"]`, never `"Ff"`
 3. **Normalization uses alphabetical sort** for consistent lookups
-4. **Wings has REVERSED dominance:** `w` (vestigial) is dominant
+4. **Wings has REVERSED dominance:** `W` (vestigial) is dominant
 5. **Multi-locus traits use separate keys:** `size_s`, `size_g`
 6. **Always validate before breeding or saving**
 7. **Use defaults for missing traits, never crash**

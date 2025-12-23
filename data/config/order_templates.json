@@ -15,7 +15,7 @@
     {
       "id": "simple_wings",
       "type": "simple",
-      "required_traits": {"wings": "WW"},
+      "required_traits": {"wings": "ww"},
       "payment_min": 120,
       "payment_max": 180,
       "deadline_min": 3,
@@ -37,7 +37,7 @@
     {
       "id": "complex_fire_wings",
       "type": "complex",
-      "required_traits": {"fire": "F_", "wings": "WW"},
+      "required_traits": {"fire": "F_", "wings": "ww"},
       "payment_min": 250,
       "payment_max": 350,
       "deadline_min": 4,
@@ -48,7 +48,7 @@
     {
       "id": "complex_all_traits",
       "type": "complex",
-      "required_traits": {"fire": "F_", "wings": "WW", "armor": "A_"},
+      "required_traits": {"fire": "F_", "wings": "ww", "armor": "A_"},
       "payment_min": 400,
       "payment_max": 500,
       "deadline_min": 5,
@@ -70,13 +70,13 @@
     {
       "id": "exact_vestigial",
       "type": "exact_genotype",
-      "required_traits": {"wings": "ww"},
+      "required_traits": {"wings": "WW"},
       "payment_min": 200,
       "payment_max": 300,
       "deadline_min": 4,
       "deadline_max": 6,
       "reputation_required": 1,
-      "description": "University study needs vestigial wings (ww) to observe ground gait."
+      "description": "University study needs vestigial wings (WW) to observe ground gait."
     },
     {
       "id": "simple_smoke",
@@ -103,7 +103,7 @@
     {
       "id": "complex_light_flyer",
       "type": "complex",
-      "required_traits": {"wings": "WW", "armor": "aa"},
+      "required_traits": {"wings": "ww", "armor": "aa"},
       "payment_min": 280,
       "payment_max": 380,
       "deadline_min": 4,
@@ -136,7 +136,7 @@
     {
       "id": "color_white_vestigial",
       "type": "complex",
-      "required_traits": {"color": "WW", "wings": "ww"},
+      "required_traits": {"color": "WW", "wings": "WW"},
       "payment_min": 280,
       "payment_max": 380,
       "deadline_min": 4,
@@ -235,7 +235,7 @@
     {
       "id": "hyper_small_courier",
       "type": "complex",
-      "required_traits": {"metabolism": "mm", "size_S": "ss", "wings": "WW"},
+      "required_traits": {"metabolism": "mm", "size_S": "ss", "wings": "ww"},
       "payment_min": 600,
       "payment_max": 750,
       "deadline_min": 6,

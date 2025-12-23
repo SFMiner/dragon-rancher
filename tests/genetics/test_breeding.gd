@@ -164,7 +164,7 @@ func test_heterozygous_cross() -> bool:
 	return true
 
 
-## Test ww × WW → all wW (vestigial phenotype)
+## Test ww × WW → all Ww (vestigial phenotype)
 func test_wings_trait() -> bool:
 	print("Test: Wings trait (ww × WW)")
 
@@ -172,14 +172,14 @@ func test_wings_trait() -> bool:
 
 	var parent_a: DragonData = DragonData.new()
 	parent_a.id = "test_a"
-	parent_a.name = "Vestigial Wings"
+	parent_a.name = "Functional Wings"
 	parent_a.genotype = {"wings": ["w", "w"]}
 	parent_a.life_stage = "adult"
 	parent_a.health = 100.0
 
 	var parent_b: DragonData = DragonData.new()
 	parent_b.id = "test_b"
-	parent_b.name = "Functional Wings"
+	parent_b.name = "Vestigial Wings"
 	parent_b.genotype = {"wings": ["W", "W"]}
 	parent_b.life_stage = "adult"
 	parent_b.health = 100.0
@@ -192,15 +192,15 @@ func test_wings_trait() -> bool:
 	var phenotype: Dictionary = GeneticsEngine.calculate_phenotype(offspring_genotype)
 	var wings_phenotype: String = phenotype["wings"]["name"]
 
-	if wings_normalized != "wW":
-		print("  FAILED: Expected wW, got %s" % wings_normalized)
+	if wings_normalized != "Ww":
+		print("  FAILED: Expected Ww, got %s" % wings_normalized)
 		return false
 
 	if wings_phenotype != "Vestigial":
 		print("  FAILED: Expected Vestigial phenotype, got %s" % wings_phenotype)
 		return false
 
-	print("  PASSED: Genotype wW with Vestigial phenotype (w is dominant)\n")
+	print("  PASSED: Genotype Ww with Vestigial phenotype (W is dominant)\n")
 	return true
 
 
@@ -299,7 +299,7 @@ func test_statistical_distribution() -> bool:
 
 ## Test breeding with multiple traits at once
 func test_multiple_traits() -> bool:
-	print("Test: Multiple traits (Ff wW Aa × ff WW aa)")
+	print("Test: Multiple traits (Ff Ww Aa x ff WW aa)")
 
 	RNGService.set_seed(42424)
 

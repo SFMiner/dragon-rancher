@@ -89,28 +89,30 @@ func test_egg_hatching() -> bool:
 		print("  FAILED: Need 2 adult dragons\n")
 		return false
 
-	# Create an egg
-	var egg_id: String = RanchState.create_egg(adults[0].id, adults[1].id)
-	if egg_id.is_empty():
-		print("  FAILED: Couldn't create egg\n")
+	# Create eggs
+	var egg_ids: Array[String] = RanchState.create_egg(adults[0].id, adults[1].id)
+	if egg_ids.is_empty():
+		print("  FAILED: Couldn't create eggs\n")
 		return false
 
 	# Set incubation to 1 season (will hatch next season)
-	if RanchState.eggs.has(egg_id):
-		RanchState.eggs[egg_id].incubation_seasons_remaining = 1
+	for egg_id in egg_ids:
+		if RanchState.eggs.has(egg_id):
+			RanchState.eggs[egg_id].incubation_seasons_remaining = 1
 
 	var initial_dragon_count: int = RanchState.dragons.size()
 
 	# Advance season (should hatch)
 	RanchState.advance_season()
 
-	# Check egg hatched
-	if RanchState.eggs.has(egg_id):
-		print("  FAILED: Egg should have hatched\n")
-		return false
+	# Check eggs hatched
+	for egg_id in egg_ids:
+		if RanchState.eggs.has(egg_id):
+			print("  FAILED: Egg should have hatched\n")
+			return false
 
-	if RanchState.dragons.size() != initial_dragon_count + 1:
-		print("  FAILED: Dragon count should increase by 1 after hatching\n")
+	if RanchState.dragons.size() != initial_dragon_count + egg_ids.size():
+		print("  FAILED: Dragon count should increase by %d after hatching\n" % egg_ids.size())
 		return false
 
 	print("  PASSED: Egg hatched successfully\n")

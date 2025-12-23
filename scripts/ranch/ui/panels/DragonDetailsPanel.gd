@@ -228,8 +228,10 @@ func _on_sell_pressed() -> void:
 	# Find OrdersPanel and open it in "fulfill" mode with this dragon
 	var orders_panel = get_tree().root.find_child("OrdersPanel", true, false)
 	if orders_panel and orders_panel.has_method("open_panel"):
-		# TODO: Pass dragon to fulfill mode
-		orders_panel.open_panel()
+		if orders_panel.has_method("open_panel_with_dragon"):
+			orders_panel.open_panel_with_dragon(current_dragon)
+		else:
+			orders_panel.open_panel()
 
 	close_panel()
 
