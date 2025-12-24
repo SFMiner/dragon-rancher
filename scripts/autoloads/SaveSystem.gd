@@ -81,6 +81,8 @@ func save_game(slot: int = 0) -> bool:
 		save_data.facilities = _coerce_array_of_dicts(ranch_state_data.get("facilities", []))
 		save_data.active_orders = _coerce_array_of_dicts(ranch_state_data.get("active_orders", []))
 		save_data.completed_orders = _coerce_array_of_dicts(ranch_state_data.get("completed_orders", []))
+		save_data.available_rentals = _coerce_array_of_dicts(ranch_state_data.get("available_rentals", []))
+		save_data.active_rentals = _coerce_array_of_dicts(ranch_state_data.get("active_rentals", []))
 		save_data.unlocked_traits = ranch_state_data.get("unlocked_traits", [])
 
 		# P0 FIX: Save achievement state to prevent data loss
@@ -213,6 +215,8 @@ func load_game(slot: int = 0) -> bool:
 			"facilities": save_data.facilities,
 			"active_orders": save_data.active_orders,
 			"completed_orders": save_data.completed_orders,
+			"available_rentals": save_data.available_rentals,
+			"active_rentals": save_data.active_rentals,
 			"unlocked_traits": save_data.unlocked_traits,
 			# P0 FIX: Load achievement state to prevent data loss
 			"achievements": save_data.achievement_state

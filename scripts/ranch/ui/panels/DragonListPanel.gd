@@ -58,8 +58,9 @@ func _init_traits() -> void:
 		push_warning("[DragonListPanel] TraitDB not available; showing no trait columns")
 		return
 
-	trait_keys = TraitDB.get_all_trait_keys()
-	trait_keys.sort()
+	var t_keys : Array = _order_trait_keys(TraitDB.get_all_trait_keys())
+	for key in t_keys:
+		trait_keys.append(key) 
 
 	trait_display_names.clear()
 	for trait_key in trait_keys:
@@ -138,14 +139,40 @@ func _build_row(dragon: DragonData) -> HBoxContainer:
 
 
 func _get_genotype_string(dragon: DragonData, trait_key: String) -> String:
-	if dragon == null or not dragon.genotype.has(trait_key):
+	if dragon == null:
 		return "--"
 
-	var alleles: Array = dragon.genotype[trait_key]
+	var alleles: Array = _get_display_alleles(dragon.genotype, trait_key)
 	if alleles.size() >= 2:
-		return str(alleles[0]) + str(alleles[1])
+		return GeneticsResolvers.normalize_genotype(alleles)
 
 	return "--"
+
+
+func _order_trait_keys(keys: Array) -> Array:
+	var ordered: Array = []
+	if "size_S" in keys:
+		ordered.append("size_S")
+	if "size_G" in keys:
+		ordered.append("size_G")
+
+	var rest: Array = keys.duplicate()
+	rest.erase("size_S")
+	rest.erase("size_G")
+	rest.sort()
+	ordered.append_array(rest)
+	return ordered
+
+
+func _get_display_alleles(genotype: Dictionary, trait_key: String) -> Array:
+	if genotype.has(trait_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, trait_key)
+
+	var lower_key: String = trait_key.to_lower()
+	if lower_key != trait_key and genotype.has(lower_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, lower_key)
+
+	return []
 
 
 func _on_close_button_pressed() -> void:

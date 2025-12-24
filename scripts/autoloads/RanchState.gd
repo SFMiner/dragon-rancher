@@ -14,6 +14,9 @@ signal egg_created(egg_id: String)
 signal egg_hatched(egg_id: String, dragon_id: String)
 signal order_accepted(order_id: String)
 signal order_completed(order_id: String, payment: int)
+signal rental_started(rental_id: String, dragon_id: String)
+signal rental_completed(rental_id: String, dragon_id: String)
+signal rental_payment_received(rental_id: String, payment: int)
 signal reputation_increased(new_level: int)
 signal facility_built(facility_id: String)
 signal money_changed(new_amount: int)
@@ -49,6 +52,12 @@ var facilities: Dictionary = {}
 
 ## Active orders (must be OrderData objects, not Dictionaries)
 var active_orders: Array[OrderData] = []
+
+## Available rental jobs (must be OrderData objects, not Dictionaries)
+var available_rentals: Array[OrderData] = []
+
+## Active rental contracts (must be OrderData objects, not Dictionaries)
+var active_rentals: Array[OrderData] = []
 
 ## Time speed multiplier (for UI feedback only, not core logic)
 var time_speed: float = 1.0
@@ -124,6 +133,8 @@ func fulfill_order(order_id: String, dragon_id: String) -> bool:
 	var dragon: DragonData = get_dragon(dragon_id)
 	if dragon == null:
 		return false
+	if is_dragon_rented(dragon_id):
+		return false
 	if not OrderMatching.does_dragon_match(dragon, order):
 		return false
 	var payment: int = Pricing.calculate_order_payment(order, dragon, reputation)
@@ -149,6 +160,75 @@ func replace_active_orders(new_orders: Array) -> void:
 	for order in new_orders:
 		if order is OrderData:
 			active_orders.append(order)
+
+
+## Replace the current list of available rentals safely
+func replace_available_rentals(new_rentals: Array) -> void:
+	available_rentals.clear()
+	for rental in new_rentals:
+		if rental is OrderData:
+			available_rentals.append(rental)
+
+
+## Start a rental job with a specific dragon
+func start_rental(rental_id: String, dragon_id: String) -> bool:
+	var rental: OrderData = null
+	for r in available_rentals:
+		if r.id == rental_id:
+			rental = r
+			break
+	if rental == null:
+		return false
+
+	var dragon: DragonData = get_dragon(dragon_id)
+	if dragon == null:
+		return false
+	if is_dragon_rented(dragon_id):
+		return false
+	if not OrderMatching.does_dragon_match(dragon, rental):
+		return false
+
+	rental.accepted_season = current_season
+	rental.assigned_dragon_id = dragon_id
+	rental.payment_per_season = Pricing.calculate_rental_payment_per_season(rental, dragon, reputation)
+
+	available_rentals.erase(rental)
+	active_rentals.append(rental)
+
+	rental_started.emit(rental_id, dragon_id)
+	print("[RanchState] Started rental: %s (%s)" % [rental.description, dragon.name])
+	return true
+
+
+## Check if a dragon is currently rented out
+func is_dragon_rented(dragon_id: String) -> bool:
+	for rental in active_rentals:
+		if rental.assigned_dragon_id == dragon_id:
+			return true
+	return false
+
+
+## Process rental payments and return dragons when contracts end
+func _process_rental_contracts() -> void:
+	var completed_rentals: Array[OrderData] = []
+
+	for rental in active_rentals:
+		var start_season: int = rental.accepted_season + 1
+		var end_season: int = rental.accepted_season + rental.deadline_seasons
+
+		if current_season > end_season:
+			completed_rentals.append(rental)
+			continue
+
+		if current_season >= start_season:
+			add_money(rental.payment_per_season)
+			rental_payment_received.emit(rental.id, rental.payment_per_season)
+			print("[RanchState] Rental payment: $%d" % rental.payment_per_season)
+
+	for rental in completed_rentals:
+		active_rentals.erase(rental)
+		rental_completed.emit(rental.id, rental.assigned_dragon_id)
+		print("[RanchState] Rental completed: %s" % rental.description)
 
 
 # === DRAGON MANAGEMENT ===
@@ -216,6 +296,8 @@ func get_all_dragons() -> Array[DragonData]:
 func get_adult_dragons() -> Array[DragonData]:
 	var result: Array[DragonData] = []
 	for dragon_data in dragons.values():
+		if is_dragon_rented(dragon_data.id):
+			continue
 		if Lifecycle.can_breed(dragon_data):
 			result.append(dragon_data)
 	return result
@@ -567,6 +649,7 @@ func _update_reputation() -> void:
 	var new_level: int = Progression.get_reputation_level(lifetime_earnings)
 	if new_level > reputation:
 		reputation = new_level
+		_apply_unlocked_traits_to_population()
 		reputation_increased.emit(new_level)
 		print("[RanchState] Reputation increased to level %d: %s" % [new_level, Progression.get_level_name(new_level)])
 
@@ -670,6 +753,9 @@ func advance_season() -> void:
 	# P0 PERFORMANCE: Cache dragon values array to avoid redundant iterations
 	var dragon_list: Array = dragons.values()
 
+	# Process rental payments and completions at season start
+	_process_rental_contracts()
+
 	# Age all dragons
 	for dragon_data in dragon_list:
 		# P0 FIX: Skip null dragon data
@@ -717,6 +803,8 @@ func start_new_game() -> void:
 	eggs.clear()
 	facilities.clear()
 	active_orders.clear()
+	available_rentals.clear()
+	active_rentals.clear()
 
 	# Reset values
 	current_season = 1
@@ -748,6 +836,11 @@ func start_new_game() -> void:
 	for order in initial_orders:
 		active_orders.append(order)
 
+	# Generate initial rentals
+	var initial_rentals: Array = OrderSystem.generate_rentals(reputation)
+	for rental in initial_rentals:
+		available_rentals.append(rental)
+
 	# Emit initialization signals
 	money_changed.emit(money)
 	food_changed.emit(food_supply)
@@ -772,6 +865,8 @@ func load_state(save_data: Dictionary) -> bool:
 	eggs.clear()
 	facilities.clear()
 	active_orders.clear()
+	available_rentals.clear()
+	active_rentals.clear()
 
 	# Load basic values - support both old and new key names
 	current_season = save_data.get("season", save_data.get("current_season", 1))
@@ -848,9 +943,27 @@ func load_state(save_data: Dictionary) -> bool:
 		order.from_dict(order_dict)
 		active_orders.append(order)
 
+	# Load available rentals - convert dictionaries back to OrderData objects
+	var rentals_data: Array = save_data.get("available_rentals", [])
+	available_rentals.clear()
+	for rental_dict in rentals_data:
+		var rental := OrderData.new()
+		rental.from_dict(rental_dict)
+		available_rentals.append(rental)
+
+	# Load active rentals - convert dictionaries back to OrderData objects
+	var active_rentals_data: Array = save_data.get("active_rentals", [])
+	active_rentals.clear()
+	for rental_dict in active_rentals_data:
+		var rental := OrderData.new()
+		rental.from_dict(rental_dict)
+		active_rentals.append(rental)
+
 	# Restore RNG seed (optional, might not be in save data)
 	if save_data.has("rng_seed"):
 		RNGService.set_seed(save_data["rng_seed"])
+
+	_apply_unlocked_traits_to_population()
 
 	# Emit signals (quietly, without sound effects)
 	money_changed.emit(money)
@@ -859,6 +972,56 @@ func load_state(save_data: Dictionary) -> bool:
 	print("[RanchState] Loaded: Season %d, %d dragons, %d eggs, $%d" % [current_season, dragons.size(), eggs.size(), money])
 
 	return true
+
+
+func _apply_unlocked_traits_to_population() -> void:
+	if not TraitDB:
+		push_warning("[RanchState] TraitDB not available; cannot apply unlocked traits")
+		return
+
+	var unlocked_traits: Array[String] = TraitDB.get_unlocked_traits(reputation)
+	if unlocked_traits.is_empty():
+		return
+
+	for dragon_data in dragons.values():
+		if dragon_data == null:
+			continue
+		if _ensure_unlocked_traits_on_genotype(dragon_data.genotype, unlocked_traits):
+			dragon_data.phenotype = GeneticsEngine.calculate_phenotype(dragon_data.genotype)
+
+	for egg_data in eggs.values():
+		if egg_data == null:
+			continue
+		_ensure_unlocked_traits_on_genotype(egg_data.genotype, unlocked_traits)
+
+
+func _ensure_unlocked_traits_on_genotype(genotype: Dictionary, unlocked_traits: Array[String]) -> bool:
+	var changed: bool = false
+	for trait_key in unlocked_traits:
+		if _genotype_has_trait(genotype, trait_key):
+			continue
+
+		var trait_def: TraitDef = TraitDB.get_trait_def(trait_key)
+		if trait_def == null:
+			continue
+
+		var dominant: String = trait_def.get_dominant_allele()
+		var recessive: String = trait_def.get_recessive_allele()
+		if dominant.is_empty() or recessive.is_empty():
+			dominant = RNGService.choice(trait_def.alleles)
+			recessive = RNGService.choice(trait_def.alleles)
+
+		genotype[trait_key] = [dominant, recessive]
+		changed = true
+
+	return changed
+
+
+func _genotype_has_trait(genotype: Dictionary, trait_key: String) -> bool:
+	if genotype.has(trait_key):
+		return true
+	var lower_key: String = trait_key.to_lower()
+	return lower_key != trait_key and genotype.has(lower_key)
 
 
 ## Check if this is a new game (no dragons and season 1)
@@ -891,6 +1054,15 @@ func save_state() -> Dictionary:
 	for order in active_orders:
 		orders_array.append(order.to_dict())
 
+	# Serialize rentals as arrays
+	var available_rentals_array: Array[Dictionary] = []
+	for rental in available_rentals:
+		available_rentals_array.append(rental.to_dict())
+
+	var active_rentals_array: Array[Dictionary] = []
+	for rental in active_rentals:
+		active_rentals_array.append(rental.to_dict())
+
 	# Get unlocked traits (from TraitDB if available)
 	var unlocked: Array[String] = []
 	if TraitDB and TraitDB.has_method("get_unlocked_trait_keys"):
@@ -909,6 +1081,8 @@ func save_state() -> Dictionary:
 		"eggs": eggs_array,
 		"facilities": facilities_array,
 		"active_orders": orders_array,
+		"available_rentals": available_rentals_array,
+		"active_rentals": active_rentals_array,
 		"completed_orders": [],  # TODO: Track completed orders
 		"unlocked_traits": unlocked
 	}
@@ -937,6 +1111,8 @@ func to_dict() -> Dictionary:
 		"eggs": eggs_dict,
 		"facilities": facilities.duplicate(true),
 		"active_orders": active_orders.duplicate(true),
+		"available_rentals": available_rentals.duplicate(true),
+		"active_rentals": active_rentals.duplicate(true),
 		"rng_seed": RNGService.get_seed()
 	}
 
@@ -974,6 +1150,10 @@ func from_dict(data: Dictionary) -> void:
 
 	# Load active orders
 	active_orders = data.get("active_orders", []).duplicate(true)
+
+	# Load rentals
+	available_rentals = data.get("available_rentals", []).duplicate(true)
+	active_rentals = data.get("active_rentals", []).duplicate(true)
 
 	# Restore RNG seed
 	if data.has("rng_seed"):

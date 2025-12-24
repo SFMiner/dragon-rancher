@@ -23,6 +23,8 @@ extends Resource
 ## Orders
 @export var active_orders: Array[Dictionary] = []
 @export var completed_orders: Array[Dictionary] = []
+@export var available_rentals: Array[Dictionary] = []
+@export var active_rentals: Array[Dictionary] = []
 
 ## Tutorial state
 @export var tutorial_state: Dictionary = {}
@@ -52,6 +54,8 @@ func to_dict() -> Dictionary:
 		"facilities": facilities,
 		"active_orders": active_orders,
 		"completed_orders": completed_orders,
+		"available_rentals": available_rentals,
+		"active_rentals": active_rentals,
 		"tutorial_state": tutorial_state,
 		"rng_state": rng_state,
 		"unlocked_traits": unlocked_traits,
@@ -76,6 +80,8 @@ static func from_dict(data: Dictionary) -> SaveData:
 	save_data.facilities = _safe_get_array(data, "facilities")
 	save_data.active_orders = _safe_get_array(data, "active_orders")
 	save_data.completed_orders = _safe_get_array(data, "completed_orders")
+	save_data.available_rentals = _safe_get_array(data, "available_rentals")
+	save_data.active_rentals = _safe_get_array(data, "active_rentals")
 
 	save_data.tutorial_state = data.get("tutorial_state", {})
 	save_data.rng_state = data.get("rng_state", 0)

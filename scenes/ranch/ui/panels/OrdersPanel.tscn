@@ -24,20 +24,46 @@ layout_mode = 2
 [node name="HeaderLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
-text = "Available Orders"
+text = "Orders and Jobs"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OrderListContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+[node name="OrdersTab" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+tab_title = "Orders"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/OrdersTab"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OrderListContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/OrdersTab/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RefreshButton" type="Button" parent="VBoxContainer"]
+[node name="RefreshOrdersButton" type="Button" parent="VBoxContainer/TabContainer/OrdersTab"]
 layout_mode = 2
 text = "Refresh Orders"
+
+[node name="JobsTab" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+tab_title = "Jobs"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/TabContainer/JobsTab"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="JobListContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/JobsTab/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RefreshJobsButton" type="Button" parent="VBoxContainer/TabContainer/JobsTab"]
+layout_mode = 2
+text = "Refresh Jobs"
 
 [node name="CloseButton" type="Button" parent="."]
 layout_mode = 2
@@ -45,5 +71,6 @@ size_flags_horizontal = 8
 size_flags_vertical = 0
 text = "Close"
 
-[connection signal="pressed" from="VBoxContainer/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/TabContainer/OrdersTab/RefreshOrdersButton" to="." method="_on_refresh_orders_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/TabContainer/JobsTab/RefreshJobsButton" to="." method="_on_refresh_jobs_button_pressed"]
 [connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

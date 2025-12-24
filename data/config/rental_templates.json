@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "id": "rental_fire_clearing",
+      "type": "rental",
+      "required_traits": {"fire": "F_"},
+      "payment_min": 120,
+      "payment_max": 180,
+      "duration_min": 1,
+      "duration_max": 3,
+      "reputation_required": 0,
+      "description": "Firebreak crew needs a dragon for seasonal brush clearing."
+    },
+    {
+      "id": "rental_wings_scout",
+      "type": "rental",
+      "required_traits": {"wings": "ww"},
+      "payment_min": 140,
+      "payment_max": 200,
+      "duration_min": 2,
+      "duration_max": 4,
+      "reputation_required": 0,
+      "description": "Courier guild rents a strong flyer for route scouting."
+    },
+    {
+      "id": "rental_armor_guard",
+      "type": "rental",
+      "required_traits": {"armor": "A_"},
+      "payment_min": 110,
+      "payment_max": 170,
+      "duration_min": 1,
+      "duration_max": 3,
+      "reputation_required": 0,
+      "description": "Caravan wants a plated escort for a short trade run."
+    },
+    {
+      "id": "rental_color_festival",
+      "type": "rental",
+      "required_traits": {"color": "RW"},
+      "payment_min": 200,
+      "payment_max": 280,
+      "duration_min": 1,
+      "duration_max": 2,
+      "reputation_required": 1,
+      "description": "Festival organizer needs a Pink dragon for a two-season tour."
+    },
+    {
+      "id": "rental_fire_wings_patrol",
+      "type": "rental",
+      "required_traits": {"fire": "F_", "wings": "ww"},
+      "payment_min": 260,
+      "payment_max": 340,
+      "duration_min": 2,
+      "duration_max": 4,
+      "reputation_required": 1,
+      "description": "Sky wardens hire a winged fire-breather for ridge patrols."
+    },
+    {
+      "id": "rental_docile_therapy",
+      "type": "rental",
+      "required_traits": {"docility": "D1_"},
+      "payment_min": 220,
+      "payment_max": 300,
+      "duration_min": 1,
+      "duration_max": 4,
+      "reputation_required": 2,
+      "description": "Therapy center requests a gentle dragon for weekly visits."
+    },
+    {
+      "id": "rental_size_large_haul",
+      "type": "rental",
+      "required_traits": {"size_S": "SS", "size_G": "G_"},
+      "payment_min": 320,
+      "payment_max": 420,
+      "duration_min": 2,
+      "duration_max": 4,
+      "reputation_required": 2,
+      "description": "Stoneworks crew rents a large dragon to haul blocks."
+    },
+    {
+      "id": "rental_metabolism_sprinter",
+      "type": "rental",
+      "required_traits": {"metabolism": "mm"},
+      "payment_min": 360,
+      "payment_max": 460,
+      "duration_min": 1,
+      "duration_max": 3,
+      "reputation_required": 3,
+      "description": "Racing league needs a hyper-metabolism sprinter for heats."
+    }
+  ]
+}

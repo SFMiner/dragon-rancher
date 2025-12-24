@@ -151,12 +151,14 @@ func _get_dragon_color() -> Color:
 func _format_genotype(genotype: Dictionary) -> String:
 	var parts: Array[String] = []
 
-	for trait_key in genotype.keys():
-		var alleles: Array = genotype[trait_key]
+	for trait_key in _get_ordered_trait_keys(genotype):
+		var alleles: Array = _get_display_alleles(genotype, trait_key)
 		if alleles.size() >= 2:
-			parts.append("%s%s" % [alleles[0], alleles[1]])
+			var trait_def: TraitDef = TraitDB.get_trait_def(trait_key) if TraitDB else null
+			var trait_name: String = trait_def.name if trait_def else trait_key.capitalize()
+			parts.append("%s: %s%s" % [trait_name, alleles[0], alleles[1]])
 
-	return ", ".join(parts) if parts.size() > 0 else "No traits"
+	return "\n".join(parts) if parts.size() > 0 else "No traits"
 
 
 ## Format phenotype for display
@@ -179,6 +181,34 @@ func _format_phenotype(phenotype: Dictionary) -> String:
 			parts.append(pheno_data.capitalize())
 
 	return ", ".join(parts) if parts.size() > 0 else "No traits"
+
+
+func _get_ordered_trait_keys(genotype: Dictionary) -> Array:
+	var ordered: Array = []
+	if genotype.has("size_S") or genotype.has("size_s"):
+		ordered.append("size_S")
+	if genotype.has("size_G") or genotype.has("size_g"):
+		ordered.append("size_G")
+
+	var rest: Array = genotype.keys()
+	rest.erase("size_S")
+	rest.erase("size_G")
+	rest.erase("size_s")
+	rest.erase("size_g")
+	rest.sort()
+	ordered.append_array(rest)
+	return ordered
+
+
+func _get_display_alleles(genotype: Dictionary, trait_key: String) -> Array:
+	if genotype.has(trait_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, trait_key)
+
+	var lower_key: String = trait_key.to_lower()
+	if lower_key != trait_key and genotype.has(lower_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, lower_key)
+
+	return []
 
 
 ## Update button states based on dragon state

@@ -113,6 +113,8 @@ func _build_parent_select_list(adult_dragons: Array[DragonData]) -> void:
 		parent_select_list.set_item_disabled(index, disabled)
 		_selectable_disabled.append(disabled)
 
+	_resize_parent_select_popup()
+
 
 func _is_same_dragon(a: DragonData, b: DragonData) -> bool:
 	if a == b:
@@ -129,15 +131,15 @@ func _format_genotype_pairs(genotype: Dictionary) -> String:
 		return "--"
 
 	var parts: Array[String] = []
-	var trait_keys: Array = genotype.keys()
-	trait_keys.sort()
+	var trait_keys: Array = _get_ordered_trait_keys(genotype)
 
 	for trait_key in trait_keys:
-		var alleles: Array = genotype[trait_key]
+		var alleles: Array = _get_display_alleles(genotype, trait_key)
 		if alleles.size() >= 2:
-			parts.append(GeneticsResolvers.normalize_genotype([alleles[0], alleles[1]]))
+			var genotype_pair: String = GeneticsResolvers.normalize_genotype(alleles)
+			parts.append(genotype_pair)
 
-	return " ".join(parts) if parts.size() > 0 else "--"
+	return "".join(parts) if parts.size() > 0 else "--"
 
 
 func _on_parent_item_selected(index: int) -> void:
@@ -313,12 +315,58 @@ func _calculate_predictions() -> Dictionary:
 func _format_genotype(genotype: Dictionary) -> String:
 	var parts: Array[String] = []
 
-	for trait_key in genotype.keys():
-		var alleles: Array = genotype[trait_key]
+	for trait_key in _get_ordered_trait_keys(genotype):
+		var alleles: Array = _get_display_alleles(genotype, trait_key)
 		if alleles.size() >= 2:
 			parts.append("%s: %s%s" % [trait_key.capitalize(), alleles[0], alleles[1]])
 
 	return ", ".join(parts) if parts.size() > 0 else "No traits"
+
+
+func _get_ordered_trait_keys(genotype: Dictionary) -> Array:
+	var ordered: Array = []
+	if genotype.has("size_S") or genotype.has("size_s"):
+		ordered.append("size_S")
+	if genotype.has("size_G") or genotype.has("size_g"):
+		ordered.append("size_G")
+
+	var rest: Array = genotype.keys()
+	rest.erase("size_S")
+	rest.erase("size_G")
+	rest.erase("size_s")
+	rest.erase("size_g")
+	rest.sort()
+	ordered.append_array(rest)
+	return ordered
+
+
+func _get_display_alleles(genotype: Dictionary, trait_key: String) -> Array:
+	if genotype.has(trait_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, trait_key)
+
+	var lower_key: String = trait_key.to_lower()
+	if lower_key != trait_key and genotype.has(lower_key):
+		return GeneticsResolvers.get_trait_alleles(genotype, lower_key)
+
+	return []
+
+
+func _resize_parent_select_popup() -> void:
+	var max_len: int = 0
+	var item_count: int = parent_select_list.get_item_count()
+	for i in range(item_count):
+		var text := parent_select_list.get_item_text(i)
+		max_len = max(max_len, text.length())
+
+	var padding: int = 40
+	var approx_char_width: int = 8
+	var min_width: int = 220
+	var max_width: int = 520
+	var desired_width: int = clamp(padding + (max_len * approx_char_width), min_width, max_width)
+
+	if parent_select_popup.size.x < desired_width:
+		parent_select_popup.size = Vector2i(desired_width, parent_select_popup.size.y)
+	parent_select_list.custom_minimum_size.x = float(desired_width - padding)
 
 
 ## Breed button pressed

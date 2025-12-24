@@ -51,6 +51,12 @@ const TYPE_BREEDING: String = "breeding"       # Use customer's dragon for breed
 ## Customer name for flavor (optional)
 @export var customer_name: String = ""
 
+## Assigned dragon id (used for rentals/breeding contracts)
+@export var assigned_dragon_id: String = ""
+
+## Payment per season for rentals (calculated on acceptance)
+@export var payment_per_season: int = 0
+
 
 # === SERIALIZATION ===
 
@@ -67,7 +73,9 @@ func to_dict() -> Dictionary:
 		"accepted_season": accepted_season,
 		"created_season": created_season,
 		"is_urgent": is_urgent,
-		"customer_name": customer_name
+		"customer_name": customer_name,
+		"assigned_dragon_id": assigned_dragon_id,
+		"payment_per_season": payment_per_season
 	}
 
 
@@ -84,6 +92,8 @@ func from_dict(data: Dictionary) -> void:
 	created_season = data.get("created_season", 0)
 	is_urgent = data.get("is_urgent", false)
 	customer_name = data.get("customer_name", "")
+	assigned_dragon_id = data.get("assigned_dragon_id", "")
+	payment_per_season = data.get("payment_per_season", 0)
 
 
 # === VALIDATION ===

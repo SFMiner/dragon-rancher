@@ -31,6 +31,18 @@ static func calculate_order_payment(order: OrderData, dragon: DragonData, reputa
 	return int(base_price)
 
 
+## Calculate per-season payment for rentals (~1/10 purchase price)
+static func calculate_rental_payment_per_season(order: OrderData, dragon: DragonData, reputation_level: int) -> int:
+	var purchase_price: int = calculate_order_payment(order, dragon, reputation_level)
+	var per_season: float = float(purchase_price) / 10.0
+	return max(1, int(round(per_season)))
+
+
+## Calculate per-season payment from a base template price (used for UI previews)
+static func calculate_rental_payment_from_base(base_payment: int) -> int:
+	var per_season: float = float(base_payment) / 10.0
+	return max(1, int(round(per_season)))
+
 ## Calculate cost of a facility
 static func calculate_facility_cost(base_cost: int, reputation_level: int) -> int:
 	var cost: float = float(base_cost)

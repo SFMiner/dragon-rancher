@@ -21,7 +21,7 @@ const RANCH_HEIGHT: float = 1500.0
 
 func _ready() -> void:
 	# Play background music
-	AudioManager.play_music("ranch_theme.ogg")
+#	AudioManager.play_music("ranch_theme.ogg")
 
 	# Connect to RanchState signals
 	RanchState.dragon_added.connect(_on_dragon_added)
