@@ -223,3 +223,4 @@ Session reports (`SESSION_*.md` and `SESSION_*_COMPLETE.md`) document developmen
 - **Testing first**: Add tests for new features before implementation
 - **JSON configs**: All player-facing content in data/config/
 - **Locked APIs**: Check docs/API_Reference.md before modifying autoloads
+- **ParentSelectPopup sizing**: Width clamp includes a +20 padding tweak for long genotype strings.

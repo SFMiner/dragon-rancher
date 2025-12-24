@@ -127,7 +127,7 @@
           "description": "Pure white scales"
         }
       },
-      "unlock_level": 1,
+      "unlock_level": 0,
       "is_multi_locus": false,
       "related_loci": []
     },
@@ -238,7 +238,7 @@
           "lifespan_multiplier": 0.7
         }
       },
-      "unlock_level": 3,
+      "unlock_level": 0,
       "is_multi_locus": false,
       "related_loci": []
     },
@@ -323,7 +323,7 @@
           "fight_bonus": 20
         }
       },
-      "unlock_level": 4,
+      "unlock_level": 0,
       "is_multi_locus": false,
       "related_loci": []
     }

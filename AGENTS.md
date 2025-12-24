@@ -37,3 +37,4 @@
 - Hatchlings scale up gradually until they're adults.
 - Added a Store button to buy food and other items.
 - Dragons breed only twice per season, laying 2-6 eggs at a time.
+- ParentSelectPopup width clamp includes a +20 padding tweak for long genotype strings.

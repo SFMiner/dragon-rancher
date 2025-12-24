@@ -25,6 +25,7 @@ var _cached_parent_b_id: String = ""
 @onready var parent_select_list: ItemList = $ParentSelectPopup/VBoxContainer/ParentList
 @onready var parent_select_confirm: Button = $ParentSelectPopup/VBoxContainer/ButtonRow/SelectButton
 @onready var parent_select_cancel: Button = $ParentSelectPopup/VBoxContainer/ButtonRow/CancelButton
+@onready var parent_select_container: VBoxContainer = $ParentSelectPopup/VBoxContainer
 
 var _selecting_parent_key: String = ""
 var _selectable_dragons: Array[DragonData] = []
@@ -40,6 +41,12 @@ func _ready() -> void:
 	parent_select_cancel.pressed.connect(_on_parent_select_cancel_pressed)
 	parent_select_list.item_activated.connect(_on_parent_item_activated)
 	parent_select_list.item_selected.connect(_on_parent_item_selected)
+
+	# Keep popup sizing from affecting the panel layout
+	var root := get_tree().root
+	if parent_select_popup.get_parent() != root:
+		parent_select_popup.get_parent().remove_child(parent_select_popup)
+		root.add_child(parent_select_popup)
 
 	# Initially hide the panel
 	hide()
@@ -362,11 +369,13 @@ func _resize_parent_select_popup() -> void:
 	var approx_char_width: int = 8
 	var min_width: int = 220
 	var max_width: int = 520
-	var desired_width: int = clamp(padding + (max_len * approx_char_width), min_width, max_width)
+	var desired_width: int = clamp(padding + (max_len * approx_char_width) + 20, min_width, max_width)
 
 	if parent_select_popup.size.x < desired_width:
 		parent_select_popup.size = Vector2i(desired_width, parent_select_popup.size.y)
-	parent_select_list.custom_minimum_size.x = float(desired_width - padding)
+	var inner_width: float = float(desired_width - padding)
+	parent_select_container.custom_minimum_size.x = inner_width
+	parent_select_list.custom_minimum_size.x = inner_width
 
 
 ## Breed button pressed

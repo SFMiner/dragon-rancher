@@ -31,6 +31,7 @@ See: [SESSION_2_COMPLETE.md](SESSION_2_COMPLETE.md)
 - IdGen: Unique ID and name generation
 - Dragon entity: Visual dragon with AI
 - Egg entity: Incubating eggs with progress bars
+- Metabolism phenotype modifiers: speed, food consumption, and lifespan adjustments
 - 170+ dragon names database
 
 **Testing**: 6 lifecycle unit tests passing

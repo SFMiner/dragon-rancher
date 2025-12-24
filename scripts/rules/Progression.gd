@@ -16,11 +16,11 @@ const LEVEL_THRESHOLDS: Dictionary = {
 ## Traits unlocked at each level
 ## P1 FIX: Populated trait unlock arrays to match trait_defs.json unlock_level values
 const UNLOCKED_TRAITS: Dictionary = {
-	0: ["fire", "wings", "armor", "size_S", "size_G"],  # Base traits for novice breeders
-	1: ["color"],                    # Color variations for established breeders
+	0: ["fire", "wings", "armor", "size_S", "size_G", "color", "docility", "metabolism"],  # Base traits for novice breeders
+	1: [],                           # Color trait now base; keep slot for future
 	2: [],                           # Size traits are now base; keep slot for future
-	3: ["metabolism"],               # Metabolism traits for master breeders
-	4: ["docility"]                  # Temperament traits for legendary breeders
+	3: [],                           # Metabolism trait now base; keep slot for future
+	4: []                            # Temperament trait now base; keep slot for future
 }
 
 
