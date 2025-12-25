@@ -65,8 +65,8 @@ func breed_dragons(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 ## genotype: Dictionary (trait_key -> [allele1, allele2])
 ## Returns: Dictionary (trait_key -> phenotype_data)
 func calculate_phenotype(genotype: Dictionary) -> Dictionary:
-	if genotype.is_empty():
-		push_error("[GeneticsEngine] calculate_phenotype: empty genotype")
+	if genotype == null or genotype.is_empty():
+		push_error("[GeneticsEngine] calculate_phenotype: invalid genotype")
 		return {}
 
 	if debug_mode:

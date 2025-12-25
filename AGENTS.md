@@ -38,3 +38,4 @@
 - Added a Store button to buy food and other items.
 - Dragons breed only twice per season, laying 2-6 eggs at a time.
 - ParentSelectPopup width clamp includes a +20 padding tweak for long genotype strings.
+- ParentSelectPopup genotype display uses a single concatenated allele string with no delimiters.

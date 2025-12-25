@@ -66,8 +66,8 @@ func randf_range(from: float, to: float) -> float:
 ## Randomly choose one element from an array
 ## Returns null if array is empty
 func choice(array: Array) -> Variant:
-	if array.is_empty():
-		push_warning("[RNGService] choice() called on empty array")
+	if array == null or array.is_empty():
+		push_error("[RNGService] choice: null or empty array")
 		return null
 	var index: int = randi_range(0, array.size() - 1)
 	return array[index]
@@ -75,6 +75,9 @@ func choice(array: Array) -> Variant:
 
 ## Shuffle an array in-place using Fisher-Yates algorithm
 func shuffle(array: Array) -> void:
+	if array == null or array.is_empty():
+		push_warning("[RNGService] shuffle: null or empty array")
+		return
 	var n: int = array.size()
 	for i in range(n - 1, 0, -1):
 		var j: int = randi_range(0, i)
@@ -89,8 +92,8 @@ func shuffle(array: Array) -> void:
 ## weights: Dictionary mapping values to weights (higher = more likely)
 ## Example: {"common": 70, "rare": 25, "legendary": 5}
 func weighted_choice(weights: Dictionary) -> Variant:
-	if weights.is_empty():
-		push_warning("[RNGService] weighted_choice() called with empty weights")
+	if weights == null or weights.is_empty():
+		push_error("[RNGService] weighted_choice: null or empty weights")
 		return null
 
 	var total_weight: float = 0.0

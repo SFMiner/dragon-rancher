@@ -243,6 +243,18 @@ func add_dragon(data: DragonData) -> String:
 	if data.id.is_empty():
 		data.id = IdGen.generate_dragon_id()
 
+	# P0 FIX: Check for duplicate ID and regenerate if needed
+	var attempts: int = 0
+	var max_attempts: int = 10
+	while dragons.has(data.id) and attempts < max_attempts:
+		push_warning("[RanchState] add_dragon: duplicate ID, regenerating")
+		data.id = IdGen.generate_dragon_id()
+		attempts += 1
+
+	if dragons.has(data.id):
+		push_error("[RanchState] add_dragon: could not generate unique ID after %d attempts" % max_attempts)
+		return ""
+
 	# Check capacity
 	if not can_add_dragon():
 		push_warning("[RanchState] At capacity, cannot add dragon")
@@ -408,6 +420,11 @@ func create_egg(parent_a_id: String, parent_b_id: String) -> Array[String]:
 
 	# Breed dragons to get offspring genotype
 	var offspring_genotype: Dictionary = GeneticsEngine.breed_dragons(parent_a, parent_b)
+
+	# P0 FIX: Validate breeding result before creating eggs
+	if offspring_genotype.is_empty():
+		push_warning("[RanchState] create_egg: breeding failed, no offspring genotype")
+		return []
 
 	var egg_count: int = RNGService.randi_range(1, 3) + RNGService.randi_range(1, 3)
 	var egg_ids: Array[String] = []

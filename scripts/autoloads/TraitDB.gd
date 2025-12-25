@@ -158,9 +158,19 @@ func get_random_genotype(reputation_level: int) -> Dictionary:
 	var genotype: Dictionary = {}
 	var unlocked: Array[String] = get_unlocked_traits(reputation_level)
 
+	# P0 FIX: Check if no traits are available
+	if unlocked.is_empty():
+		push_error("[TraitDB] get_random_genotype: no traits loaded")
+		return {}
+
 	for trait_key in unlocked:
 		var trait_def: TraitDef = get_trait_def(trait_key)
 		if trait_def == null:
+			continue
+
+		# P0 FIX: Verify alleles array is not empty
+		if trait_def.alleles.is_empty():
+			push_warning("[TraitDB] get_random_genotype: trait '%s' has no alleles" % trait_key)
 			continue
 
 		# Randomly select two alleles (may be the same)

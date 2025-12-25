@@ -224,3 +224,4 @@ Session reports (`SESSION_*.md` and `SESSION_*_COMPLETE.md`) document developmen
 - **JSON configs**: All player-facing content in data/config/
 - **Locked APIs**: Check docs/API_Reference.md before modifying autoloads
 - **ParentSelectPopup sizing**: Width clamp includes a +20 padding tweak for long genotype strings.
+- **ParentSelectPopup genotype display**: Use a single concatenated allele string with no delimiters.
