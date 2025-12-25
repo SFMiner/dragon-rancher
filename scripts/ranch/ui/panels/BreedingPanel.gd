@@ -241,17 +241,18 @@ func _update_predictions() -> void:
 		for trait_key in predictions.keys():
 			var trait_predictions: Dictionary = predictions[trait_key]
 
-			var trait_label := Label.new()
-			trait_label.text = trait_key.capitalize() + ":"
-			trait_label.add_theme_font_size_override("font_size", 14)
-			prediction_results.add_child(trait_label)
-
+			# Combine all phenotypes and probabilities on one line
+			var prob_parts: Array[String] = []
 			for phenotype in trait_predictions.keys():
 				var probability: float = trait_predictions[phenotype]
-				var prob_label := Label.new()
-				prob_label.text = "  %d%% %s" % [int(probability * 100), phenotype]
-				prob_label.add_theme_font_size_override("font_size", 12)
-				prediction_results.add_child(prob_label)
+				prob_parts.append("%d%% %s" % [int(probability * 100), phenotype])
+
+			# Create single label with all probabilities
+			var trait_label := Label.new()
+			trait_label.text = "%s: %s" % [trait_key.capitalize(), "  ".join(prob_parts)]
+			trait_label.add_theme_font_size_override("font_size", 12)
+			trait_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+			prediction_results.add_child(trait_label)
 
 
 ## Calculate breeding predictions

@@ -76,6 +76,20 @@ func _update_display() -> void:
 	health_bar.value = current_dragon.health
 	happiness_bar.value = current_dragon.happiness
 
+	# Add breeding eligibility note based on happiness
+	var breeding_note: String = ""
+	if current_dragon.life_stage == "adult":
+		if current_dragon.health < 20.0:
+			breeding_note = "\n[Health too low to breed]"
+		elif current_dragon.happiness < 40.0:
+			breeding_note = "\n[Happiness too low to breed - needs %.0f%%]" % (40.0 - current_dragon.happiness)
+		else:
+			breeding_note = "\n[Ready to breed ✓]"
+
+	# Append to age label (adjust based on your UI structure)
+	if breeding_note:
+		age_label.text += breeding_note
+
 	# Add docility display if trait present
 	if current_dragon.phenotype.has("docility"):
 		var docility_pheno: Dictionary = current_dragon.phenotype["docility"]

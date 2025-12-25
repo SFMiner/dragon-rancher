@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cwk16phuriqnu" path="res://assets/uix/button_03.png" id="3_xdh4e"]
 
 [node name="BreedingPanel" type="PanelContainer"]
+custom_minimum_size = Vector2i(600, 400)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -29,6 +30,7 @@ theme = ExtResource("1_tlnnn")
 theme_type_variation = &"HeaderLabel"
 text = "Select Breeding Pair"
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -44,6 +46,7 @@ text = "Select Parent A"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Parent A genotype"
+autowrap_mode = 2
 
 [node name="ParentB_Button" type="Button" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -54,12 +57,14 @@ text = "Select Parent B"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Parent B genotype"
+autowrap_mode = 2
 
 [node name="PredictionLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 text = "Predicted Offspring"
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="PredictionResults" type="VBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -87,6 +92,7 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_type_variation = &"HeaderLabel"
 text = "Select Parent"
+autowrap_mode = 2
 
 [node name="ParentList" type="ItemList" parent="ParentSelectPopup/VBoxContainer"]
 layout_mode = 2

@@ -74,6 +74,11 @@ const BASE_CAPACITY: int = 6
 ## Food consumption per dragon per season
 const FOOD_PER_DRAGON: int = 5
 
+## Happiness mechanics constants
+const BASE_HAPPINESS_DECAY: float = 5.0  # Happiness lost per season without facilities
+const OVERCROWDING_PENALTY_PER_DRAGON: float = 2.0  # Additional penalty per dragon over capacity (tuned for balance)
+const MIN_BREEDING_HAPPINESS: float = 40.0  # Minimum happiness to breed
+
 
 func _ready() -> void:
 	## P1 FIX: Load facility definitions at startup
@@ -395,6 +400,35 @@ func _get_facility_capacity_value(facility_data) -> int:
 	return 0
 
 
+## Calculate total dragon housing capacity
+## Returns: Total capacity from all facilities
+func _calculate_dragon_capacity() -> int:
+	var total_capacity: int = 0
+
+	for facility_data in facilities.values():
+		if facility_data is FacilityData:
+			total_capacity += facility_data.capacity
+		elif facility_data is Dictionary:
+			total_capacity += facility_data.get("capacity", 0)
+
+	return total_capacity
+
+
+## Calculate overcrowding penalty
+## Returns: Negative happiness modifier based on dragons over capacity
+func _calculate_overcrowding_penalty() -> float:
+	var dragon_count: int = dragons.size()
+	var total_capacity: int = _calculate_dragon_capacity()
+
+	# No penalty if under capacity
+	if dragon_count <= total_capacity:
+		return 0.0
+
+	# Penalty increases per dragon over capacity
+	var dragons_over: int = dragon_count - total_capacity
+	return dragons_over * OVERCROWDING_PENALTY_PER_DRAGON
+
+
 # === EGG MANAGEMENT ===
 
 ## Create eggs from breeding two dragons
@@ -659,6 +693,29 @@ func _check_dragon_escapes_optimized(dragon_list: Array) -> void:
 		remove_dragon(dragon_data.id)
 
 
+## Process happiness changes for all dragons
+## Called during advance_season()
+func _process_happiness(dragon_list: Array) -> void:
+	# Calculate facility bonuses and penalties
+	var facility_happiness_bonus: float = get_facility_bonus("happiness")
+	var overcrowding_penalty: float = _calculate_overcrowding_penalty()
+
+	# Net change per season
+	var net_change: float = facility_happiness_bonus - BASE_HAPPINESS_DECAY - overcrowding_penalty
+
+	# Apply to all dragons
+	for dragon_data in dragon_list:
+		if dragon_data == null:
+			continue
+
+		# Apply happiness change
+		dragon_data.happiness = clamp(dragon_data.happiness + net_change, 0.0, 100.0)
+
+		# Log significant changes (optional, for debugging)
+		if net_change < -10.0 and OS.is_debug_build():
+			push_warning("[RanchState] %s happiness dropping (now %.1f)" % [dragon_data.name, dragon_data.happiness])
+
+
 # === PROGRESSION SYSTEM ===
 
 ## Update reputation level based on lifetime earnings
@@ -787,6 +844,9 @@ func advance_season() -> void:
 
 		if old_stage != dragon_data.life_stage:
 			print("[RanchState] %s aged to %s (age %d)" % [dragon_data.name, dragon_data.life_stage, dragon_data.age])
+
+	# Process happiness changes
+	_process_happiness(dragon_list)
 
 	# Process egg incubation
 	_process_egg_incubation()

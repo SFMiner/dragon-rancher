@@ -143,8 +143,18 @@ func is_valid() -> bool:
 # === HELPER METHODS ===
 
 func can_breed() -> bool:
-	"""Check if this dragon can breed (adult stage, healthy enough)."""
-	return life_stage == "adult" and health >= 20.0
+	"""Check if this dragon can breed (adult stage, healthy enough, happy enough)."""
+	if life_stage != "adult":
+		return false
+
+	if health < 20.0:
+		return false
+
+	# Minimum happiness threshold for breeding
+	if happiness < 40.0:  # RanchState.MIN_BREEDING_HAPPINESS
+		return false
+
+	return true
 
 
 func get_display_genotype(trait_key: String) -> String:

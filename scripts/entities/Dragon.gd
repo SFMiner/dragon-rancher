@@ -32,7 +32,7 @@ var _wander_timer: float = 0.0
 var _is_wandering: bool = true
 
 ## Node references (set in _ready)
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: Polygon2D = $Sprite
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var name_label: Label = $NameLabel
 @onready var click_area: Area2D = $ClickArea
@@ -101,14 +101,14 @@ func update_visuals() -> void:
 	scale = Vector2(final_scale, final_scale)
 
 	# Try to load sprite based on phenotype
-	var sprite_path: String = _build_sprite_path()
-	if ResourceLoader.exists(sprite_path):
-		var texture: Texture2D = load(sprite_path)
-		if sprite and texture:
-			sprite.texture = texture
-	else:
+	#var sprite_path: String = _build_sprite_path()
+	#if ResourceLoader.exists(sprite_path):
+	#	var texture: Texture2D = load(sprite_path)
+	#	if sprite and texture:
+	#		sprite.texture = texture
+	#else:
 		# Use colored placeholder based on phenotype
-		_create_placeholder_sprite()
+	#	_create_placeholder_sprite()
 
 	# Apply color modulation if color trait present
 	_apply_color_modulation()
@@ -238,8 +238,8 @@ func _process(delta: float) -> void:
 
 		# Flip sprite based on movement direction
 		if sprite and direction.x != 0:
-			sprite.flip_h = direction.x < 0
-
+#			sprite.flip_h = direction.x < 0
+			pass
 
 ## Pick a new random wander target near current position
 func _pick_new_wander_target() -> void:

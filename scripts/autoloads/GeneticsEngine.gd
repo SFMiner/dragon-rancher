@@ -277,10 +277,24 @@ func can_breed(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 		return {"success": false, "reason": "Missing parent data"}
 
 	if not parent_a.can_breed():
-		return {"success": false, "reason": "%s cannot breed (wrong stage or health)" % parent_a.name}
+		if parent_a.life_stage != "adult":
+			return {"success": false, "reason": "%s cannot breed (wrong life stage)" % parent_a.name}
+		elif parent_a.health < 20.0:
+			return {"success": false, "reason": "%s cannot breed (health too low)" % parent_a.name}
+		elif parent_a.happiness < 40.0:
+			return {"success": false, "reason": "%s cannot breed (happiness too low: %.0f%%)" % [parent_a.name, parent_a.happiness]}
+		else:
+			return {"success": false, "reason": "%s cannot breed" % parent_a.name}
 
 	if not parent_b.can_breed():
-		return {"success": false, "reason": "%s cannot breed (wrong stage or health)" % parent_b.name}
+		if parent_b.life_stage != "adult":
+			return {"success": false, "reason": "%s cannot breed (wrong life stage)" % parent_b.name}
+		elif parent_b.health < 20.0:
+			return {"success": false, "reason": "%s cannot breed (health too low)" % parent_b.name}
+		elif parent_b.happiness < 40.0:
+			return {"success": false, "reason": "%s cannot breed (happiness too low: %.0f%%)" % [parent_b.name, parent_b.happiness]}
+		else:
+			return {"success": false, "reason": "%s cannot breed" % parent_b.name}
 
 	if parent_a == parent_b or (not parent_a.id.is_empty() and parent_a.id == parent_b.id):
 		return {"success": false, "reason": "A dragon cannot breed with itself"}
