@@ -100,6 +100,12 @@ func update_visuals() -> void:
 	var final_scale: float = stage_scale * size_scale
 	scale = Vector2(final_scale, final_scale)
 
+	# Apply color modulation if color trait present
+	_apply_color_modulation()
+
+	# NEW: Apply pattern effects (stripes)
+	_apply_pattern_effects()
+
 	# Try to load sprite based on phenotype
 	#var sprite_path: String = _build_sprite_path()
 	#if ResourceLoader.exists(sprite_path):
@@ -341,3 +347,57 @@ func _compute_age_stage_scale() -> float:
 			return Lifecycle.get_stage_scale(stage)
 		_:
 			return Lifecycle.get_stage_scale(stage)
+
+
+## Add these functions to Dragon.gd for stripe pattern support
+
+## NEW: Apply pattern effects (stripes) to polygon sprite
+## Call this at the end of update_visuals()
+func _apply_pattern_effects() -> void:
+	if not sprite or dragon_data == null:
+		return
+
+	# Check if dragon has color phenotype with pattern info
+	if not dragon_data.phenotype.has("color"):
+		# No pattern info, remove any existing shader
+		if sprite.material:
+			sprite.material = null
+		return
+
+	var color_pheno: Dictionary = dragon_data.phenotype["color"]
+	var pattern_type: String = color_pheno.get("pattern", "solid")
+
+	# Apply or remove stripe shader based on pattern
+	if pattern_type == "striped":
+		_apply_stripe_shader()
+	else:
+		# Solid pattern - remove shader
+		if sprite.material:
+			sprite.material = null
+
+
+## Create and apply stripe shader material to polygon sprite
+func _apply_stripe_shader() -> void:
+	if not sprite:
+		return
+
+	# Load stripe shader
+	var shader_path: String = "res://shaders/stripe_pattern.gdshader"
+	if not ResourceLoader.exists(shader_path):
+		push_warning("[Dragon] Stripe shader not found: %s" % shader_path)
+		return
+
+	var stripe_shader: Shader = load(shader_path)
+	
+	# Create shader material
+	var shader_material := ShaderMaterial.new()
+	shader_material.shader = stripe_shader
+
+	# Configure stripe parameters
+	shader_material.set_shader_parameter("stripe_width", 0.2)      # 20% of height is white stripe
+	shader_material.set_shader_parameter("stripe_count", 4.0)      # 4 stripes total
+	shader_material.set_shader_parameter("stripe_color", Color.WHITE)
+	shader_material.set_shader_parameter("stripes_enabled", 1.0)
+
+	# Apply material to polygon sprite
+	sprite.material = shader_material

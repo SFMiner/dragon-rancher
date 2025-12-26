@@ -133,11 +133,8 @@ func _build_row(dragon: DragonData) -> HBoxContainer:
 		var cell_label := Label.new()
 		cell_label.custom_minimum_size.x = 120
 
-		# For pattern trait, show phenotype (Solid/Striped) instead of genotype
-		if trait_key == "pattern":
-			cell_label.text = _get_pattern_phenotype(dragon)
-		else:
-			cell_label.text = _get_genotype_string(dragon, trait_key)
+		# REMOVED special case for pattern - show genotype like all other traits
+		cell_label.text = _get_genotype_string(dragon, trait_key)
 
 		row.add_child(cell_label)
 
