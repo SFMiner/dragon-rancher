@@ -106,19 +106,6 @@ func update_visuals() -> void:
 	# NEW: Apply pattern effects (stripes)
 	_apply_pattern_effects()
 
-	# Try to load sprite based on phenotype
-	#var sprite_path: String = _build_sprite_path()
-	#if ResourceLoader.exists(sprite_path):
-	#	var texture: Texture2D = load(sprite_path)
-	#	if sprite and texture:
-	#		sprite.texture = texture
-	#else:
-		# Use colored placeholder based on phenotype
-	#	_create_placeholder_sprite()
-
-	# Apply color modulation if color trait present
-	_apply_color_modulation()
-
 
 ## Build sprite path from phenotype
 ## Example: "res://assets/sprites/dragons/dragon_red_fire_vestigial_heavy.png"

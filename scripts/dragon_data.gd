@@ -60,11 +60,19 @@ class_name DragonData
 
 func to_dict() -> Dictionary:
 	"""Serialize dragon data to JSON-compatible dictionary."""
+	# Convert Color objects in phenotype to hex strings for JSON compatibility
+	var phenotype_json: Dictionary = {}
+	for trait_key in phenotype.keys():
+		var pheno_data: Dictionary = phenotype[trait_key].duplicate(true)
+		if pheno_data.has("color") and pheno_data["color"] is Color:
+			pheno_data["color"] = pheno_data["color"].to_html()
+		phenotype_json[trait_key] = pheno_data
+	
 	return {
 		"id": id,
 		"name": name,
 		"genotype": genotype.duplicate(true),
-		"phenotype": phenotype.duplicate(true),
+		"phenotype": phenotype_json,
 		"age": age,
 		"life_stage": life_stage,
 		"health": health,
@@ -84,7 +92,16 @@ func from_dict(data: Dictionary) -> void:
 	id = data.get("id", "")
 	name = data.get("name", "")
 	genotype = data.get("genotype", {}).duplicate(true)
-	phenotype = data.get("phenotype", {}).duplicate(true)
+	
+	# Parse phenotype and convert color strings back to Color objects
+	phenotype = {}
+	var phenotype_data: Dictionary = data.get("phenotype", {})
+	for trait_key in phenotype_data.keys():
+		var pheno_data: Dictionary = phenotype_data[trait_key].duplicate(true)
+		if pheno_data.has("color") and pheno_data["color"] is String:
+			pheno_data["color"] = Color.from_string(pheno_data["color"], Color.WHITE)
+		phenotype[trait_key] = pheno_data
+	
 	age = data.get("age", 0)
 	life_stage = data.get("life_stage", "hatchling")
 	health = data.get("health", 100.0)
