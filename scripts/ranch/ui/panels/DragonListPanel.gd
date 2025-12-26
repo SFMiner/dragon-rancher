@@ -6,8 +6,8 @@ extends PanelContainer
 
 const NAME_SORT_KEY := "name"
 
-@onready var header_container: HBoxContainer = $VBoxContainer/HeaderContainer
-@onready var rows_container: VBoxContainer = $VBoxContainer/ScrollContainer/RowsContainer
+@onready var header_container: HBoxContainer = %HeaderContainer
+@onready var rows_container: VBoxContainer = %RowsContainer
 
 var sort_key: String = NAME_SORT_KEY
 var sort_ascending: bool = true
@@ -130,12 +130,35 @@ func _build_row(dragon: DragonData) -> HBoxContainer:
 	row.add_child(name_label)
 
 	for trait_key in trait_keys:
-		var genotype_label := Label.new()
-		genotype_label.text = _get_genotype_string(dragon, trait_key)
-		genotype_label.custom_minimum_size.x = 120
-		row.add_child(genotype_label)
+		var cell_label := Label.new()
+		cell_label.custom_minimum_size.x = 120
+
+		# For pattern trait, show phenotype (Solid/Striped) instead of genotype
+		if trait_key == "pattern":
+			cell_label.text = _get_pattern_phenotype(dragon)
+		else:
+			cell_label.text = _get_genotype_string(dragon, trait_key)
+
+		row.add_child(cell_label)
 
 	return row
+
+
+func _get_pattern_phenotype(dragon: DragonData) -> String:
+	if dragon == null or not dragon.phenotype.has("color"):
+		return "--"
+
+	# Pattern phenotype is now embedded in the color name (e.g., "Striped Gold")
+	var color_phenotype = dragon.phenotype.get("color", {})
+	if color_phenotype is Dictionary:
+		var color_name: String = color_phenotype.get("name", "")
+		# Check if "Striped" is in the color name
+		if "Striped" in color_name:
+			return "Striped"
+		else:
+			return "Solid"
+
+	return "--"
 
 
 func _get_genotype_string(dragon: DragonData, trait_key: String) -> String:

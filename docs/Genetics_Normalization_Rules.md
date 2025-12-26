@@ -59,6 +59,8 @@ genotype["fire"] = ["f", "f"]  # Use uppercase: ["F", "F"] or normalized
 | `wings` | `w`, `W` | W = Vestigial (DOMINANT), w = Functional (recessive) — **Teaching moment!** |
 | `armor` | `A`, `a` | A = Heavy (dominant), a = Light (recessive) |
 | `color` | `R`, `W` | Incomplete dominance: RR=Red, RW=Pink, WW=White |
+| `hue` | `H`, `Ho`, `Hb`, `Hg` | Hue modifier — affects color pigmentation (see Color + Hue Epistasis) |
+| `pattern` | `P`, `p` | P = Solid (dominant), p = Striped (recessive) — creates 16 total color phenotypes |
 | `size_s` | `S`, `s` | S = Large (dominant), s = small (recessive) |
 | `size_g` | `G`, `g` | G = Tall (dominant), g = short (recessive) |
 | `metabolism` | `M`, `m` | Incomplete dominance: MM=Normal, Mm=Intermediate, mm=Hyper |
@@ -67,10 +69,12 @@ genotype["fire"] = ["f", "f"]  # Use uppercase: ["F", "F"] or normalized
 ### 2.3 Uppercase Convention
 
 All alleles are stored in their canonical uppercase form:
-- Dominant alleles: `F`, `A`, `S`, `G`, `M`
-- Recessive alleles: `f`, `a`, `s`, `g`, `m` (stored as lowercase)
+- Dominant alleles: `F`, `A`, `S`, `G`, `M`, `P`
+- Recessive alleles: `f`, `a`, `s`, `g`, `m`, `p` (stored as lowercase)
 - Multi-allele: `D1`, `D2`, `D3` (number suffix)
+- Hue modifier: `H`, `Ho`, `Hb`, `Hg` (special codes for different hues)
 - Wings exception: `W` (dominant), `w` (recessive) — reversed!
+- Color exception: `R`, `W` (incomplete dominance, not simple dominant/recessive)
 
 ---
 
@@ -113,6 +117,10 @@ static func normalize_genotype(alleles: Array) -> String:
 | `["D1", "D3"]` | `"D1D3"` | Multi-allele (numeric sort) |
 | `["D3", "D1"]` | `"D1D3"` | Same result |
 | `["R", "W"]` | `"RW"` | Color incomplete dominance |
+| `["P", "p"]` | `"Pp"` | Pattern heterozygous |
+| `["p", "P"]` | `"Pp"` | Same result regardless of order |
+| `["P", "P"]` | `"PP"` | Pattern homozygous dominant (solid) |
+| `["p", "p"]` | `"pp"` | Pattern homozygous recessive (striped) |
 
 ### 3.4 Special Cases
 
@@ -248,6 +256,95 @@ Dominance: D2 > D1 > D3
 
 **Note:** D1D3 expresses as Normal because D1 masks D3 (D1 > D3), and the combined effect mimics D2.
 
+#### Color + Hue + Pattern — Three-Gene Epistatic System
+
+This system teaches **epistasis**, **independent assortment**, and **gene interaction**.
+
+**Gene Functions:**
+
+1. **Color (color)** - Base pigment production
+   - `RR` = Full pigment (bright colors)
+   - `RW` = Half pigment (pastel colors)
+   - `WW` = No pigment (white)
+
+2. **Hue (hue)** - Pigment color modifier
+   - `H_` = Red (no modification)
+   - `HoHo`, `HoHb`, `HoHg` = Gold/Orange
+   - `HbHb`, `HbHg` = Teal/Blue
+   - `HgHg` = Jade/Green
+
+3. **Pattern (pattern)** - Scale pattern
+   - `PP`, `Pp` = Solid (uniform color)
+   - `pp` = Striped (alternating with white)
+
+**Epistasis Examples:**
+
+White masks everything:
+- `WW + HoHo + pp` → **White** (no pigment to modify or stripe)
+- `WW + HgHg + PP` → **White** (no pigment to modify)
+
+Pattern requires pigment:
+- `RR + HH + pp` → **Striped Red** (red with white stripes)
+- `WW + HH + pp` → **White** (stripes invisible without pigment)
+
+**Complete Phenotype Table:**
+
+| Color | Hue | Pattern | Result |
+|-------|-----|---------|--------|
+| RR | HH | PP/Pp | Red |
+| RR | HH | pp | Striped Red |
+| RR | HoHo | PP/Pp | Gold |
+| RR | HoHo | pp | Striped Gold |
+| RR | HbHb | PP/Pp | Teal |
+| RR | HbHb | pp | Striped Teal |
+| RR | HgHg | PP/Pp | Jade |
+| RR | HgHg | pp | Striped Jade |
+| RW | HH | PP/Pp | Pink |
+| RW | HH | pp | Striped Pink |
+| RW | HoHo | PP/Pp | Peach |
+| RW | HoHo | pp | Striped Peach |
+| RW | HbHb | PP/Pp | Sky |
+| RW | HbHb | pp | Striped Sky |
+| RW | HgHg | PP/Pp | Mint |
+| RW | HgHg | pp | Striped Mint |
+| WW | any | any | White |
+
+**Total possible phenotypes:** 17 distinct appearances (16 colored + 1 white)
+
+**Teaching Moments:**
+
+1. **Epistasis**: WW always produces white, regardless of other genes
+2. **Gene Interaction**: Hue only matters if pigment exists (R alleles present)
+3. **Independent Assortment**: Pattern segregates independently from color/hue
+4. **Dominance**: P is dominant (solid), p is recessive (striped)
+5. **Incomplete Dominance**: RW creates intermediate pigment levels
+
+**Breeding Example:**
+
+Cross: `RR HoHo Pp` × `RW HbHb pp`
+
+Possible offspring:
+- Solid Gold (`RR HoHb PP/Pp`)
+- Striped Gold (`RR HoHb pp`)
+- Solid Sky (`RW HoHb PP/Pp`)
+- Striped Sky (`RW HoHb pp`)
+- And more combinations...
+
+Each gene segregates independently, creating diverse offspring!
+
+**Implementation Notes:**
+```gdscript
+# The color + hue + pattern phenotype is calculated AFTER individual traits
+if genotype.has("color") and genotype.has("hue"):
+    var color_pheno: Dictionary = calculate_color_phenotype(genotype)
+    # This function checks for pattern gene (optional third locus)
+    # Pattern genotype determines if name includes "Striped"
+    phenotype["color"] = color_pheno
+    # Remove hue and pattern from phenotype display (merged into color)
+    phenotype.erase("hue")
+    phenotype.erase("pattern")
+```
+
 ---
 
 ## 5. Breeding Mechanics
@@ -283,6 +380,8 @@ When a dragon is missing a trait (e.g., older dragon from before trait was unloc
 | `wings` | `["w", "W"]` |
 | `armor` | `["A", "a"]` |
 | `color` | `["R", "W"]` |
+| `hue` | `["H", "H"]` |
+| `pattern` | `["P", "P"]` |
 | `size_s` | `["S", "s"]` |
 | `size_g` | `["G", "g"]` |
 | `metabolism` | `["M", "m"]` |

@@ -1,331 +1,448 @@
 {
   "version": "1.0",
   "traits": [
-    {
-      "key": "fire",
-      "name": "Breath Type",
-      "description": "Determines what the dragon breathes",
-      "alleles": ["F", "f"],
-      "dominance_type": "simple",
-      "dominance_rank": ["F", "f"],
-      "phenotypes": {
-        "FF": {
-          "name": "Fire",
-          "sprite_suffix": "fire",
-          "color": "#FF4500",
-          "description": "Breathes powerful flames"
-        },
-        "Ff": {
-          "name": "Fire",
-          "sprite_suffix": "fire",
-          "color": "#FF4500",
-          "description": "Breathes powerful flames"
-        },
-        "ff": {
-          "name": "Smoke",
-          "sprite_suffix": "smoke",
-          "color": "#808080",
-          "description": "Breathes harmless smoke puffs"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    },
-    {
-      "key": "wings",
-      "name": "Wing Type",
-      "description": "Size and functionality of wings",
-      "alleles": ["w", "W"],
-      "dominance_type": "simple",
-      "dominance_rank": ["W", "w"],
-      "phenotypes": {
-        "WW": {
-          "name": "Vestigial",
-          "sprite_suffix": "vestigial_wings",
-          "color": "#D2B48C",
-          "description": "Tiny wing stubs, cannot fly"
-        },
-        "Ww": {
-          "name": "Vestigial",
-          "sprite_suffix": "vestigial_wings",
-          "color": "#D2B48C",
-          "description": "Tiny wing stubs, cannot fly"
-        },
-        "ww": {
-          "name": "Functional",
-          "sprite_suffix": "functional_wings",
-          "color": "#4169E1",
-          "description": "Large functional wings, can fly"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    },
-    {
-      "key": "armor",
-      "name": "Scale Type",
-      "description": "Thickness and type of scales",
-      "alleles": ["A", "a"],
-      "dominance_type": "simple",
-      "dominance_rank": ["A", "a"],
-      "phenotypes": {
-        "AA": {
-          "name": "Heavy",
-          "sprite_suffix": "heavy_armor",
-          "color": "#2F4F4F",
-          "description": "Thick dark scales, excellent protection"
-        },
-        "Aa": {
-          "name": "Heavy",
-          "sprite_suffix": "heavy_armor",
-          "color": "#2F4F4F",
-          "description": "Thick dark scales, excellent protection"
-        },
-        "aa": {
-          "name": "Light",
-          "sprite_suffix": "light_armor",
-          "color": "#F0E68C",
-          "description": "Smooth light scales, more agile"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    },
-    {
-      "key": "color",
-      "name": "Body Color",
-      "description": "Dragon's scale color (incomplete dominance)",
-      "alleles": ["R", "W"],
-      "dominance_type": "incomplete",
-      "dominance_rank": ["R", "W"],
-      "phenotypes": {
-        "RR": {
-          "name": "Red",
-          "sprite_suffix": "red",
-          "color": "#E63946",
-          "description": "Bright red scales"
-        },
-        "RW": {
-          "name": "Pink",
-          "sprite_suffix": "pink",
-          "color": "#F2A2B0",
-          "description": "Pink scales (blend of red and white)"
-        },
-        "WR": {
-          "name": "Pink",
-          "sprite_suffix": "pink",
-          "color": "#F2A2B0",
-          "description": "Pink scales (blend of red and white)"
-        },
-        "WW": {
-          "name": "White",
-          "sprite_suffix": "white",
-          "color": "#F5F5F5",
-          "description": "Pure white scales"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    },
-    {
-      "key": "size_S",
-      "name": "Size (S locus)",
-      "description": "Body size S gene (Large/small) - works with G locus",
-      "alleles": ["S", "s"],
-      "dominance_type": "simple",
-      "dominance_rank": ["S", "s"],
-      "phenotypes": {
-        "SS": {
-          "name": "S-Large",
-          "sprite_suffix": "",
-          "color": "#4A90E2",
-          "description": "Homozygous large (S locus)"
-        },
-        "Ss": {
-          "name": "S-Large",
-          "sprite_suffix": "",
-          "color": "#4A90E2",
-          "description": "Heterozygous large (S locus)"
-        },
-        "ss": {
-          "name": "S-Small",
-          "sprite_suffix": "",
-          "color": "#7EB2E8",
-          "description": "Homozygous small (S locus)"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": true,
-      "related_loci": ["size_G"]
-    },
-    {
-      "key": "size_G",
-      "name": "Size (G locus)",
-      "description": "Body size G gene (Tall/short) - works with S locus",
-      "alleles": ["G", "g"],
-      "dominance_type": "simple",
-      "dominance_rank": ["G", "g"],
-      "phenotypes": {
-        "GG": {
-          "name": "G-Tall",
-          "sprite_suffix": "",
-          "color": "#50C878",
-          "description": "Homozygous tall (G locus)"
-        },
-        "Gg": {
-          "name": "G-Tall",
-          "sprite_suffix": "",
-          "color": "#50C878",
-          "description": "Heterozygous tall (G locus)"
-        },
-        "gg": {
-          "name": "G-Short",
-          "sprite_suffix": "",
-          "color": "#90EE90",
-          "description": "Homozygous short (G locus)"
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": true,
-      "related_loci": ["size_S"]
-    },
-    {
-      "key": "metabolism",
-      "name": "Metabolism",
-      "description": "Metabolic rate (incomplete dominance with trade-offs)",
-      "alleles": ["M", "m"],
-      "dominance_type": "incomplete",
-      "dominance_rank": ["M", "m"],
-      "phenotypes": {
-        "MM": {
-          "name": "Normal",
-          "sprite_suffix": "normal_metabolism",
-          "color": "#4CAF50",
-          "description": "Normal metabolism (1.0x speed, 1.0x food, 1.0x lifespan)",
-          "speed_multiplier": 1.0,
-          "food_multiplier": 1.0,
-          "lifespan_multiplier": 1.0
-        },
-        "Mm": {
-          "name": "Intermediate",
-          "sprite_suffix": "intermediate_metabolism",
-          "color": "#FF9800",
-          "description": "Intermediate metabolism (1.25x speed, 1.5x food, 0.85x lifespan)",
-          "speed_multiplier": 1.25,
-          "food_multiplier": 1.5,
-          "lifespan_multiplier": 0.85
-        },
-        "mM": {
-          "name": "Intermediate",
-          "sprite_suffix": "intermediate_metabolism",
-          "color": "#FF9800",
-          "description": "Intermediate metabolism (1.25x speed, 1.5x food, 0.85x lifespan)",
-          "speed_multiplier": 1.25,
-          "food_multiplier": 1.5,
-          "lifespan_multiplier": 0.85
-        },
-        "mm": {
-          "name": "Hyper",
-          "sprite_suffix": "hyper_metabolism",
-          "color": "#F44336",
-          "description": "Hyper metabolism (1.5x speed, 2.0x food, 0.7x lifespan)",
-          "speed_multiplier": 1.5,
-          "food_multiplier": 2.0,
-          "lifespan_multiplier": 0.7
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    },
-    {
-      "key": "docility",
-      "name": "Temperament",
-      "description": "Dragon's behavioral temperament (3-allele hierarchy)",
-      "alleles": ["D1", "D2", "D3"],
-      "dominance_type": "hierarchy",
-      "dominance_rank": ["D2", "D1", "D3"],
-      "phenotypes": {
-        "D1D1": {
-          "name": "Very Docile",
-          "sprite_suffix": "very_docile",
-          "color": "#A8E6CF",
-          "description": "Extremely gentle and calm (0% escape chance)",
-          "escape_chance": 0.0,
-          "fight_bonus": -20
-        },
-        "D1D2": {
-          "name": "Docile",
-          "sprite_suffix": "docile",
-          "color": "#C1E1C1",
-          "description": "Gentle and friendly (5% escape chance)",
-          "escape_chance": 0.05,
-          "fight_bonus": -10
-        },
-        "D2D1": {
-          "name": "Docile",
-          "sprite_suffix": "docile",
-          "color": "#C1E1C1",
-          "description": "Gentle and friendly (5% escape chance)",
-          "escape_chance": 0.05,
-          "fight_bonus": -10
-        },
-        "D2D2": {
-          "name": "Normal",
-          "sprite_suffix": "normal_temperament",
-          "color": "#FFE5A0",
-          "description": "Balanced temperament (10% escape chance)",
-          "escape_chance": 0.10,
-          "fight_bonus": 0
-        },
-        "D1D3": {
-          "name": "Normal",
-          "sprite_suffix": "normal_temperament",
-          "color": "#FFE5A0",
-          "description": "Balanced temperament (10% escape chance)",
-          "escape_chance": 0.10,
-          "fight_bonus": 0
-        },
-        "D3D1": {
-          "name": "Normal",
-          "sprite_suffix": "normal_temperament",
-          "color": "#FFE5A0",
-          "description": "Balanced temperament (10% escape chance)",
-          "escape_chance": 0.10,
-          "fight_bonus": 0
-        },
-        "D2D3": {
-          "name": "Aggressive",
-          "sprite_suffix": "aggressive",
-          "color": "#FFAD99",
-          "description": "Territorial and fierce (15% escape chance)",
-          "escape_chance": 0.15,
-          "fight_bonus": 10
-        },
-        "D3D2": {
-          "name": "Aggressive",
-          "sprite_suffix": "aggressive",
-          "color": "#FFAD99",
-          "description": "Territorial and fierce (15% escape chance)",
-          "escape_chance": 0.15,
-          "fight_bonus": 10
-        },
-        "D3D3": {
-          "name": "Very Aggressive",
-          "sprite_suffix": "very_aggressive",
-          "color": "#FF6B6B",
-          "description": "Extremely wild and dangerous (25% escape chance)",
-          "escape_chance": 0.25,
-          "fight_bonus": 20
-        }
-      },
-      "unlock_level": 0,
-      "is_multi_locus": false,
-      "related_loci": []
-    }
+	{
+	  "key": "fire",
+	  "name": "Breath Type",
+	  "description": "Determines what the dragon breathes",
+	  "alleles": ["F", "f"],
+	  "dominance_type": "simple",
+	  "dominance_rank": ["F", "f"],
+	  "phenotypes": {
+		"FF": {
+		  "name": "Fire",
+		  "sprite_suffix": "fire",
+		  "color": "#FF4500",
+		  "description": "Breathes powerful flames"
+		},
+		"Ff": {
+		  "name": "Fire",
+		  "sprite_suffix": "fire",
+		  "color": "#FF4500",
+		  "description": "Breathes powerful flames"
+		},
+		"ff": {
+		  "name": "Smoke",
+		  "sprite_suffix": "smoke",
+		  "color": "#808080",
+		  "description": "Breathes harmless smoke puffs"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": false,
+	  "related_loci": []
+	},
+	{
+	  "key": "wings",
+	  "name": "Wing Type",
+	  "description": "Size and functionality of wings",
+	  "alleles": ["w", "W"],
+	  "dominance_type": "simple",
+	  "dominance_rank": ["W", "w"],
+	  "phenotypes": {
+		"WW": {
+		  "name": "Vestigial",
+		  "sprite_suffix": "vestigial_wings",
+		  "color": "#D2B48C",
+		  "description": "Tiny wing stubs, cannot fly"
+		},
+		"Ww": {
+		  "name": "Vestigial",
+		  "sprite_suffix": "vestigial_wings",
+		  "color": "#D2B48C",
+		  "description": "Tiny wing stubs, cannot fly"
+		},
+		"ww": {
+		  "name": "Functional",
+		  "sprite_suffix": "functional_wings",
+		  "color": "#4169E1",
+		  "description": "Large functional wings, can fly"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": false,
+	  "related_loci": []
+	},
+	{
+	  "key": "armor",
+	  "name": "Scale Type",
+	  "description": "Thickness and type of scales",
+	  "alleles": ["A", "a"],
+	  "dominance_type": "simple",
+	  "dominance_rank": ["A", "a"],
+	  "phenotypes": {
+		"AA": {
+		  "name": "Heavy",
+		  "sprite_suffix": "heavy_armor",
+		  "color": "#2F4F4F",
+		  "description": "Thick dark scales, excellent protection"
+		},
+		"Aa": {
+		  "name": "Heavy",
+		  "sprite_suffix": "heavy_armor",
+		  "color": "#2F4F4F",
+		  "description": "Thick dark scales, excellent protection"
+		},
+		"aa": {
+		  "name": "Light",
+		  "sprite_suffix": "light_armor",
+		  "color": "#F0E68C",
+		  "description": "Smooth light scales, more agile"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": false,
+	  "related_loci": []
+	},
+	{
+	  "key": "color",
+	  "name": "Body Color",
+	  "description": "Dragon's scale color (incomplete dominance)",
+	  "alleles": ["R", "W"],
+	  "dominance_type": "incomplete",
+	  "dominance_rank": ["R", "W"],
+	  "phenotypes": {
+		"RR": {
+		  "name": "Red",
+		  "sprite_suffix": "red",
+		  "color": "#E63946",
+		  "description": "Bright red scales"
+		},
+		"RW": {
+		  "name": "Pink",
+		  "sprite_suffix": "pink",
+		  "color": "#F2A2B0",
+		  "description": "Pink scales (blend of red and white)"
+		},
+		"WR": {
+		  "name": "Pink",
+		  "sprite_suffix": "pink",
+		  "color": "#F2A2B0",
+		  "description": "Pink scales (blend of red and white)"
+		},
+		"WW": {
+		  "name": "White",
+		  "sprite_suffix": "white",
+		  "color": "#F5F5F5",
+		  "description": "Pure white scales"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": true,
+	  "related_loci": ["hue", "pattern"]
+	},
+	{
+	  "key": "size_S",
+	  "name": "Size (S locus)",
+	  "description": "Body size S gene (Large/small) - works with G locus",
+	  "alleles": ["S", "s"],
+	  "dominance_type": "simple",
+	  "dominance_rank": ["S", "s"],
+	  "phenotypes": {
+		"SS": {
+		  "name": "S-Large",
+		  "sprite_suffix": "",
+		  "color": "#4A90E2",
+		  "description": "Homozygous large (S locus)"
+		},
+		"Ss": {
+		  "name": "S-Large",
+		  "sprite_suffix": "",
+		  "color": "#4A90E2",
+		  "description": "Heterozygous large (S locus)"
+		},
+		"ss": {
+		  "name": "S-Small",
+		  "sprite_suffix": "",
+		  "color": "#7EB2E8",
+		  "description": "Homozygous small (S locus)"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": true,
+	  "related_loci": ["size_G"]
+	},
+	{
+	  "key": "size_G",
+	  "name": "Size (G locus)",
+	  "description": "Body size G gene (Tall/short) - works with S locus",
+	  "alleles": ["G", "g"],
+	  "dominance_type": "simple",
+	  "dominance_rank": ["G", "g"],
+	  "phenotypes": {
+		"GG": {
+		  "name": "G-Tall",
+		  "sprite_suffix": "",
+		  "color": "#50C878",
+		  "description": "Homozygous tall (G locus)"
+		},
+		"Gg": {
+		  "name": "G-Tall",
+		  "sprite_suffix": "",
+		  "color": "#50C878",
+		  "description": "Heterozygous tall (G locus)"
+		},
+		"gg": {
+		  "name": "G-Short",
+		  "sprite_suffix": "",
+		  "color": "#90EE90",
+		  "description": "Homozygous short (G locus)"
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": true,
+	  "related_loci": ["size_S"]
+	},
+	{
+	  "key": "metabolism",
+	  "name": "Metabolism",
+	  "description": "Metabolic rate (incomplete dominance with trade-offs)",
+	  "alleles": ["M", "m"],
+	  "dominance_type": "incomplete",
+	  "dominance_rank": ["M", "m"],
+	  "phenotypes": {
+		"MM": {
+		  "name": "Normal",
+		  "sprite_suffix": "normal_metabolism",
+		  "color": "#4CAF50",
+		  "description": "Normal metabolism (1.0x speed, 1.0x food, 1.0x lifespan)",
+		  "speed_multiplier": 1.0,
+		  "food_multiplier": 1.0,
+		  "lifespan_multiplier": 1.0
+		},
+		"Mm": {
+		  "name": "Intermediate",
+		  "sprite_suffix": "intermediate_metabolism",
+		  "color": "#FF9800",
+		  "description": "Intermediate metabolism (1.25x speed, 1.5x food, 0.85x lifespan)",
+		  "speed_multiplier": 1.25,
+		  "food_multiplier": 1.5,
+		  "lifespan_multiplier": 0.85
+		},
+		"mM": {
+		  "name": "Intermediate",
+		  "sprite_suffix": "intermediate_metabolism",
+		  "color": "#FF9800",
+		  "description": "Intermediate metabolism (1.25x speed, 1.5x food, 0.85x lifespan)",
+		  "speed_multiplier": 1.25,
+		  "food_multiplier": 1.5,
+		  "lifespan_multiplier": 0.85
+		},
+		"mm": {
+		  "name": "Hyper",
+		  "sprite_suffix": "hyper_metabolism",
+		  "color": "#F44336",
+		  "description": "Hyper metabolism (1.5x speed, 2.0x food, 0.7x lifespan)",
+		  "speed_multiplier": 1.5,
+		  "food_multiplier": 2.0,
+		  "lifespan_multiplier": 0.7
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": false,
+	  "related_loci": []
+	},
+	{
+	  "key": "docility",
+	  "name": "Temperament",
+	  "description": "Dragon's behavioral temperament (3-allele hierarchy)",
+	  "alleles": ["D1", "D2", "D3"],
+	  "dominance_type": "hierarchy",
+	  "dominance_rank": ["D2", "D1", "D3"],
+	  "phenotypes": {
+		"D1D1": {
+		  "name": "Very Docile",
+		  "sprite_suffix": "very_docile",
+		  "color": "#A8E6CF",
+		  "description": "Extremely gentle and calm (0% escape chance)",
+		  "escape_chance": 0.0,
+		  "fight_bonus": -20
+		},
+		"D1D2": {
+		  "name": "Docile",
+		  "sprite_suffix": "docile",
+		  "color": "#C1E1C1",
+		  "description": "Gentle and friendly (5% escape chance)",
+		  "escape_chance": 0.05,
+		  "fight_bonus": -10
+		},
+		"D2D1": {
+		  "name": "Docile",
+		  "sprite_suffix": "docile",
+		  "color": "#C1E1C1",
+		  "description": "Gentle and friendly (5% escape chance)",
+		  "escape_chance": 0.05,
+		  "fight_bonus": -10
+		},
+		"D2D2": {
+		  "name": "Normal",
+		  "sprite_suffix": "normal_temperament",
+		  "color": "#FFE5A0",
+		  "description": "Balanced temperament (10% escape chance)",
+		  "escape_chance": 0.10,
+		  "fight_bonus": 0
+		},
+		"D1D3": {
+		  "name": "Normal",
+		  "sprite_suffix": "normal_temperament",
+		  "color": "#FFE5A0",
+		  "description": "Balanced temperament (10% escape chance)",
+		  "escape_chance": 0.10,
+		  "fight_bonus": 0
+		},
+		"D3D1": {
+		  "name": "Normal",
+		  "sprite_suffix": "normal_temperament",
+		  "color": "#FFE5A0",
+		  "description": "Balanced temperament (10% escape chance)",
+		  "escape_chance": 0.10,
+		  "fight_bonus": 0
+		},
+		"D2D3": {
+		  "name": "Aggressive",
+		  "sprite_suffix": "aggressive",
+		  "color": "#FFAD99",
+		  "description": "Territorial and fierce (15% escape chance)",
+		  "escape_chance": 0.15,
+		  "fight_bonus": 10
+		},
+		"D3D2": {
+		  "name": "Aggressive",
+		  "sprite_suffix": "aggressive",
+		  "color": "#FFAD99",
+		  "description": "Territorial and fierce (15% escape chance)",
+		  "escape_chance": 0.15,
+		  "fight_bonus": 10
+		},
+		"D3D3": {
+		  "name": "Very Aggressive",
+		  "sprite_suffix": "very_aggressive",
+		  "color": "#FF6B6B",
+		  "description": "Extremely wild and dangerous (25% escape chance)",
+		  "escape_chance": 0.25,
+		  "fight_bonus": 20
+		}
+	  },
+	  "unlock_level": 0,
+	  "is_multi_locus": false,
+	  "related_loci": []
+	},
+	{
+	"key": "hue",
+	"name": "Hue Modifier",
+	"description": "Modifies base pigment color (only works if pigment is present)",
+	"alleles": ["H", "Ho", "Hb", "Hg"],
+	"dominance_type": "hierarchy",
+	"dominance_rank": ["H", "Ho", "Hb", "Hg"],
+	"phenotypes": {
+		"HH": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHo": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHb": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHg": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HoHo": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HoHb": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HoHg": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HbHb": {
+			"name": "Teal Hue",
+			"sprite_suffix": "hue_teal",
+			"color": "#1B9AAA",
+			"description": "Converts red pigment to blue/teal",
+			"hue_name": "teal"
+		},
+		"HbHg": {
+			"name": "Teal Hue",
+			"sprite_suffix": "hue_teal",
+			"color": "#1B9AAA",
+			"description": "Converts red pigment to blue/teal",
+			"hue_name": "teal"
+		},
+		"HgHg": {
+			"name": "Jade Hue",
+			"sprite_suffix": "hue_jade",
+			"color": "#06A77D",
+			"description": "Converts red pigment to green/jade",
+			"hue_name": "jade"
+		}
+	},
+	"unlock_level": 0,
+	"is_multi_locus": true,
+	"related_loci": ["color", "pattern"]
+},
+{
+	"key": "pattern",
+	"name": "Scale Pattern",
+	"description": "Scale pattern (solid or striped)",
+	"alleles": ["P", "p"],
+	"dominance_type": "simple",
+	"dominance_rank": ["P", "p"],
+	"phenotypes": {
+		"PP": {
+			"name": "Solid",
+			"sprite_suffix": "solid",
+			"color": "#808080",
+			"description": "Uniform solid color scales",
+			"pattern_type": "solid"
+		},
+		"Pp": {
+			"name": "Solid",
+			"sprite_suffix": "solid",
+			"color": "#808080",
+			"description": "Uniform solid color scales",
+			"pattern_type": "solid"
+		},
+		"pp": {
+			"name": "Striped",
+			"sprite_suffix": "striped",
+			"color": "#505050",
+			"description": "Alternating stripe pattern",
+			"pattern_type": "striped"
+		}
+	},
+	"unlock_level": 0,
+	"is_multi_locus": true,
+	"related_loci": ["color", "hue"]
+}
   ]
 }

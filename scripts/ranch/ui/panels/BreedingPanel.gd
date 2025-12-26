@@ -239,6 +239,10 @@ func _update_predictions() -> void:
 		var predictions: Dictionary = _calculate_predictions()
 
 		for trait_key in predictions.keys():
+			# Skip hue since it's combined into color phenotype
+			if trait_key == "hue":
+				continue
+
 			var trait_predictions: Dictionary = predictions[trait_key]
 
 			# Combine all phenotypes and probabilities on one line
@@ -256,6 +260,7 @@ func _update_predictions() -> void:
 
 
 ## Calculate breeding predictions
+## FIXED: Use probabilities from GeneticsEngine instead of recounting
 func _calculate_predictions() -> Dictionary:
 	if not selected_parent_a or not selected_parent_b:
 		return {}
@@ -281,33 +286,24 @@ func _calculate_predictions() -> Dictionary:
 			trait_key
 		)
 
-		var punnett: Dictionary = {"outcomes": outcomes}
-
-		# Count phenotypes
-		var phenotype_counts: Dictionary = {}
-		var total_outcomes: int = 0
-
-		for outcome in punnett.get("outcomes", []):
-			total_outcomes += 1
-
-			# Use Punnett outcome phenotype data directly to avoid invalid allele warnings
-			var phenotype: String = "unknown"
-			if outcome is Dictionary:
-				var phenotype_data = outcome.get("phenotype_data", null)
-				if phenotype_data is Dictionary:
-					phenotype = phenotype_data.get("name", "unknown")
-				elif outcome.get("phenotype") is String:
-					phenotype = outcome.get("phenotype")
-
-			if not phenotype_counts.has(phenotype):
-				phenotype_counts[phenotype] = 0
-			phenotype_counts[phenotype] += 1
-
-		# Convert counts to probabilities
+		# Aggregate phenotype probabilities from Punnett square results
+		# DON'T recount - use the probabilities GeneticsEngine already calculated!
 		var trait_predictions: Dictionary = {}
-		for phenotype in phenotype_counts.keys():
-			var count: int = phenotype_counts[phenotype]
-			trait_predictions[phenotype] = float(count) / float(total_outcomes)
+		
+		for outcome in outcomes:
+			if not outcome is Dictionary:
+				continue
+			
+			var phenotype_data = outcome.get("phenotype_data", {})
+			var phenotype: String = phenotype_data.get("name", "Unknown") if phenotype_data is Dictionary else outcome.get("phenotype", "Unknown")
+			var probability: float = outcome.get("probability", 0.0)
+			
+			# If this phenotype already exists, add probabilities
+			# (e.g., if multiple genotypes produce same phenotype)
+			if trait_predictions.has(phenotype):
+				trait_predictions[phenotype] += probability
+			else:
+				trait_predictions[phenotype] = probability
 
 		predictions[trait_key] = trait_predictions
 
@@ -317,7 +313,6 @@ func _calculate_predictions() -> Dictionary:
 	_cached_parent_b_id = parent_b_id
 
 	return predictions
-
 
 ## Format genotype for display
 func _format_genotype(genotype: Dictionary) -> String:

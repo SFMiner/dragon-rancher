@@ -1,0 +1,83 @@
+{
+	"key": "hue",
+	"name": "Hue Modifier",
+	"description": "Modifies base pigment color (only works if pigment is present)",
+	"alleles": ["H", "Ho", "Hb", "Hg"],
+	"dominance_type": "hierarchy",
+	"dominance_rank": ["H", "Ho", "Hb", "Hg"],
+	"phenotypes": {
+		"HH": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHo": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHb": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HHg": {
+			"name": "Red Hue",
+			"sprite_suffix": "hue_red",
+			"color": "#E63946",
+			"description": "No hue modification - pigment stays red",
+			"hue_name": "red"
+		},
+		"HoHo": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HoHb": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HoHg": {
+			"name": "Gold Hue",
+			"sprite_suffix": "hue_gold",
+			"color": "#FFB627",
+			"description": "Converts red pigment to gold/orange",
+			"hue_name": "gold"
+		},
+		"HbHb": {
+			"name": "Teal Hue",
+			"sprite_suffix": "hue_teal",
+			"color": "#1B9AAA",
+			"description": "Converts red pigment to blue/teal",
+			"hue_name": "teal"
+		},
+		"HbHg": {
+			"name": "Teal Hue",
+			"sprite_suffix": "hue_teal",
+			"color": "#1B9AAA",
+			"description": "Converts red pigment to blue/teal",
+			"hue_name": "teal"
+		},
+		"HgHg": {
+			"name": "Jade Hue",
+			"sprite_suffix": "hue_jade",
+			"color": "#06A77D",
+			"description": "Converts red pigment to green/jade",
+			"hue_name": "jade"
+		}
+	},
+	"unlock_level": 1,
+	"is_multi_locus": true,
+	"related_loci": ["color"]
+}

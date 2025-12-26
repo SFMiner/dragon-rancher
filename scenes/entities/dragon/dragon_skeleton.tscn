@@ -17,7 +17,7 @@ rest = Transform2D(0.9910994, -0.1331238, 0.1331238, 0.9910994, 0, 0)
 
 [node name="Spine2" type="Bone2D" parent="Spine1"]
 position = Vector2(19, 0)
-rotation = 0.0743691
+rotation = 0.07436911
 scale = Vector2(0.9999999, 0.9999999)
 rest = Transform2D(0.9972358, 0.07430056, -0.07430056, 0.9972358, 19, 0)
 
@@ -33,6 +33,10 @@ rotation = -0.07416494
 scale = Vector2(0.7949398, 1.0489076)
 rest = Transform2D(0.7858182, -0.120079406, 0.15844244, 1.0368718, 21.103718, 1.9060626)
 
+[node name="RearLeg_End" type="Bone2D" parent="Spine1/Spine2/RearLeg_U/RearLeg_L"]
+position = Vector2(15, 0)
+rest = Transform2D(1, 0, 0, 1, 15, 0)
+
 [node name="Tail1" type="Bone2D" parent="Spine1/Spine2"]
 position = Vector2(19, 0)
 rotation = 0.36530393
@@ -47,8 +51,12 @@ rest = Transform2D(0.9852712, -0.17099892, 0.17099892, 0.9852712, 17.582561, 3.9
 [node name="Tail2" type="Bone2D" parent="Spine1/Spine2/Tail1/Tail2"]
 position = Vector2(18.433231, 0.46477103)
 rotation = -0.30612442
-scale = Vector2(0.9999996, 0.9999996)
+scale = Vector2(0.9999995, 0.9999995)
 rest = Transform2D(0.9535083, -0.30136538, 0.30136538, 0.9535083, 18.433231, 0.46477103)
+
+[node name="Tail_End" type="Bone2D" parent="Spine1/Spine2/Tail1/Tail2/Tail2"]
+position = Vector2(15, 0)
+rest = Transform2D(1, 0, 0, 1, 15, 0)
 
 [node name="ForeLeg_U" type="Bone2D" parent="."]
 rotation = 1.1440471
@@ -59,6 +67,10 @@ position = Vector2(21.103718, 1.9060626)
 rotation = 0.49173376
 scale = Vector2(0.9999997, 0.9999997)
 rest = Transform2D(0.8815153, 0.4721548, -0.4721548, 0.8815153, 21.103718, 1.9060626)
+
+[node name="ForeLeg_End" type="Bone2D" parent="ForeLeg_U/ForeLeg_L"]
+position = Vector2(15, 0)
+rest = Transform2D(1, 0, 0, 1, 15, 0)
 
 [node name="Neck1" type="Bone2D" parent="."]
 rotation = -3.071821
@@ -79,6 +91,10 @@ position = Vector2(32.742954, 2.8135066)
 scale = Vector2(3.9984026, 0.10776714)
 rest = Transform2D(3.9984026, 0, 0, 0.10776714, 32.742954, 2.8135066)
 
+[node name="Head_End" type="Bone2D" parent="Neck1/Neck2/Neck3/Head"]
+position = Vector2(15, 0)
+rest = Transform2D(1, 0, 0, 1, 15, 0)
+
 [node name="Wing1" type="Bone2D" parent="."]
 rotation = -1.075037
 rest = Transform2D(0.4756997, -0.87960774, 0.87960774, 0.4756997, 0, 0)
@@ -93,3 +109,7 @@ position = Vector2(18.83072, 1.1848826)
 rotation = 0.6971424
 scale = Vector2(1.9586942, 2.3752809)
 rest = Transform2D(1.5016916, 1.2575394, -1.5250003, 1.8210802, 18.83072, 1.1848826)
+
+[node name="Wing_End" type="Bone2D" parent="Wing1/Wing2/Wing3"]
+position = Vector2(15, 0)
+rest = Transform2D(1, 0, 0, 1, 15, 0)

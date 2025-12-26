@@ -38,6 +38,13 @@ func breed_dragons(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 	for trait_key in parent_b.genotype.keys():
 		all_trait_keys[trait_key] = true
 
+	# Also include any newly unlocked traits at current reputation level
+	# This ensures new traits (like pattern at reputation 2) are added to offspring
+	if RanchState:
+		var currently_unlocked: Array[String] = TraitDB.get_unlocked_traits(RanchState.reputation)
+		for trait_key in currently_unlocked:
+			all_trait_keys[trait_key] = true
+
 	# For each trait, randomly select one allele from each parent
 	for trait_key in all_trait_keys.keys():
 		var allele_from_a: String = _get_random_allele_from_parent(parent_a, trait_key)
@@ -107,6 +114,21 @@ func calculate_phenotype(genotype: Dictionary) -> Dictionary:
 		phenotype["size"] = size_pheno
 		if debug_mode:
 			print("  Combined Size: %s (scale: %.1fx)" % [size_pheno.get("name", "Unknown"), size_pheno.get("scale_factor", 1.0)])
+
+	# === ADD THIS NEW SECTION ===
+	# Calculate combined color phenotype if both loci present
+	if genotype.has("color") and genotype.has("hue"):
+		var color_pheno: Dictionary = calculate_color_phenotype(genotype)
+		# Override the individual color phenotype with combined result
+		phenotype["color"] = color_pheno
+		# Remove hue from phenotype display since it's now combined into color
+		phenotype.erase("hue")
+		if debug_mode:
+			print("  Combined Color: %s (%s hue, %s base)" % [
+				color_pheno.get("name", "Unknown"),
+				color_pheno.get("hue", "unknown"),
+				color_pheno.get("base_color", "unknown")
+			])
 
 	return phenotype
 
@@ -395,3 +417,109 @@ func _coerce_alleles(value, trait_key: String) -> Array:
 
 	push_warning("[GeneticsEngine] Trait '%s' genotype not array/dict, got %s" % [trait_key, type_string(typeof(value))])
 	return []
+
+
+## Calculate combined color phenotype from color + hue genes
+## Demonstrates epistasis: WW is always white regardless of hue
+## genotype: Dictionary with both "color" and "hue" keys
+## Returns: Dictionary with combined phenotype data
+## Calculate combined color phenotype from color + hue + pattern genes
+## Demonstrates epistasis and independent assortment
+## genotype: Dictionary with "color", "hue", and optionally "pattern" keys
+## Returns: Dictionary with combined phenotype data
+func calculate_color_phenotype(genotype: Dictionary) -> Dictionary:
+	if not genotype.has("color") or not genotype.has("hue"):
+		push_warning("[GeneticsEngine] calculate_color_phenotype: missing color or hue locus")
+		return {}
+
+	# Get individual trait definitions
+	var color_def: TraitDef = TraitDB.get_trait_def("color")
+	var hue_def: TraitDef = TraitDB.get_trait_def("hue")
+
+	if color_def == null or hue_def == null:
+		push_error("[GeneticsEngine] calculate_color_phenotype: missing trait definitions")
+		return {}
+
+	# Get alleles and normalize
+	var color_alleles: Array = _coerce_alleles(genotype["color"], "color")
+	var hue_alleles: Array = _coerce_alleles(genotype["hue"], "hue")
+
+	var color_normalized: String = GeneticsResolvers.normalize_genotype_by_dominance(color_alleles, color_def)
+	var hue_normalized: String = GeneticsResolvers.normalize_genotype_by_dominance(hue_alleles, hue_def)
+
+	# Get base color phenotype
+	var color_pheno: Dictionary = color_def.get_phenotype_data(color_normalized)
+	var hue_pheno: Dictionary = hue_def.get_phenotype_data(hue_normalized)
+
+	if color_pheno.is_empty() or hue_pheno.is_empty():
+		push_error("[GeneticsEngine] calculate_color_phenotype: missing phenotype data")
+		return {}
+
+	# Check for pattern gene (optional)
+	var has_stripes: bool = false
+	if genotype.has("pattern"):
+		var pattern_def: TraitDef = TraitDB.get_trait_def("pattern")
+		if pattern_def != null:
+			var pattern_alleles: Array = _coerce_alleles(genotype["pattern"], "pattern")
+			var pattern_normalized: String = GeneticsResolvers.normalize_genotype_by_dominance(pattern_alleles, pattern_def)
+			# pp = striped, PP or Pp = solid
+			has_stripes = (pattern_normalized == "pp")
+
+	# EPISTASIS: WW is always white, hue and pattern have no effect
+	if color_normalized == "WW":
+		return {
+			"name": "White",
+			"sprite_suffix": "white",
+			"color": Color.from_string("#F5F5F5", Color.WHITE),
+			"description": "Pure white - no pigment to modify",
+			"base_color": "white",
+			"hue": "none",
+			"pattern": "none"
+		}
+
+	# Extract hue name from hue phenotype
+	var hue_name: String = hue_pheno.get("hue_name", "red")
+	var hue_color: Color = hue_pheno.get("color", Color.WHITE)
+
+	# Determine intensity based on base color (RR = full, RW = pastel)
+	var is_full_intensity: bool = (color_normalized == "RR")
+
+	# Color mapping for full intensity (RR)
+	var full_colors: Dictionary = {
+		"red": {"name": "Red", "color": "#E63946", "desc": "Bright red scales"},
+		"gold": {"name": "Gold", "color": "#FFB627", "desc": "Shimmering gold scales"},
+		"teal": {"name": "Teal", "color": "#1B9AAA", "desc": "Deep teal scales"},
+		"jade": {"name": "Jade", "color": "#06A77D", "desc": "Rich jade green scales"}
+	}
+
+	# Color mapping for pastel intensity (RW)
+	var pastel_colors: Dictionary = {
+		"red": {"name": "Pink", "color": "#F2A2B0", "desc": "Soft pink scales"},
+		"gold": {"name": "Peach", "color": "#FFD4A3", "desc": "Delicate peach scales"},
+		"teal": {"name": "Sky", "color": "#89CFF0", "desc": "Pale sky blue scales"},
+		"jade": {"name": "Mint", "color": "#98D8C8", "desc": "Gentle mint green scales"}
+	}
+
+	# Select appropriate color data
+	var color_map: Dictionary = full_colors if is_full_intensity else pastel_colors
+	var final_data: Dictionary = color_map.get(hue_name, color_map["red"])
+
+	# Modify name and description if striped
+	var display_name: String = final_data["name"]
+	var description: String = final_data["desc"]
+	var sprite_suffix: String = hue_name if is_full_intensity else ("pastel_" + hue_name)
+
+	if has_stripes:
+		display_name = "Striped " + display_name
+		description = final_data["desc"].replace("scales", "scales with white stripes")
+		sprite_suffix += "_striped"
+
+	return {
+		"name": display_name,
+		"sprite_suffix": sprite_suffix,
+		"color": Color.from_string(final_data["color"], Color.WHITE),
+		"description": description,
+		"base_color": "pigmented" if is_full_intensity else "diluted",
+		"hue": hue_name,
+		"pattern": "striped" if has_stripes else "solid"
+	}

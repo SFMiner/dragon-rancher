@@ -4,7 +4,8 @@
       "Bash(mkdir:*)",
       "Bash(cat:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(godot:*)"
     ]
   }
 }
