@@ -2,7 +2,122 @@
 # Unit tests for reputation and progression system
 # Part of Dragon Ranch - Session 8 Progression System
 
-extends GutTest
+extends SceneTree
+
+# Plain-script port of the former GutTest suite (GUT addon is not installed).
+# Run with: godot --headless --path . --script tests/progression/test_reputation.gd
+# Autoloads are not registered as global identifiers in --script mode, so this
+# member shadows it and is bound to the live /root node in _init().
+var RanchState: Node = null
+
+var _checks_failed: int = 0
+var _checks_total: int = 0
+var _signal_counts: Dictionary = {}
+var _connections: Array[Dictionary] = []
+
+
+func _init() -> void:
+	print("
+========================================")
+	print("Running Reputation & Progression Tests")
+	print("========================================
+")
+
+	await get_root().ready
+	RanchState = root.get_node("/root/RanchState")
+
+	var passed: int = 0
+	var failed: int = 0
+
+	for test_name: String in ["test_reputation_levels", "test_level_names", "test_earnings_for_next_level", "test_trait_unlocking", "test_ranchstate_reputation", "test_achievements", "test_full_house_achievement", "test_expansion_achievement"]:
+		var before: int = _checks_failed
+		print("Test: %s" % test_name)
+		call(test_name)
+		if _checks_failed == before:
+			print("  PASSED
+")
+			passed += 1
+		else:
+			print("  FAILED
+")
+			failed += 1
+
+	print("
+========================================")
+	print("Test Results: %d passed, %d failed (%d assertions)" % [passed, failed, _checks_total])
+	print("========================================
+")
+
+	quit(0 if failed == 0 else 1)
+
+
+# === ASSERT HELPERS (replace GUT) ===
+
+func assert_eq(actual: Variant, expected: Variant, msg: String = "") -> void:
+	_checks_total += 1
+	if actual != expected:
+		_checks_failed += 1
+		print("  ASSERT FAILED: expected %s, got %s %s" % [str(expected), str(actual), msg])
+
+
+func assert_true(value: bool, msg: String = "") -> void:
+	_checks_total += 1
+	if not value:
+		_checks_failed += 1
+		print("  ASSERT FAILED: expected true %s" % msg)
+
+
+func assert_false(value: bool, msg: String = "") -> void:
+	_checks_total += 1
+	if value:
+		_checks_failed += 1
+		print("  ASSERT FAILED: expected false %s" % msg)
+
+
+## Start counting emissions of every signal declared on the node's script.
+## Disconnects handlers from any previous watch first.
+func _watch(node: Node) -> void:
+	for conn: Dictionary in _connections:
+		if is_instance_valid(conn["node"]) and conn["node"].is_connected(conn["signal"], conn["callable"]):
+			conn["node"].disconnect(conn["signal"], conn["callable"])
+	_connections.clear()
+	_signal_counts.clear()
+	for sig: Dictionary in node.get_script().get_script_signal_list():
+		var sig_name: String = sig["name"]
+		var arg_count: int = (sig["args"] as Array).size()
+		var handler: Callable = _on_signal.bind(sig_name).unbind(arg_count)
+		_signal_counts[sig_name] = 0
+		node.connect(sig_name, handler)
+		_connections.append({"node": node, "signal": sig_name, "callable": handler})
+
+
+func _on_signal(sig_name: String) -> void:
+	_signal_counts[sig_name] = int(_signal_counts.get(sig_name, 0)) + 1
+
+
+func assert_signal_emitted(sig_name: String) -> void:
+	_checks_total += 1
+	if int(_signal_counts.get(sig_name, 0)) == 0:
+		_checks_failed += 1
+		print("  ASSERT FAILED: signal %s not emitted" % sig_name)
+
+
+func assert_signal_not_emitted(sig_name: String) -> void:
+	_checks_total += 1
+	if int(_signal_counts.get(sig_name, 0)) != 0:
+		_checks_failed += 1
+		print("  ASSERT FAILED: signal %s was emitted" % sig_name)
+
+
+func assert_signal_emit_count(sig_name: String, expected: int) -> void:
+	_checks_total += 1
+	var actual: int = int(_signal_counts.get(sig_name, 0))
+	if actual != expected:
+		_checks_failed += 1
+		print("  ASSERT FAILED: signal %s emitted %d times, expected %d" % [sig_name, actual, expected])
+
+
+# === TESTS ===
 
 # Test reputation level calculation
 func test_reputation_levels() -> void:
@@ -57,18 +172,18 @@ func test_ranchstate_reputation() -> void:
 	assert_eq(RanchState.lifetime_earnings, 0, "Start at $0 earnings")
 
 	# Earn some money
-	watch_signals(RanchState)
+	_watch(RanchState)
 	RanchState.add_money(3000)
 	assert_eq(RanchState.lifetime_earnings, 3000, "Lifetime earnings tracked")
 	assert_eq(RanchState.reputation, 0, "Still level 0")
-	assert_signal_not_emitted(RanchState, "reputation_increased")
+	assert_signal_not_emitted("reputation_increased")
 
 	# Cross threshold to level 1
 	RanchState.add_money(2500)  # Total: 5500
 	assert_eq(RanchState.lifetime_earnings, 5500, "Earnings at 5500")
 	assert_eq(RanchState.reputation, 1, "Promoted to level 1")
-	assert_signal_emitted(RanchState, "reputation_increased")
-	assert_signal_emit_count(RanchState, "reputation_increased", 1)
+	assert_signal_emitted("reputation_increased")
+	assert_signal_emit_count("reputation_increased", 1)
 
 	# Add more within same level
 	RanchState.add_money(5000)  # Total: 10500
@@ -81,11 +196,11 @@ func test_achievements() -> void:
 
 	# First sale achievement
 	assert_false(RanchState.achievements.has("first_sale"), "No first sale yet")
-	watch_signals(RanchState)
+	_watch(RanchState)
 	RanchState.add_money(100)
 	RanchState._check_achievements()
 	assert_true(RanchState.achievements.has("first_sale"), "First sale unlocked")
-	assert_signal_emitted(RanchState, "achievement_unlocked")
+	assert_signal_emitted("achievement_unlocked")
 
 	# Wealthy achievement
 	assert_false(RanchState.achievements.has("wealthy"), "Not wealthy yet")

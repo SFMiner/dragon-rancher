@@ -1,57 +1,42 @@
 @echo off
-REM Run all genetics tests on Windows
+setlocal enabledelayedexpansion
+REM Run every headless test suite (tests\**\test_*.gd) under the project's autoloads.
 REM Usage: tests\run_all_tests.bat
+REM Set GODOT to the Godot 4.5 binary if it is not "godot" on PATH, e.g.
+REM   set GODOT=..\Godot_v4.5-stable_win64.exe
 
-echo Running Dragon Ranch Genetics Tests
-echo ====================================
-echo.
+if "%GODOT%"=="" set GODOT=godot
+cd /d "%~dp0.."
 
-REM Check if godot is available
-where godot >nul 2>nul
+where "%GODOT%" >nul 2>nul
 if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Godot not found in PATH
-    echo Please ensure Godot 4.x is installed and in your PATH
+    echo ERROR: Godot not found ^(%GODOT%^). Set GODOT to the Godot 4.5 binary.
     exit /b 1
 )
 
-REM Track overall results
+echo Running Dragon Ranch Tests
+echo ==========================
+
 set TOTAL_PASSED=0
 set TOTAL_FAILED=0
+set FAILED_NAMES=
 
-REM Run breeding tests
-echo Running breeding tests...
-godot --headless --script tests/genetics/test_breeding.gd
-if %ERRORLEVEL% EQU 0 (
-    set /a TOTAL_PASSED+=1
-) else (
-    set /a TOTAL_FAILED+=1
+for /r tests %%F in (test_*.gd) do (
+    echo.
+    echo --- %%F
+    "%GODOT%" --headless --path . --script "%%F"
+    if !ERRORLEVEL! EQU 0 (
+        set /a TOTAL_PASSED+=1
+    ) else (
+        set /a TOTAL_FAILED+=1
+        set FAILED_NAMES=!FAILED_NAMES! %%~nxF
+    )
 )
 
 echo.
-
-REM Run phenotype tests
-echo Running phenotype tests...
-godot --headless --script tests/genetics/test_phenotype.gd
-if %ERRORLEVEL% EQU 0 (
-    set /a TOTAL_PASSED+=1
-) else (
-    set /a TOTAL_FAILED+=1
-)
-
-echo.
-
-REM Run normalization tests
-echo Running normalization tests...
-godot --headless --script tests/genetics/test_normalization.gd
-if %ERRORLEVEL% EQU 0 (
-    set /a TOTAL_PASSED+=1
-) else (
-    set /a TOTAL_FAILED+=1
-)
-
-echo.
-echo ====================================
-echo Overall Results: %TOTAL_PASSED% test suites passed, %TOTAL_FAILED% failed
-echo ====================================
+echo ==========================
+echo Overall Results: %TOTAL_PASSED% suites passed, %TOTAL_FAILED% failed
+if not "%FAILED_NAMES%"=="" echo Failed:%FAILED_NAMES%
+echo ==========================
 
 exit /b %TOTAL_FAILED%

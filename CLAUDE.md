@@ -26,17 +26,20 @@ godot .
 
 ### Running Tests
 ```bash
-# Windows: Run all tests
+# Windows: Run all tests (set GODOT=..\Godot_v4.5-stable_win64.exe if godot is not on PATH)
 tests\run_all_tests.bat
 
 # Unix/Linux/Mac: Run all tests
 ./tests/run_all_tests.sh
 
-# Run individual test suite
-godot --headless --script tests/genetics/test_breeding.gd
-godot --headless --script tests/lifecycle/test_lifecycle.gd
-godot --headless --script tests/ranch_state/test_ranch_state.gd
+# Run individual test suite (exit code 0 = pass, 1 = fail)
+godot --headless --path . --script tests/genetics/test_breeding.gd
 ```
+Suites `extend SceneTree` and, because autoloads are not global identifiers in `--script` mode,
+declare `var RanchState: Node = null` etc. (shadowing the autoload name) and bind them in `_init()`
+after `await get_root().ready` with `root.get_node("/root/RanchState")`. A one-time
+`Identifier not found: TraitDB` compile error at startup is expected noise (the script is loaded
+once before autoloads register, then again successfully); trust the `Test Results` line and exit code.
 
 ### Exporting Builds
 Use Godot Editor: Project > Export

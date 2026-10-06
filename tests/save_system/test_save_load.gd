@@ -2,10 +2,15 @@
 # Comprehensive tests for the save/load system
 # Part of Dragon Ranch - Session 14 Save/Load System
 #
-# This is a manual test script to be run from the Godot editor
-# Attach this script to a Node and run the scene to execute tests
+# Run with: godot --headless --path . --script tests/save_system/test_save_load.gd
 
-extends Node
+extends SceneTree
+
+# Autoloads are not registered as global identifiers in --script mode, so these
+# members shadow them and are bound to the live /root nodes in _init().
+var RanchState: Node = null
+var SaveSystem: Node = null
+var TutorialService: Node = null
 
 ## Test results
 var tests_passed: int = 0
@@ -13,7 +18,12 @@ var tests_failed: int = 0
 var test_details: Array[String] = []
 
 
-func _ready() -> void:
+func _init() -> void:
+	await get_root().ready
+	RanchState = root.get_node("/root/RanchState")
+	SaveSystem = root.get_node("/root/SaveSystem")
+	TutorialService = root.get_node("/root/TutorialService")
+
 	print("\n========================================")
 	print("SAVE/LOAD SYSTEM TEST SUITE")
 	print("========================================\n")
@@ -33,6 +43,7 @@ func _ready() -> void:
 
 	# Print results
 	print_results()
+	quit(0 if tests_failed == 0 else 1)
 
 
 ## Test SaveData serialization
@@ -48,10 +59,10 @@ func test_save_data_serialization() -> void:
 	save_data.reputation = 2
 
 	# Add some test data
-	save_data.dragons = [
-		{"id": "dragon_1", "name": "Test Dragon"},
-		{"id": "dragon_2", "name": "Another Dragon"}
-	]
+	var test_dragons: Array[Dictionary] = []
+	test_dragons.append({"id": "dragon_1", "name": "Test Dragon"})
+	test_dragons.append({"id": "dragon_2", "name": "Another Dragon"})
+	save_data.dragons = test_dragons
 
 	# Serialize to dictionary
 	var dict = save_data.to_dict()
@@ -290,7 +301,7 @@ func test_save_load_with_dragons() -> void:
 	test_dragon.id = "test_dragon_save_load"
 	test_dragon.name = "Test Dragon"
 	test_dragon.genotype = {"fire": ["F", "f"], "wings": ["W", "w"]}
-	test_dragon.phenotype = {"fire": "present", "wings": "present"}
+	test_dragon.phenotype = {"fire": {"name": "present"}, "wings": {"name": "present"}}
 	test_dragon.age = 5
 	test_dragon.life_stage = "adult"
 

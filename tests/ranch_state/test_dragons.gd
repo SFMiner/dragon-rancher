@@ -3,12 +3,19 @@
 
 extends SceneTree
 
+# Autoloads are not registered as global identifiers in --script mode, so these
+# members shadow them and are bound to the live /root nodes in _init().
+var GeneticsEngine: Node = null
+var RanchState: Node = null
+
 func _init() -> void:
 	print("\n========================================")
 	print("Running RanchState Dragon Tests")
 	print("========================================\n")
 
 	await get_root().ready
+	GeneticsEngine = root.get_node("/root/GeneticsEngine")
+	RanchState = root.get_node("/root/RanchState")
 
 	var passed: int = 0
 	var failed: int = 0
