@@ -86,7 +86,7 @@ static func from_dict(data: Dictionary) -> TutorialStep:
 	step.highlight_mode = data.get("highlight_mode", "screen_center")
 	step.advance_condition = data.get("advance_condition", {})
 	step.on_enter_actions.clear()
-	step.on_enter_actions.clear()
+	step.on_exit_actions.clear()
 
 	# Convert on_enter_actions Array to Array[Dictionary]
 	if data.has("on_enter_actions"):
