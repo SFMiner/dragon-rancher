@@ -9,6 +9,39 @@ extends Node
 ## Debug mode - logs all breeding operations
 var debug_mode: bool = false
 
+## Genome engine library built from the same trait_defs.json that TraitDB loads
+var _library: GenomeLibrary = null
+
+
+## Lazily build the GenomeLibrary (rancher's trait_defs.json schema is accepted as-is)
+func _get_library() -> GenomeLibrary:
+	if _library == null:
+		_library = GenomeLibrary.from_json_file(TraitDB.TRAIT_DEFS_PATH)
+	return _library
+
+
+## Convert an engine phenotype dict to the game's shape: drop the engine's "key" field and
+## turn hex color strings back into Color (as TraitDef does)
+func _to_game_phenotype(engine_data: Dictionary) -> Dictionary:
+	var out: Dictionary = engine_data.duplicate(true)
+	out.erase("key")
+	if out.has("color") and out["color"] is String:
+		out["color"] = Color.from_string(out["color"], Color.WHITE)
+	return out
+
+
+## Copy of a genotype with every locus coerced to a 2-element Array (legacy dict formats
+## handled); loci with invalid alleles are dropped, matching the old per-trait skip
+func _coerce_genotype(genotype: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	for trait_key: String in genotype.keys():
+		var alleles: Array = _coerce_alleles(genotype[trait_key], trait_key)
+		if alleles.size() != 2:
+			push_warning("[GeneticsEngine] Invalid alleles for parent trait '%s'" % trait_key)
+			continue
+		out[trait_key] = alleles
+	return out
+
 
 ## Breed two dragons and return offspring genotype
 ## parent_a: DragonData for first parent
@@ -45,24 +78,33 @@ func breed_dragons(parent_a: DragonData, parent_b: DragonData) -> Dictionary:
 		for trait_key in currently_unlocked:
 			all_trait_keys[trait_key] = true
 
-	# For each trait, randomly select one allele from each parent
-	for trait_key in all_trait_keys.keys():
-		var allele_from_a: String = _get_random_allele_from_parent(parent_a, trait_key)
-		var allele_from_b: String = _get_random_allele_from_parent(parent_b, trait_key)
-
-		if allele_from_a.is_empty() or allele_from_b.is_empty():
+	# Meiosis + fertilization for the chosen loci is delegated to the Genome engine.
+	# A locus missing on a parent defaults to that locus's recessive pair.
+	var locus_ids: Array[String] = []
+	for trait_key: String in all_trait_keys.keys():
+		if TraitDB.get_trait_def(trait_key) == null:
 			push_warning("[GeneticsEngine] Missing allele for trait '%s', using defaults" % trait_key)
 			continue
+		locus_ids.append(trait_key)
 
-		offspring_genotype[trait_key] = [allele_from_a, allele_from_b]
+	offspring_genotype = Genome.cross(
+		_get_library(),
+		_coerce_genotype(parent_a.genotype),
+		_coerce_genotype(parent_b.genotype),
+		RNGService,
+		0.0,
+		locus_ids
+	)
 
-		if debug_mode:
+	if debug_mode:
+		for trait_key: String in offspring_genotype.keys():
+			var kid: Array = offspring_genotype[trait_key]
 			print("  Trait '%s': %s + %s -> [%s, %s]" % [
 				trait_key,
 				GeneticsResolvers.format_trait_display(parent_a.genotype, trait_key),
 				GeneticsResolvers.format_trait_display(parent_b.genotype, trait_key),
-				allele_from_a,
-				allele_from_b
+				kid[0],
+				kid[1]
 			])
 
 	return offspring_genotype
@@ -94,16 +136,18 @@ func calculate_phenotype(genotype: Dictionary) -> Dictionary:
 			push_warning("[GeneticsEngine] Invalid alleles for trait '%s'" % trait_key)
 			continue
 
-		# Normalize genotype for lookup
-		var normalized: String = GeneticsResolvers.normalize_genotype_by_dominance(alleles, trait_def)
-
-		# Look up phenotype data
-		var pheno_data: Dictionary = trait_def.get_phenotype_data(normalized)
-		if pheno_data.is_empty():
+		# Single-locus phenotype lookup is delegated to the Genome engine
+		var locus: GenomeLocus = _get_library().get_locus(trait_key)
+		if locus == null:
+			push_warning("[GeneticsEngine] No locus for trait '%s'" % trait_key)
+			continue
+		var normalized: String = locus.genotype_key(alleles)
+		if not locus.phenotypes.has(normalized):
 			push_error("[GeneticsEngine] No phenotype data for genotype '%s' of trait '%s'" % [normalized, trait_key])
 			continue
+		var pheno_data: Dictionary = _to_game_phenotype(locus.phenotype_of(alleles))
 
-		phenotype[trait_key] = pheno_data.duplicate()
+		phenotype[trait_key] = pheno_data
 
 		if debug_mode:
 			print("  Trait '%s': %s -> %s" % [trait_key, normalized, pheno_data.get("name", "Unknown")])
@@ -161,51 +205,25 @@ func generate_punnett_square(parent_a: DragonData, parent_b: DragonData, trait_k
 		push_error("[GeneticsEngine] generate_punnett_square: missing alleles for trait '%s'" % trait_key)
 		return []
 
-	# Generate all possible combinations (2x2 = 4 outcomes)
-	var outcomes: Array = []
-	for allele_a in parent_a_alleles:
-		for allele_b in parent_b_alleles:
-			var offspring_alleles: Array = [allele_a, allele_b]
-			var normalized: String = GeneticsResolvers.normalize_genotype_by_dominance(offspring_alleles, trait_def)
-			var pheno_data: Dictionary = trait_def.get_phenotype_data(normalized)
+	# Exact single-locus cross computed by the Genome engine
+	var locus_ids: Array[String] = []
+	locus_ids.append(trait_key)
+	var sq: Dictionary = Genome.punnett(_get_library(), _coerce_genotype(parent_a.genotype), _coerce_genotype(parent_b.genotype), locus_ids)
+	var engine_outcomes: Array = sq["outcomes"]
 
-			outcomes.append({
-				"genotype": normalized,
-				"phenotype": pheno_data.get("name", "Unknown"),
-				"phenotype_data": pheno_data,
-				"alleles": offspring_alleles
-			})
-
-	# Calculate probabilities
-	var outcome_counts: Dictionary = {}
-	for outcome in outcomes:
-		var key: String = outcome["genotype"]
-		if not outcome_counts.has(key):
-			outcome_counts[key] = 0
-		outcome_counts[key] += 1
-
-	# Create final results with probabilities
 	var results: Array = []
-	var processed: Dictionary = {}
-
-	for outcome in outcomes:
-		var key: String = outcome["genotype"]
-		if processed.has(key):
-			continue
-
-		var count: int = outcome_counts[key]
-		var probability: float = count / 4.0
-
+	for outcome: Dictionary in engine_outcomes:
+		var probability: float = outcome["probability"]
+		var child_pheno: Dictionary = outcome["phenotype"]
+		var pheno_data: Dictionary = _to_game_phenotype(child_pheno.get(trait_key, {}))
 		results.append({
-			"genotype": outcome["genotype"],
-			"phenotype": outcome["phenotype"],
-			"phenotype_data": outcome["phenotype_data"],
+			"genotype": outcome["genotype_key"],
+			"phenotype": pheno_data.get("name", "Unknown"),
+			"phenotype_data": pheno_data,
 			"probability": probability,
-			"count": count,
+			"count": roundi(probability * 4.0),
 			"total": 4
 		})
-
-		processed[key] = true
 
 	if debug_mode:
 		print("[GeneticsEngine] Punnett square for trait '%s':" % trait_key)
@@ -241,27 +259,6 @@ func generate_full_punnett_square(parent_a: DragonData, parent_b: DragonData) ->
 		result[trait_key] = generate_punnett_square(parent_a, parent_b, trait_key)
 
 	return result
-
-
-## Helper: Get a random allele from a parent for a specific trait
-## Returns empty string if trait not found or invalid
-func _get_random_allele_from_parent(parent: DragonData, trait_key: String) -> String:
-	if not parent.genotype.has(trait_key):
-		# Parent doesn't have this trait, try to use default
-		var trait_def: TraitDef = TraitDB.get_trait_def(trait_key)
-		if trait_def == null:
-			return ""
-		# Return recessive allele as default
-		return trait_def.get_recessive_allele()
-
-	var alleles: Array = _coerce_alleles(parent.genotype[trait_key], trait_key)
-	if alleles.size() != 2:
-		push_warning("[GeneticsEngine] Invalid alleles for parent trait '%s'" % trait_key)
-		return ""
-
-	# Randomly select one allele (50% chance for each)
-	var index: int = RNGService.randi_range(0, 1)
-	return str(alleles[index])
 
 
 ## Create a starter dragon with default genotype

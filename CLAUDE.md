@@ -180,8 +180,15 @@ dragon-rancher/
 ### Genetics Engine
 - **Breeding**: `GeneticsEngine.breed_dragons(parent_a, parent_b)`
 - **Phenotype**: `GeneticsEngine.calculate_phenotype(genotype)`
-- **Predictions**: `GeneticsEngine.predict_offspring(parent_a, parent_b)`
-- **Validation**: `GeneticsEngine.validate_genotype(genotype)`
+- **Predictions**: `GeneticsEngine.generate_punnett_square(parent_a, parent_b, trait_key)` /
+  `generate_full_punnett_square(parent_a, parent_b)`
+- **Validation**: `TraitDB.validate_genotype(genotype)`
+- **Shared genome addon:** the Mendelian math (meiosis, crosses, single-locus phenotype lookup,
+  Punnett) lives in `addons/genome/`. That folder is a **vendored copy** of
+  `../genome-engine` (https://github.com/SFMiner/genome-engine). **Never edit it here.** Change
+  the engine, then run `bash tools/sync_genome.sh ../dragon-rancher` from genome-engine.
+  Rancher-only rules stay in `GeneticsEngine`: which loci breed (reputation unlocks), the
+  size_S/size_G polygenic size, and the color×hue×pattern epistasis.
 
 ### RanchState (Central Game State)
 - **Dragons**: `add_dragon()`, `remove_dragon()`, `get_adult_dragons()`
