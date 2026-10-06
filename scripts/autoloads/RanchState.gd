@@ -402,23 +402,11 @@ func _get_facility_capacity_value(facility_data) -> int:
 
 ## Calculate total dragon housing capacity
 ## Returns: Total capacity from all facilities
-func _calculate_dragon_capacity() -> int:
-	var total_capacity: int = 0
-
-	for facility_data in facilities.values():
-		if facility_data is FacilityData:
-			total_capacity += facility_data.capacity
-		elif facility_data is Dictionary:
-			total_capacity += facility_data.get("capacity", 0)
-
-	return total_capacity
-
-
 ## Calculate overcrowding penalty
 ## Returns: Negative happiness modifier based on dragons over capacity
 func _calculate_overcrowding_penalty() -> float:
 	var dragon_count: int = dragons.size()
-	var total_capacity: int = _calculate_dragon_capacity()
+	var total_capacity: int = get_total_capacity()
 
 	# No penalty if under capacity
 	if dragon_count <= total_capacity:

@@ -168,7 +168,7 @@ func test_overcrowding_penalty() -> bool:
 	print("  Total dragons after adding: %d" % total_dragons)
 
 	# Calculate expected overcrowding penalty
-	var capacity: int = RanchState._calculate_dragon_capacity()
+	var capacity: int = RanchState.get_total_capacity()
 	var overcrowding_penalty: float = RanchState._calculate_overcrowding_penalty()
 	print("  Capacity: %d, Overcrowding penalty: %.1f" % [capacity, overcrowding_penalty])
 
