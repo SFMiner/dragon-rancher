@@ -7,6 +7,7 @@ extends SceneTree
 # Autoloads are not registered as global identifiers in --script mode, so these
 # members shadow them and are bound to the live /root nodes in _init().
 var RanchState: Node = null
+var RNGService: Node = null
 
 func _init() -> void:
 	print("\n========================================")
@@ -15,6 +16,7 @@ func _init() -> void:
 
 	await get_root().ready
 	RanchState = root.get_node("/root/RanchState")
+	RNGService = root.get_node("/root/RNGService")
 
 	var passed: int = 0
 	var failed: int = 0
@@ -86,6 +88,8 @@ func test_dragon_aging() -> bool:
 func test_egg_hatching() -> bool:
 	print("Test: Egg hatching")
 
+	# Deterministic RNG (egg count, incubation, escape rolls)
+	RNGService.set_seed(12345)
 	RanchState.reset_game()
 
 	# Get two adult dragons to breed
@@ -107,8 +111,20 @@ func test_egg_hatching() -> bool:
 
 	var initial_dragon_count: int = RanchState.dragons.size()
 
+	# Track hatches and removals: advance_season() also rolls dragon escapes
+	# (docility), which legitimately remove dragons in the same call.
+	var hatched: Array[String] = []
+	var removed: Array[String] = []
+	var on_hatched: Callable = func(egg_id: String, _dragon_id: String) -> void: hatched.append(egg_id)
+	var on_removed: Callable = func(dragon_id: String) -> void: removed.append(dragon_id)
+	RanchState.egg_hatched.connect(on_hatched)
+	RanchState.dragon_removed.connect(on_removed)
+
 	# Advance season (should hatch)
 	RanchState.advance_season()
+
+	RanchState.egg_hatched.disconnect(on_hatched)
+	RanchState.dragon_removed.disconnect(on_removed)
 
 	# Check eggs hatched
 	for egg_id in egg_ids:
@@ -116,8 +132,15 @@ func test_egg_hatching() -> bool:
 			print("  FAILED: Egg should have hatched\n")
 			return false
 
-	if RanchState.dragons.size() != initial_dragon_count + egg_ids.size():
-		print("  FAILED: Dragon count should increase by %d after hatching\n" % egg_ids.size())
+	if hatched.size() != egg_ids.size():
+		print("  FAILED: Expected %d eggs to hatch, got %d\n" % [egg_ids.size(), hatched.size()])
+		return false
+
+	# Capacity is soft (add_dragon only warns), so every hatch adds a dragon;
+	# escapes during the same season are the only legitimate subtraction.
+	var expected_count: int = initial_dragon_count + egg_ids.size() - removed.size()
+	if RanchState.dragons.size() != expected_count:
+		print("  FAILED: Dragon count should be %d after hatching %d eggs (%d escaped), got %d\n" % [expected_count, egg_ids.size(), removed.size(), RanchState.dragons.size()])
 		return false
 
 	print("  PASSED: Egg hatched successfully\n")

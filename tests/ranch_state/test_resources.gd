@@ -6,6 +6,7 @@ extends SceneTree
 # Autoloads are not registered as global identifiers in --script mode, so these
 # members shadow them and are bound to the live /root nodes in _init().
 var RanchState: Node = null
+var RNGService: Node = null
 
 func _init() -> void:
 	print("\n========================================")
@@ -14,6 +15,10 @@ func _init() -> void:
 
 	await get_root().ready
 	RanchState = root.get_node("/root/RanchState")
+	RNGService = root.get_node("/root/RNGService")
+
+	# Deterministic RNG: advance_season() rolls dragon escapes
+	RNGService.set_seed(12345)
 
 	var passed: int = 0
 	var failed: int = 0

@@ -11,6 +11,7 @@ extends SceneTree
 var TraitDB: Node = null
 var GeneticsEngine: Node = null
 var RanchState: Node = null
+var RNGService: Node = null
 
 
 func _init() -> void:
@@ -23,6 +24,10 @@ func _init() -> void:
 	TraitDB = root.get_node("/root/TraitDB")
 	GeneticsEngine = root.get_node("/root/GeneticsEngine")
 	RanchState = root.get_node("/root/RanchState")
+	RNGService = root.get_node("/root/RNGService")
+
+	# Deterministic RNG: advance_season() rolls dragon escapes
+	RNGService.set_seed(12345)
 
 	var passed: int = 0
 	var failed: int = 0
