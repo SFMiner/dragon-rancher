@@ -5,16 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://c5nk4t5od4wpq" path="res://assets/sprites/dragon_test_sprite.png" id="2_q51gm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_click"]
-size = Vector2(64, 64)
+size = Vector2(157, 82)
 
 [node name="Dragon" type="Node2D"]
 script = ExtResource("1_dragon")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
-position = Vector2(6.000001, -36.999996)
-scale = Vector2(1.3334417, 1.3334417)
-texture = ExtResource("2_q51gm")
 
 [node name="NameLabel" type="Label" parent="."]
 offset_left = -31.0
@@ -31,6 +25,7 @@ vertical_alignment = 1
 [node name="ClickArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
+position = Vector2(9.5, -35)
 shape = SubResource("RectangleShape2D_click")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -42,7 +37,7 @@ position = Vector2(-17, -29)
 scale = Vector2(1.1469499, 1.4685103)
 
 [node name="Tail2" parent="Skeleton/Spine1/Spine2/Tail1/Tail2" index="0"]
-scale = Vector2(0.9999994, 0.9999994)
+scale = Vector2(0.99999934, 0.99999934)
 
 [node name="Wing3" parent="Skeleton/Wing1/Wing2" index="0"]
 rotation = 1.2501872

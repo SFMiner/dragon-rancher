@@ -36,7 +36,7 @@ var _is_wandering: bool = true
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var name_label: Label = $NameLabel
 @onready var click_area: Area2D = $ClickArea
-
+@onready var skeleton : Skeleton2D = $Skeleton
 
 func _ready() -> void:
 	# Connect click area signal
@@ -105,7 +105,7 @@ func update_visuals() -> void:
 
 	# NEW: Apply pattern effects (stripes)
 	_apply_pattern_effects()
-
+#	_apply_stripe_shader()
 
 ## Build sprite path from phenotype
 ## Example: "res://assets/sprites/dragons/dragon_red_fire_vestigial_heavy.png"
@@ -181,15 +181,16 @@ func _get_dominant_phenotype_color() -> Color:
 
 	return Color.GRAY
 
+func scale_dragon(scale_factor : float):
+	skeleton.scale = Vector2(scale_factor,scale_factor) 
+	sprite.scale = Vector2(scale_factor,scale_factor)
 
 ## Apply color modulation to sprite based on color trait
 func _apply_color_modulation() -> void:
 	if not sprite or dragon_data == null:
 		return
 
-	# Check if color trait is present
 	if not dragon_data.phenotype.has("color"):
-		# No color trait, use default white (no modulation)
 		sprite.modulate = Color.WHITE
 		return
 
@@ -198,18 +199,19 @@ func _apply_color_modulation() -> void:
 		sprite.modulate = Color.WHITE
 		return
 
-	# Get color value
 	var color_value = color_pheno["color"]
 	var modulate_color: Color = Color.WHITE
 
 	if color_value is Color:
 		modulate_color = color_value
 	elif color_value is String:
-		modulate_color = Color.from_string(color_value, Color.WHITE)
+		# ADD # PREFIX IF MISSING
+		var color_string: String = color_value
+		if not color_string.begins_with("#"):
+			color_string = "#" + color_string
+		modulate_color = Color.from_string(color_string, Color.WHITE)
 
-	# Apply color modulation to sprite
 	sprite.modulate = modulate_color
-
 
 ## Process wandering behavior
 func _process(delta: float) -> void:
@@ -340,6 +342,8 @@ func _compute_age_stage_scale() -> float:
 
 ## NEW: Apply pattern effects (stripes) to polygon sprite
 ## Call this at the end of update_visuals()
+
+## Apply pattern effects (stripes) to polygon sprite
 func _apply_pattern_effects() -> void:
 	if not sprite or dragon_data == null:
 		return
