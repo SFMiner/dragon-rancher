@@ -1,279 +1,54 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Dragon Ranch: dragon breeding tycoon in Godot 4.5 (Mendelian genetics, orders, facilities, save/load). Signal-based, data-driven (JSON configs), deterministic seedable RNG.
 
-## Project Overview
+Cold reference (architecture, systems, history): `KNOWLEDGE.md` in this folder.
 
-Dragon Ranch is a dragon breeding tycoon game built with Godot 4.5. Players breed dragons with Mendelian genetics, fulfill customer orders, and build their ranch empire. The game features a deterministic genetics engine, progression system, save/load functionality, and facility management.
+## Commands
 
-**Key Traits:**
-- Signal-based architecture for decoupled systems
-- Data-driven design (all content in JSON configs)
-- Deterministic gameplay via seedable RNG
-- Pure logic modules for testability
-- Comprehensive autoload singleton system
-
-## Development Commands
-
-### Running the Game
 ```bash
-# Open project in Godot 4.5+
-godot .
-
-# Run the game
-# Press F5 in Godot Editor
+godot .                       # open project; F5 to run
+tests\run_all_tests.bat       # Windows, all tests (set GODOT=..\Godot_v4.5-stable_win64.exe if godot not on PATH)
+./tests/run_all_tests.sh      # Unix/Linux/Mac
+godot --headless --path . --script tests/genetics/test_breeding.gd   # one suite (exit 0 = pass, 1 = fail)
 ```
+- Suites `extend SceneTree` and, because autoloads are not global identifiers in `--script` mode, declare `var RanchState: Node = null` etc. (shadowing the autoload name) and bind them in `_init()` after `await get_root().ready` with `root.get_node("/root/RanchState")`.
+- A one-time `Identifier not found: TraitDB` compile error at startup is expected noise (script loads once before autoloads register, then again successfully); trust the `Test Results` line and exit code.
+- Export via Godot Editor (Project > Export); add new export presets to `project.godot`, not custom scripts. Keep `project.godot` autoload paths intact.
 
-### Running Tests
-```bash
-# Windows: Run all tests (set GODOT=..\Godot_v4.5-stable_win64.exe if godot is not on PATH)
-tests\run_all_tests.bat
+## Critical rules
 
-# Unix/Linux/Mac: Run all tests
-./tests/run_all_tests.sh
+- **Autoload order is LOCKED** (dependencies). Register in the order in `project.godot`; don't reorder (details: `KNOWLEDGE.md` § Autoload singleton order, which is partly out of date).
+- **`docs/API_Reference.md` interfaces are LOCKED** (RanchState API included). Changes require architectural review, updates to all dependents, doc updates, and a save migration path if applicable. Check it before modifying autoloads. Changing RanchState also means updating SaveSystem serialization (details: `KNOWLEDGE.md` § Common workflows).
+- **Never edit `addons/genome/`.** It is a vendored copy of `../genome-engine`. Change the engine, then run `bash tools/sync_genome.sh ../dragon-rancher` from genome-engine (details: `KNOWLEDGE.md` § Genetics Engine).
+- All randomness flows through `RNGService`. No direct file I/O: use `SaveSystem`.
+- Never modify state directly; always use RanchState methods, and always emit signals after state changes.
+- Connect to RanchState signals in `_ready()`. UI reacts to signals, never polls state.
+- All player-facing content in `data/config/`. Data-driven first: extend JSON configs instead of hardcoding, expose through TraitDB/RanchState APIs, keep logic and data separate.
+- Pure logic in `scripts/rules/` stays stateless. Data classes in `scripts/data/` extend `Resource` with `to_dict()`, `from_dict()`, `is_valid()`; use `is_valid()` before processing data.
+- All getters return `null` for not-found items.
+- Errors: `push_warning()` for recoverable, `push_error()` for critical; favor these over bare prints unless in debug mode.
+- Testing first: add tests for new features before implementation.
+- **ParentSelectPopup:** width clamp includes a +20 padding tweak for long genotype strings; genotype display is a single concatenated allele string with no delimiters.
 
-# Run individual test suite (exit code 0 = pass, 1 = fail)
-godot --headless --path . --script tests/genetics/test_breeding.gd
-```
-Suites `extend SceneTree` and, because autoloads are not global identifiers in `--script` mode,
-declare `var RanchState: Node = null` etc. (shadowing the autoload name) and bind them in `_init()`
-after `await get_root().ready` with `root.get_node("/root/RanchState")`. A one-time
-`Identifier not found: TraitDB` compile error at startup is expected noise (the script is loaded
-once before autoloads register, then again successfully); trust the `Test Results` line and exit code.
+## Coding conventions
 
-### Exporting Builds
-Use Godot Editor: Project > Export
-Export presets are configured in `project.godot`
+- Typed GDScript always; tabs; LF line endings (`.gitattributes` enforces).
+- `snake_case` functions/variables/signals; `PascalCase` classes/resources/scenes; signal names verb-based (`dragon_bred`, `order_fulfilled`, `season_changed`).
+- Layout: `scripts/{autoloads,rules,entities,ui,data,util}`, `scenes/{entities,ui}`, `data/config/`, `tests/<domain>/`, `docs/` (details: `KNOWLEDGE.md` § File organization).
 
-## Critical Architecture
+## Testing
 
-### Autoload Singleton Order (LOCKED)
+- Seed RNG via `RNGService.set_seed()` in tests; assert both genotype and phenotype outcomes.
+- Keep tests fast: no scene instancing unless required.
+- Place suites at `tests/<domain>/test_<feature>.gd` (domains: genetics, lifecycle, ranch_state, progression, save_system), runnable via `godot --headless --script ...`.
+- Features touching state need lifecycle/progression coverage.
 
-The autoloads MUST be registered in this exact order due to dependencies. See `docs/API_Reference.md` for full API documentation.
+## Commits and PRs
 
-1. **RNGService** - Deterministic randomness (no dependencies)
-2. **TraitDB** - Trait definitions database (no dependencies)
-3. **GeneticsEngine** - Breeding logic (depends on RNGService, TraitDB)
-4. **RanchState** - Central game state (depends on GeneticsEngine)
-5. **OrderSystem** - Order generation (depends on TraitDB, GeneticsEngine)
-6. **SaveSystem** - Persistence (depends on RanchState)
-7. **AudioManager** - Sound management (subscribes to RanchState signals)
-8. **TutorialService** - Tutorial system (subscribes to RanchState signals)
+- Concise, present-tense messages (e.g. `Add music and money_start.ogg`, `Session 15 done`); one feature/fix per commit when possible.
+- PRs describe gameplay impact and touched systems; link tracking issue or session doc; include test command and pass result; add notes or screenshots for UI changes.
 
-### API Stability
+## Docs
 
-The interfaces in `docs/API_Reference.md` are **LOCKED**. Any changes require:
-1. Architectural review
-2. Updates to all dependent systems
-3. Documentation updates
-4. Migration path for saves (if applicable)
-
-### Key Design Patterns
-
-**Signal-Based Communication:**
-- All state changes emit signals
-- UI subscribes to signals for updates
-- No direct coupling between systems
-
-**Data-Driven Content:**
-- Trait definitions: `data/config/trait_defs.json`
-- Dragon names: `data/config/names_dragons.json`
-- Order templates: `data/config/order_templates.json`
-- Facility definitions: `data/config/facility_defs.json`
-- Achievements: `data/config/achievements.json`
-
-**Pure Logic Modules:**
-- Located in `scripts/rules/`
-- Static classes with no side effects
-- Testable independently of game state
-- Examples: Lifecycle, GeneticsResolvers, OrderMatching, Pricing, Progression
-
-**Resource-Based Data:**
-- All data classes extend `Resource`
-- Implement `to_dict()` and `from_dict()` for serialization
-- Implement `is_valid()` for validation
-- Located in `scripts/data/`
-
-## File Organization
-
-```
-dragon-rancher/
-├── data/config/          # JSON configuration (traits, orders, facilities, etc.)
-├── scripts/
-│   ├── autoloads/        # Singleton services (8 autoloads in specific order)
-│   ├── rules/            # Pure logic modules (static utility classes)
-│   ├── entities/         # Entity controllers (Dragon.gd, Egg.gd)
-│   ├── ui/               # UI scripts (HUD, panels)
-│   ├── data/             # Resource classes (DragonData, OrderData, etc.)
-│   └── util/             # Utilities (IdGen)
-├── scenes/
-│   ├── entities/         # Entity scenes (dragon/, egg/)
-│   └── ui/               # UI scenes (HUD, panels)
-├── tests/                # Unit tests grouped by domain
-│   ├── genetics/         # 19 genetics tests
-│   ├── lifecycle/        # 6 lifecycle tests
-│   ├── ranch_state/      # 3 ranch state test suites
-│   └── progression/      # 1 progression test suite
-├── assets/               # Audio and art assets
-└── docs/                 # Technical documentation
-```
-
-## Coding Conventions
-
-### GDScript Style
-- **Typed GDScript**: Always use type hints
-- **Indentation**: Tabs (Godot default)
-- **Line endings**: LF (enforced by `.gitattributes`)
-- **Naming**:
-  - `snake_case`: functions, variables, signals
-  - `PascalCase`: classes, resources, scenes
-  - Signal names: verb-based (`dragon_bred`, `order_fulfilled`, `season_changed`)
-
-### State Management
-- **Never modify state directly** - Always use RanchState methods
-- **Always emit signals** after state changes
-- **Null checks**: All getters return `null` for not-found items
-- **Validation**: Use `is_valid()` before processing data
-- **Error handling**: Use `push_warning()` for recoverable issues, `push_error()` for critical failures
-
-### Testing
-- **Deterministic RNG**: Always seed RNG via `RNGService.set_seed()` in tests
-- **Assert both genotype and phenotype** outcomes
-- **Fast tests**: No scene instancing unless required
-- **Test location**: Mirror structure in `tests/<domain>/test_<feature>.gd`
-
-### Data-Driven First
-- Extend JSON configs instead of hardcoding values
-- Expose data through TraitDB/RanchState APIs
-- Keep logic and data separate
-
-## Common Workflows
-
-### Adding a New Trait
-1. Add trait definition to `data/config/trait_defs.json`
-2. Update `TraitDB` constants if needed
-3. Add normalization rules to `GeneticsResolvers` if complex
-4. Update tests to cover new trait
-5. Add to reputation unlock tier in progression system
-
-### Adding a New Order Template
-1. Add template to `data/config/order_templates.json`
-2. Include requirements (genotype patterns, phenotypes, life stage)
-3. Set base payment and reputation level
-4. Test matching logic with `OrderMatching.does_dragon_match()`
-
-### Adding a New Facility
-1. Add definition to `data/config/facility_defs.json`
-2. Include cost, capacity, bonuses, reputation requirement
-3. Update UI to display new facility in BuildPanel
-4. Add visual representation to Ranch scene
-
-### Modifying RanchState
-1. **WARNING**: RanchState API is LOCKED
-2. Consult `docs/API_Reference.md` first
-3. If changes needed, discuss architectural impact
-4. Update SaveSystem serialization
-5. Implement save migration if breaking change
-
-## Key Systems Reference
-
-### Genetics Engine
-- **Breeding**: `GeneticsEngine.breed_dragons(parent_a, parent_b)`
-- **Phenotype**: `GeneticsEngine.calculate_phenotype(genotype)`
-- **Predictions**: `GeneticsEngine.generate_punnett_square(parent_a, parent_b, trait_key)` /
-  `generate_full_punnett_square(parent_a, parent_b)`
-- **Validation**: `TraitDB.validate_genotype(genotype)`
-- **Shared genome addon:** the Mendelian math (meiosis, crosses, single-locus phenotype lookup,
-  Punnett) lives in `addons/genome/`. That folder is a **vendored copy** of
-  `../genome-engine` (https://github.com/SFMiner/genome-engine). **Never edit it here.** Change
-  the engine, then run `bash tools/sync_genome.sh ../dragon-rancher` from genome-engine.
-  Rancher-only rules stay in `GeneticsEngine`: which loci breed (reputation unlocks), the
-  size_S/size_G polygenic size, and the color×hue×pattern epistasis.
-
-### RanchState (Central Game State)
-- **Dragons**: `add_dragon()`, `remove_dragon()`, `get_adult_dragons()`
-- **Eggs**: `create_egg()`, `hatch_egg()`, `get_all_eggs()`
-- **Resources**: `add_money()`, `spend_money()`, `add_food()`, `consume_food()`
-- **Time**: `advance_season()`, `can_advance_season()`
-- **Orders**: `accept_order()`, `fulfill_order()`, `remove_order()`
-- **Facilities**: `build_facility()`, `get_facility_bonus()`
-
-### Save System
-- **Save format**: JSON (version 1, documented in `docs/Save_Format_v1.md`)
-- **Location**: `user://savegame_v1.json` (IndexedDB on web)
-- **Autosave**: Configurable via `SaveSystem.enable_autosave(interval)`
-- **Backup**: Auto-backup created before overwrite
-- **Export**: `export_save_string()` for manual backup
-
-### Order System
-- **Generation**: `OrderSystem.generate_orders(reputation_level)`
-- **Matching**: `OrderMatching.does_dragon_match(dragon, order)`
-- **Payment**: `Pricing.calculate_payment(order, dragon)`
-- **Patterns**: Genotype patterns like `F_`, `FF`, `Ff` supported
-
-## Documentation Reference
-
-- **`docs/API_Reference.md`**: Complete API documentation (LOCKED interfaces)
-- **`docs/Genetics_Normalization_Rules.md`**: Genotype normalization rules
-- **`docs/Save_Format_v1.md`**: Save file format specification
-- **`PROJECT_STRUCTURE.md`**: Detailed directory structure
-- **`IMPLEMENTATION_STATUS.md`**: Current implementation status
-- **Repository guidelines for AI agents**: in this file, under "Repository guidelines (moved from AGENTS.md)"
-
-## Session Reports
-
-Session reports (`SESSION_*.md` and `SESSION_*_COMPLETE.md`) document development history and contain valuable context about implementation decisions. Consult recent session reports when working on related systems.
-
-## Important Notes
-
-- **Deterministic RNG**: All randomness flows through RNGService for reproducibility
-- **No direct file I/O**: Use SaveSystem for persistence
-- **Signal subscriptions**: Connect to RanchState signals in `_ready()`
-- **UI updates**: Always react to signals, never poll state
-- **Testing first**: Add tests for new features before implementation
-- **JSON configs**: All player-facing content in data/config/
-- **Locked APIs**: Check docs/API_Reference.md before modifying autoloads
-- **ParentSelectPopup sizing**: Width clamp includes a +20 padding tweak for long genotype strings.
-- **ParentSelectPopup genotype display**: Use a single concatenated allele string with no delimiters.
-
-## Repository guidelines (moved from AGENTS.md)
-
-### Project Structure & Module Organization
-- Core logic lives in `scripts/` (`autoloads` singletons for RNG/TraitDB/GeneticsEngine/State, `rules` for pure utilities, `entities`/`ranch`/`menus` for gameplay and UI flows).
-- Scenes are under `scenes/` (`entities` for dragons/eggs, `ui` for HUD and panels); data files are in `data/config/` (traits, names, orders, facilities, achievements JSON).
-- Tests reside in `tests/` grouped by domain (`genetics`, `lifecycle`, `ranch_state`, `progression`, `save_system`); runners in `tests/run_all_tests.*`.
-- Assets (audio, art) live in `assets/`; docs and design notes are in `docs/` plus session reports and `PROJECT_STRUCTURE.md`/`IMPLEMENTATION_STATUS.md` at repo root.
-
-### Build, Test, and Development Commands
-- Open and run in Godot 4.5+: `godot .` then F5 to play; keep `project.godot` autoload paths intact.
-- Run all scripted tests (Windows): `tests\run_all_tests.bat`; individual suites: `godot --headless --script tests/genetics/test_breeding.gd` (replace path per suite).
-- Export builds via Godot Editor’s Project > Export; add new export presets to `project.godot` rather than custom scripts.
-
-### Coding Style & Naming Conventions
-- Use typed GDScript; match existing indentation (tabs, Godot default) and LF line endings (`.gitattributes` enforces).
-- Snake_case for functions/variables, PascalCase for classes/resources/scenes; keep signal names verb-based (`dragon_bred`, `order_fulfilled`).
-- Keep pure logic stateless inside `scripts/rules`; use autoloads for shared state/services; favor `push_error/push_warning` over bare prints unless in debug mode.
-- Data-driven first: extend JSON in `data/config/` and expose keys via TraitDB/RanchState instead of hardcoding.
-
-### Testing Guidelines
-- Mirror current pattern: place new suites as `tests/<domain>/test_<feature>.gd` and make them runnable via `godot --headless --script ...`.
-- Seed RNG deterministically through `RNGService` in tests; assert both genotype and phenotype outcomes to avoid regressions.
-- When adding features that touch state, include lifecycle/progression coverage and keep tests fast (no scene instancing unless required).
-
-### Commit & Pull Request Guidelines
-- Follow existing concise, present-tense messages (e.g., `Add music and money_start.ogg`, `Session 15 done`). One feature/fix per commit when possible.
-- PRs should describe gameplay impact and touched systems (autoloader, data config, UI); link any tracking issue or session doc.
-- Include test evidence: command used and pass result. Add short notes or screenshots if UI changes affect HUD/panels.
-
-### Latest Changes
-- Dragons are hermaphrodites (no male/female split).
-- Fixed W/wingless allele so functional wings are not treated as dominant.
-- Added a theme.
-- OrdersPanel randomizes better.
-- BreedingPanel allows selecting the dragons to breed.
-- Added DragonListPanel to show all owned dragons.
-- Hatchlings scale up gradually until they're adults.
-- Added a Store button to buy food and other items.
-- Dragons breed only twice per season, laying 2-6 eggs at a time.
-- ParentSelectPopup width clamp includes a +20 padding tweak for long genotype strings.
-- ParentSelectPopup genotype display uses a single concatenated allele string with no delimiters.
+`docs/API_Reference.md` (locked APIs), `docs/Genetics_Normalization_Rules.md`, `docs/Save_Format_v1.md`, `IMPLEMENTATION_STATUS.md`. Session reports `SESSION_*.md` hold implementation-decision history; consult recent ones when working on related systems. Systems reference, workflows, latest changes: `KNOWLEDGE.md`.
