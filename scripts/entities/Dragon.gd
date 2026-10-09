@@ -136,7 +136,7 @@ func _create_placeholder_sprite() -> void:
 	var color: Color = _get_dominant_phenotype_color()
 
 	# Create image
-	var image := Image.create(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
+	var image := Image.create_empty(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
 	image.fill(color)
 
 	# Add border

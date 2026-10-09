@@ -119,7 +119,7 @@ func _update_sprite_preview() -> void:
 
 	# Try to create a simple visual representation
 	var placeholder_size: int = 128
-	var image := Image.create(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
+	var image := Image.create_empty(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
 
 	# Get dragon color based on traits
 	var color: Color = _get_dragon_color()

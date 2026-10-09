@@ -66,7 +66,7 @@ func _create_placeholder_sprite() -> void:
 	var color: Color = _get_egg_color()
 
 	# Create oval/egg shaped image
-	var image := Image.create(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
+	var image := Image.create_empty(placeholder_size, placeholder_size, false, Image.FORMAT_RGBA8)
 
 	# Draw egg shape (simplified oval)
 	for y in range(placeholder_size):
